@@ -1,13 +1,16 @@
-CFLAGS+=-g -Wall -O2
+CFLAGS+=-g -Wall -O2 -std=c99
 LDFLAGS+=-L./lib -lkoki
 INCLUDES+=-I. -I./include
 
-OBJECTS=
+OBJECTS=labeling.o
 
 SRC_DIR=./src
 LIB_DIR=./lib
 TEST_DIR=./test
 DOCS_DIR=./docs
+
+CFLAGS+=`pkg-config --cflags glib-2.0`
+LDFLAGS+=`pkg-config --libs glib-2.0`
 
 all: solib example docs docs_latex
 

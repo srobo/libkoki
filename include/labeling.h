@@ -61,4 +61,10 @@ typedef struct {
 } koki_labeled_image_t;
 
 
+/* FUNCTION PROTOTYPES */
+
+koki_labeled_image_t* koki_labeled_image_new(uint16_t w, uint16_t h);
+
+void koki_labeled_image_free(koki_labeled_image_t *labeled_image);
+
 #endif /* _KOKI_LABELING_H_ */
