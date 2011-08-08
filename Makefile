@@ -7,8 +7,9 @@ OBJECTS=
 SRC_DIR=./src
 LIB_DIR=./lib
 TEST_DIR=./test
+DOCS_DIR=./docs
 
-all: solib example
+all: solib example docs docs_latex
 
 %.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -c $< -o $@
@@ -26,7 +27,14 @@ run_example:
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
 		$(TEST_DIR)/example
 
-clean:
-	rm -rf $(LIB_DIR) $(TEST_DIR)/example *.o
+docs:
+	doxygen $(DOCS_DIR)/Doxyfile
 
-.PHONY: clean solib example run_example
+docs_latex: docs
+	cd $(DOCS_DIR)/latex ; make
+
+clean:
+	rm -rf $(LIB_DIR) $(TEST_DIR)/example *.o $(DOCS_DIR)/html $(DOCS_DIR)/latex
+
+
+.PHONY: clean solib example run_example docs docs_latex
