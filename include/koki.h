@@ -7,6 +7,6 @@
  */
 
 #include "points.h"
-#include "labeling.h"
+#include "labelling.h"
 
 #endif /* _KOKI_H_ */

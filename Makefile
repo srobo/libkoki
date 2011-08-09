@@ -2,7 +2,7 @@ CFLAGS+=-g -Wall -O2 -std=c99
 LDFLAGS+=-L./lib -lkoki
 INCLUDES+=-I. -I./include
 
-OBJECTS=labeling.o
+OBJECTS=labelling.o
 
 SRC_DIR=./src
 LIB_DIR=./lib
