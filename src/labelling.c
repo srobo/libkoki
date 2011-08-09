@@ -27,8 +27,8 @@ koki_labelled_image_t* koki_labelled_image_new(uint16_t w, uint16_t h)
 	labelled_image = malloc(sizeof(koki_labelled_image_t));
 	assert(labelled_image != NULL);
 
-	labelled_image->w = 0;
-	labelled_image->h = 0;
+	labelled_image->w = w;
+	labelled_image->h = h;
 
 	/* alocate the label data array */
 	uint16_t data_size = (w+2) * (h+2) * sizeof(uint16_t);
