@@ -67,4 +67,8 @@ koki_labelled_image_t* koki_labelled_image_new(uint16_t w, uint16_t h);
 
 void koki_labelled_image_free(koki_labelled_image_t *labelled_image);
 
+koki_labelled_image_t* koki_label_image(IplImage *image, float threshold);
+
+IplImage* koki_labelled_image_to_IplImage(koki_labelled_image_t *labelled_image);
+
 #endif /* _KOKI_LABELLING_H_ */

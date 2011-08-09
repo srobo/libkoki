@@ -9,8 +9,8 @@ LIB_DIR=./lib
 TEST_DIR=./test
 DOCS_DIR=./docs
 
-CFLAGS+=`pkg-config --cflags glib-2.0`
-LDFLAGS+=`pkg-config --libs glib-2.0`
+CFLAGS+=`pkg-config --cflags glib-2.0 opencv`
+LDFLAGS+=`pkg-config --libs glib-2.0 opencv`
 
 all: solib example docs docs_latex
 
