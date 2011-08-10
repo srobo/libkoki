@@ -17,6 +17,8 @@
 #define G 1
 #define B 2
 
+#define KOKI_MIN_REGION_MASS 64
+#define KOKI_MIN_DISTANCE_FROM_BORDER 3
 
 /**
  * @brief a macro for getting or setting an R, G or B value of an \c IplImage
@@ -455,5 +457,42 @@ IplImage* koki_labelled_image_to_IplImage(koki_labelled_image_t *labelled_image)
 	}//for y
 
 	return image;
+
+}
+
+
+
+/**
+ * @brief determines whether or not a label is going to be useful
+ *
+ * It will return FALSE for any regions that are too small, or too near the
+ * edge of the input image.
+ *
+ * @param labelled_image  the labelled image to use
+ * @param region          the clip region number (i.e. an index for
+ *                        \c labelled_image.clips)
+ * @return                FALSE if the region is considered unusable, TRUE
+ *                        otherwise
+ */
+bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region)
+{
+
+	koki_clip_region_t *clip;
+	clip = &g_array_index(labelled_image->clips,
+			      koki_clip_region_t,
+			      region);
+
+	/* are there enough pixels */
+	if (clip->mass < KOKI_MIN_REGION_MASS)
+		return FALSE;
+
+	/* make sure we're not interacting with the edge of the image */
+	if (   clip->min.x < KOKI_MIN_DISTANCE_FROM_BORDER
+	    || clip->min.y < KOKI_MIN_DISTANCE_FROM_BORDER
+	    || clip->max.x > labelled_image->w - KOKI_MIN_DISTANCE_FROM_BORDER
+	    || clip->max.y > labelled_image->h - KOKI_MIN_DISTANCE_FROM_BORDER)
+		return FALSE;
+
+	return TRUE;
 
 }

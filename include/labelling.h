@@ -7,6 +7,7 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <glib.h>
 
 #include "points.h"
@@ -68,6 +69,8 @@ koki_labelled_image_t* koki_labelled_image_new(uint16_t w, uint16_t h);
 void koki_labelled_image_free(koki_labelled_image_t *labelled_image);
 
 koki_labelled_image_t* koki_label_image(IplImage *image, float threshold);
+
+bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region);
 
 IplImage* koki_labelled_image_to_IplImage(koki_labelled_image_t *labelled_image);
 
