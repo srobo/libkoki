@@ -106,4 +106,8 @@ bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region);
 
 IplImage* koki_labelled_image_to_IplImage(koki_labelled_image_t *labelled_image);
 
+uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
+				    uint16_t x, uint16_t y,
+			     enum DIRECTION direction);
+
 #endif /* _KOKI_LABELLING_H_ */

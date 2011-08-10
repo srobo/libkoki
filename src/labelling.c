@@ -158,7 +158,7 @@ static void set_label(koki_labelled_image_t *labelled_image,
  * @param direction       the direction to move in (from the \c DIRECTION enum)
  * @return                the label \c direction of (x, y)
  */
-static uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
+uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
 				    uint16_t x, uint16_t y,
 				    enum DIRECTION direction)
 {
