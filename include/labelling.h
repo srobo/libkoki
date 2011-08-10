@@ -14,6 +14,37 @@
 #include "points.h"
 
 /**
+ * @brief a macro for getting or setting an R, G or B value of an \c IplImage
+ *
+ * @param img  the \c IplImage in question
+ * @param x    the X co-ordinate
+ * @param y    the Y co-ordinate
+ * @param rgb  0, 1 or 2 for R, G or B, respectively
+ * @return     the R, G or B value
+ */
+#define KOKI_IPLIMAGE_ELEM(img, x, y, rgb) \
+	(((uint8_t*)((img)->imageData + (img)->widthStep*(y)))[(x)*3+rgb])
+
+
+/**
+ * @brief a macro for getting the label in a labeled image at point (x, y)
+ *
+ * @param limg  the labeled image in question
+ * @param x     the X co-ordinate
+ * @param y     the Y co-ordinate
+ * @return      the label at point (x, y)
+ */
+#define KOKI_LABELLED_IMAGE_LABEL(limg, x, y) \
+	((limg)->data[(y+1) * ((limg)->w+2) + (x+1)])
+
+/**
+ * an enumeration for compass directions
+ */
+enum DIRECTION {N, NE, E, SE, S, SW, W, NW};
+
+
+
+/**
  * @brief A structure for storing the co-ordinate extremes for a given labelled
  *        region and also the size of said region.
 
