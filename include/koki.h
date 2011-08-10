@@ -8,5 +8,6 @@
 
 #include "points.h"
 #include "labelling.h"
+#include "contour.h"
 
 #endif /* _KOKI_H_ */
