@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <glib.h>
+#include <cv.h>
 
 #include "points.h"
 
