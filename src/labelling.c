@@ -383,7 +383,7 @@ koki_labelled_image_t* koki_label_image(IplImage *image, float threshold)
 		for (uint16_t x=0; x<image->width; x++){
 
 			uint16_t label, alias;
-			koki_clip_region_t clip;
+			koki_clip_region_t *clip;
 
 			label = KOKI_LABELLED_IMAGE_LABEL(labelled_image, x, y);
 
@@ -393,24 +393,19 @@ koki_labelled_image_t* koki_label_image(IplImage *image, float threshold)
 
 			alias = g_array_index(aliases, uint16_t, label-1);
 
-			clip = g_array_index(clips,
+			clip = &g_array_index(clips,
 					     koki_clip_region_t,
 					     alias-1);
 
-			clip.mass++;
-			if (x > clip.max.x)
-				clip.max.x = x;
-			if (y > clip.max.y)
-				clip.max.y = y;
-			if (x < clip.min.x)
-				clip.min.x = x;
-			if (y < clip.min.y)
-				clip.min.y = y;
-
-			g_array_index(clips,
-				      koki_clip_region_t,
-				      alias-1)
-				= clip;
+			clip->mass++;
+			if (x > clip->max.x)
+				clip->max.x = x;
+			if (y > clip->max.y)
+				clip->max.y = y;
+			if (x < clip->min.x)
+				clip->min.x = x;
+			if (y < clip->min.y)
+				clip->min.y = y;
 
 		}//for col
 	}//for row
