@@ -478,6 +478,10 @@ bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region)
 {
 
 	koki_clip_region_t *clip;
+
+	/* ensure the region number isn't too high */
+	assert(labelled_image->clips->len > region);
+
 	clip = &g_array_index(labelled_image->clips,
 			      koki_clip_region_t,
 			      region);
