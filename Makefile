@@ -8,6 +8,8 @@ SRC_DIR=./src
 LIB_DIR=./lib
 TEST_DIR=./test
 DOCS_DIR=./docs
+BUGS_DIR=./bugs
+BUGS_HTML_DIR=$(BUGS_DIR)/html
 
 CFLAGS+=`pkg-config --cflags glib-2.0 opencv`
 LDFLAGS+=`pkg-config --libs glib-2.0 opencv`
@@ -36,8 +38,13 @@ docs:
 docs_latex: docs
 	cd $(DOCS_DIR)/latex ; make
 
+bugs_html:
+	ditz html $(BUGS_HTML_DIR)
+
 clean:
-	rm -rf $(LIB_DIR) $(TEST_DIR)/example *.o $(DOCS_DIR)/html $(DOCS_DIR)/latex
+	rm -rf $(LIB_DIR) $(TEST_DIR)/example *.o
+	rm -rf $(DOCS_DIR)/html $(DOCS_DIR)/latex
+	rm -rf $(BUGS_HTML_DIR)
 
 
 .PHONY: clean solib example run_example docs docs_latex
