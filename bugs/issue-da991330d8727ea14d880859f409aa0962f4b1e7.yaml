@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: frame undistortion using camera params
+desc: There is probably some barrel distortion on the captured images which can be corrected.
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 21:42:54.417427 Z
+references: []
+
+id: da991330d8727ea14d880859f409aa0962f4b1e7
+log_events: 
+- - 2011-08-11 21:42:55.609147 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
