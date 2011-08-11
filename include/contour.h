@@ -1,6 +1,11 @@
 #ifndef _KOKI_CONTOUR_H_
 #define _KOKI_CONTOUR_H_
 
+/**
+ * @file  contour.h
+ * @brief Header file for extracting contours from a labelled image
+ */
+
 #include <stdint.h>
 #include <glib.h>
 

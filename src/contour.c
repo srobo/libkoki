@@ -1,4 +1,9 @@
 
+/**
+ * @file  contour.c
+ * @brief Implemetation for extracting contours from a labelled image
+ */
+
 #include <stdint.h>
 #include <glib.h>
 
