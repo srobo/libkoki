@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: a function that wraps up most of the function calls for higher-level use
+desc: Most, if not all, of the functions produced will be able to be wrapped up to simplify library use.
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 22:07:40.926802 Z
+references: []
+
+id: 1c090d9f6857c4f3665b60273e778a4bf08db27d
+log_events: 
+- - 2011-08-11 22:07:42.398958 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
