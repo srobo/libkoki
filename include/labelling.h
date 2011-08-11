@@ -13,6 +13,12 @@
 
 #include "points.h"
 
+
+#define R 0
+#define G 1
+#define B 2
+
+
 /**
  * @brief a macro for getting or setting an R, G or B value of an \c IplImage
  *

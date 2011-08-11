@@ -13,10 +13,6 @@
 #include "labelling.h"
 
 
-#define R 0
-#define G 1
-#define B 2
-
 #define KOKI_MIN_REGION_MASS 64
 #define KOKI_MIN_DISTANCE_FROM_BORDER 3
 
