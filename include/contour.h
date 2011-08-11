@@ -16,4 +16,6 @@ GSList* koki_contour_find(koki_labelled_image_t *labelled_image,
 
 void koki_contour_free(GSList *contour);
 
+void koki_contour_draw_on_frame(IplImage *frame, GSList *contour);
+
 #endif /* _KOKI_CONTOUR_H_ */

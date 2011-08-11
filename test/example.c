@@ -48,6 +48,8 @@ int main(void)
 		}
 		printf("\n");
 
+		koki_contour_draw_on_frame(frame, contour);
+
 		koki_contour_free(contour);
 
 	}
@@ -57,6 +59,8 @@ int main(void)
 	display_frame(limage);
 	cvReleaseImage(&limage);
 	*/
+
+	display_frame(frame);
 
 	koki_labelled_image_free(l);
 	cvReleaseImage(&frame);

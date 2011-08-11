@@ -13,6 +13,11 @@
 #include "contour.h"
 
 
+#define KOKI_CONTOUR_RED   255
+#define KOKI_CONTOUR_GREEN 0
+#define KOKI_CONTOUR_BLUE  255
+
+
 /**
  * @brief identifies the first point on the top row of the clip region that is
  *        in the region
@@ -263,5 +268,35 @@ void koki_contour_free(GSList *contour)
 	} while (l != NULL);
 
 	g_slist_free(contour);
+
+}
+
+
+
+/**
+ * @brief draws a contour on to an \c IplImage
+ *
+ * Ideally, the \c IplImage would be the original or a copy of the frame the
+ * contour was created for. Doing so will outline the regions the contour
+ * detection has found.
+ *
+ * @param frame    a pointer the the \c IplImage to draw on to
+ * @param contour  the contour to draw
+ */
+void koki_contour_draw_on_frame(IplImage *frame, GSList *contour)
+{
+
+	while (contour != NULL){
+
+		koki_point2Di_t *p;
+		p = contour->data;
+
+		KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, R) = KOKI_CONTOUR_RED;
+		KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, G) = KOKI_CONTOUR_GREEN;
+		KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, B) = KOKI_CONTOUR_BLUE;
+
+		contour = contour->next;
+
+	}
 
 }
