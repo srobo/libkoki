@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: automatic thresholding of an image
+desc: |-
+  Light conditions will vary -- auto thresholding is better than tweaking a threshold value
+  depending on the lighting.
+  
+  Otsu's method (http://en.wikipedia.org/wiki/Otsu%27s_method) or something similar could
+  be used to perform this thresholding.
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 21:49:12.606556 Z
+references: []
+
+id: 4e4389f5e968f009ebcdc1e0849b89056d06db60
+log_events: 
+- - 2011-08-11 21:49:13.718467 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
