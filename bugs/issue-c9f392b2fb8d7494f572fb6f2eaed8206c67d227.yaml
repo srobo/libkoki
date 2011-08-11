@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: labelled image clips GArray is currently larger than necessary
+desc: |-
+  A lot of useless regions make their way into the cips array, but shouldn't.
+  Could be resolved by storing a reference to a label (alias) in the clip struct.
+type: :task
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 21:25:55.179172 Z
+references: []
+
+id: c9f392b2fb8d7494f572fb6f2eaed8206c67d227
+log_events: 
+- - 2011-08-11 21:25:56.914851 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
