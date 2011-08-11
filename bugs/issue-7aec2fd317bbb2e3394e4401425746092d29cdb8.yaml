@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: recover marker code from an unwarped (square) image
+desc: |-
+  Work out what the image of a marker represents code-wise.
+  This will have to involve error correction (Reed-Solomon) and error detection, CRC16 probably.
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 22:01:01.243014 Z
+references: []
+
+id: 7aec2fd317bbb2e3394e4401425746092d29cdb8
+log_events: 
+- - 2011-08-11 22:01:02.411156 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
