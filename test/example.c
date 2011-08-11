@@ -48,6 +48,7 @@ int main(void)
 		}
 		printf("\n");
 
+		koki_contour_free(contour);
 
 	}
 
