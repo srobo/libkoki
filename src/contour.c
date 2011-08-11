@@ -235,3 +235,28 @@ GSList* koki_contour_find(koki_labelled_image_t *labelled_image,
 	return g_slist_reverse(contour);
 
 }
+
+
+
+/**
+ * @brief frees a contour \c GSList and it's associated allocated gslices
+ *
+ * @param contour  the GSList of a contour to free
+ */
+void koki_contour_free(GSList *contour)
+{
+
+	if (contour == NULL)
+		return;
+
+	GSList *l = contour;
+
+	do {
+		g_slice_free(koki_point2Di_t, l->data);
+		l = l->next;
+
+	} while (l != NULL);
+
+	g_slist_free(contour);
+
+}
