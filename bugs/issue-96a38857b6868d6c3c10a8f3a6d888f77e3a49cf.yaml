@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: refine vertex estimates using PCA (as linear regression)
+desc: Principal Component Analysis (PCA) shall be used on the edges of the quad to improve the estimate of where the vertices are.
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 21:53:37.841348 Z
+references: []
+
+id: 96a38857b6868d6c3c10a8f3a6d888f77e3a49cf
+log_events: 
+- - 2011-08-11 21:53:39.137101 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
