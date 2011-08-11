@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: marker pose estimation
+desc: Calculating the position of a marker in 3D space, i.e. the distance to it (in x, y, z), the angle to it (about camera x and y), and its orientation about its center (about x, y and z).
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-11 22:05:07.662702 Z
+references: []
+
+id: c515bca398ce3c37c882a51020d2dfd3a8f1f012
+log_events: 
+- - 2011-08-11 22:05:08.558667 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
