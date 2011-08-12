@@ -159,20 +159,16 @@ uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
 				    enum DIRECTION direction)
 {
 
-	uint16_t *data, w;
-	data = labelled_image->data;
-	w = labelled_image->w;
-
 	switch (direction){
 
-	case N:  return data[(y+1-1) * (w+2) + (x+1)];
-	case NE: return data[(y+1-1) * (w+2) + (x+1+1)];
-	case E:  return data[(y+1)   * (w+2) + (x+1+1)];
-	case SE: return data[(y+1+1) * (w+2) + (x+1+1)];
-	case S:  return data[(y+1+1) * (w+2) + (x+1)];
-	case SW: return data[(y+1+1) * (w+2) + (x+1-1)];
-	case W:  return data[(y+1)   * (w+2) + (x+1-1)];
-	case NW: return data[(y+1-1) * (w+2) + (x+1-1)];
+	case N:  return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x,   y-1);
+	case NE: return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x+1, y-1);
+	case E:  return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x+1, y);
+	case SE: return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x+1, y+1);
+	case S:  return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x,   y+1);
+	case SW: return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x-1, y+1);
+	case W:  return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x-1, y);
+	case NW: return KOKI_LABELLED_IMAGE_LABEL(labelled_image, x-1, y-1);
 	default: return -1;
 
 	}
