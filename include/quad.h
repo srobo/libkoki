@@ -7,6 +7,7 @@
  */
 
 #include <glib.h>
+#include <cv.h>
 
 #include "points.h"
 
@@ -27,5 +28,7 @@ typedef struct {
 koki_quad_t* koki_quad_find_vertices(GSList *contour);
 
 void koki_quad_free(koki_quad_t *quad);
+
+void koki_quad_draw_on_frame(IplImage *frame, koki_quad_t *quad);
 
 #endif /* _KOKI_QUAD_H_ */

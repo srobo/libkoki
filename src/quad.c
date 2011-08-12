@@ -6,11 +6,17 @@
 
 #include <stdint.h>
 #include <glib.h>
+#include <cv.h>
 
 #include "contour.h"
 #include "points.h"
 
 #include "quad.h"
+
+
+#define KOKI_QUAD_RED   0
+#define KOKI_QUAD_GREEN 255
+#define KOKI_QUAD_BLUE  0
 
 
 /**
@@ -484,5 +490,68 @@ void koki_quad_free(koki_quad_t *quad)
 {
 
 	free(quad);
+
+}
+
+
+
+/**
+ * @brief draws a cross (i.e. a pixel at (x, y), then N, E, S and W of it)
+ *
+ * @param frame  the \c IplImage to draw on to
+ * @param p      the integer point to which represents the centre
+ */
+static void draw_cross(IplImage *frame, koki_point2Di_t p)
+{
+
+	/* centre */
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, R) = KOKI_QUAD_RED;
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, G) = KOKI_QUAD_GREEN;
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, B) = KOKI_QUAD_BLUE;
+
+	/* above */
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y-1, R) = KOKI_QUAD_RED;
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y-1, G) = KOKI_QUAD_GREEN;
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y-1, B) = KOKI_QUAD_BLUE;
+
+	/* below */
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y+1, R) = KOKI_QUAD_RED;
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y+1, G) = KOKI_QUAD_GREEN;
+	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y+1, B) = KOKI_QUAD_BLUE;
+
+	/* left */
+	KOKI_IPLIMAGE_ELEM(frame, p.x-1, p.y, R) = KOKI_QUAD_RED;
+	KOKI_IPLIMAGE_ELEM(frame, p.x-1, p.y, G) = KOKI_QUAD_GREEN;
+	KOKI_IPLIMAGE_ELEM(frame, p.x-1, p.y, B) = KOKI_QUAD_BLUE;
+
+	/* right */
+	KOKI_IPLIMAGE_ELEM(frame, p.x+1, p.y, R) = KOKI_QUAD_RED;
+	KOKI_IPLIMAGE_ELEM(frame, p.x+1, p.y, G) = KOKI_QUAD_GREEN;
+	KOKI_IPLIMAGE_ELEM(frame, p.x+1, p.y, B) = KOKI_QUAD_BLUE;
+
+
+}
+
+
+
+/**
+ * @brief draws a little cross on each corner of a quad
+ *
+ * @param frame  the \c IplImage to draw on to
+ * @param quad   the quad that should be drawn
+ */
+void koki_quad_draw_on_frame(IplImage *frame, koki_quad_t *quad)
+{
+
+	koki_point2Di_t p;
+
+	assert(frame != NULL);
+	assert(quad != NULL);
+
+	for (uint8_t i=0; i<4; i++){
+		p.x = quad->vertices[i].x;
+		p.y = quad->vertices[i].y;
+		draw_cross(frame, p);
+	}
 
 }
