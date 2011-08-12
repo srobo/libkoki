@@ -166,3 +166,309 @@ static GSList* furthest_point_perpendicular_to_line(GSList *start, GSList *end)
 }
 
 
+
+/**
+ * @brief given two points of a contour, \c start and \c end, this function
+ *        finds vertices between them, if any.
+ *
+ * @param start           the \c GSList* of the start node
+ * @param end             the \c GSList* of the end node
+ * @param points          an array that may contain points on return
+ * @param num_points      a pointer to an count for the number of points in
+ *                        \c points
+ * @param vertices_found  a pointer the the number of vertices found so far,
+ *                        used to limit the recursion
+ */
+static void find_intermediate_vertices(GSList *start, GSList *end,
+				       GSList *points[10], uint8_t *num_points,
+				       uint8_t *vertices_found)
+{
+
+	GSList *furthest;
+
+	furthest = furthest_point_perpendicular_to_line(start, end);
+
+	if (furthest == NULL)
+		return;
+
+	/* add the point as a found vertex */
+	(*vertices_found)++;
+	points[*num_points] = furthest;
+	(*num_points)++;
+
+
+	/* now for the recursive bit */
+
+	/* start --> furthest */
+	find_intermediate_vertices(start, furthest, points, num_points,
+				   vertices_found);
+
+	/* make sure we don't find too many for a quad */
+	if (*vertices_found > 4)
+		return;
+
+	/* furthest --> end */
+	find_intermediate_vertices(furthest, end, points, num_points,
+				   vertices_found);
+
+
+}
+
+
+
+/**
+ * @brief a quick test to see if a \c GSList is of sufficient length for use
+ *
+ * @param l  the \c GSList to test the length of
+ * @param n  the requred minimum length
+ * @return   TRUE if it's length is greater than \c n, FALSE otherwise
+ */
+static bool slist_longer_than(GSList *l, uint16_t n)
+{
+
+	for (uint8_t i=0; i<n+1; i++){
+		if (l == NULL)
+			return FALSE;
+		l = l->next;
+	}
+
+	return TRUE;
+
+}
+
+
+
+/**
+ * @brief returns a pointer to the last element in the \c GSList
+ *
+ * @param l  a pointer to the \c GSList in question
+ * @return   the last element
+ */
+static GSList* last_in_slist(GSList *l)
+{
+
+	if (l == NULL)
+		return NULL;
+
+	while (l->next != NULL)
+		l = l->next;
+
+	return l;
+
+}
+
+
+
+/**
+ * @brief returns an element that is approximately in the middle of the
+ *        \c GSList between two elements
+ *
+ * @param start  the element to be considered at the begining of the list
+ * @param end    the element to be considered at the end of the list
+ * @return       the \c GSList which is approximately in the centre of
+ *               \c start and \c end
+ */
+static GSList* slist_middle(GSList *start, GSList *end)
+{
+
+	uint16_t i, len = 1;
+	GSList *l;
+
+	if (start == NULL || end == NULL)
+		return NULL;
+
+	l = start;
+
+	while (l->next != NULL){
+		len++;
+		l = l->next;
+	}
+
+	for (l = start, i=0;
+	     i < len/2;
+	     i++, l=l->next);
+
+	return l;
+
+}
+
+
+
+/**
+ * @brief given 4 vertices and the contour they are from, this function
+ *        returns a pointer to a \c koki_quad_t with the vertices ordered
+ *        in a clockwise manner, starting at \c v1.
+ *
+ * @param v1       the first vertex
+ * @param v2       the second vertex
+ * @param v3       the third vertex
+ * @param v4       the fourth vertex
+ * @param contour  the contour the vertices are from
+ */
+static koki_quad_t* quad_from_vertices(GSList *v1, GSList *v2, GSList *v3,
+				       GSList *v4, GSList *contour)
+{
+
+	koki_quad_t *quad;
+	uint8_t n = 1;
+
+	quad = malloc(sizeof(koki_quad_t));
+	assert(quad != NULL);
+
+	assert(v1 == contour);
+
+	quad->links[0] = v1;
+
+	while (contour != NULL){
+
+		if (contour == v2){
+			quad->links[n] = v2;
+			n++;
+		} else if (contour == v3){
+			quad->links[n] = v3;
+			n++;
+		} else if (contour == v4){
+			quad->links[n] = v4;
+			n++;
+		}
+
+		contour = contour->next;
+
+	}
+
+	assert(n == 4);
+
+	for (uint8_t i=0; i<4; i++){
+		koki_point2Di_t *p;
+		p = quad->links[i]->data;
+		quad->vertices[i].x = p->x;
+		quad->vertices[i].y = p->y;
+	}
+
+	return quad;
+
+}
+
+
+
+/**
+ * @brief given a contour chain, the function works out if the chain
+ *        could represent a quadrilateral
+ *
+ * @param contour  the chain to check
+ * @return         a populated \c koki_quad_t if a quad has been found,
+ *                 NULL otherwise
+ */
+koki_quad_t* koki_quad_find_vertices(GSList *contour)
+{
+
+	GSList *v1, *v2, *v3, *v4; /* number don't mean anything here */
+	GSList *end, *tmp;
+	uint8_t vertices_found, num_points1, num_points2;
+	GSList *points1[10], *points2[10];
+
+	/* make sure there are enough points to make a quad */
+	if (!slist_longer_than(contour, 4))
+		return NULL;
+
+	/* get first 2 vertices (our starting point, and the point
+	   furthest from it) */
+	v1 = contour;
+	v2 = furthest_point(v1, contour->next);
+
+	/* find the last in the chain */
+	end = last_in_slist(contour);
+
+	/* make sure everything's in order */
+	if (v1 == NULL || v2 == NULL || end == NULL)
+		return NULL;
+
+	/* now find vertices between v1 and v2, and v2 and the end */
+
+	vertices_found = 2;
+	num_points1 = num_points2 = 0;
+
+	find_intermediate_vertices(v1, v2, points1, &num_points1,
+				   &vertices_found);
+
+	find_intermediate_vertices(v2, end, points2, &num_points2,
+				   &vertices_found);
+
+
+	if (num_points1 == 1 && num_points2 == 1){
+
+		/* v1 and v2 are opposite corners of a square,
+		   add the found vertices as v3 and v4 */
+		v3 = points1[0];
+		v4 = points2[0];
+
+	} else {
+
+		/* one of the chains (v1 -> v2, v2 -> end) */
+
+		vertices_found = 2;
+		num_points1 = num_points2 = 0;
+
+
+		if (num_points1 == 0 && num_points2 > 1){
+
+			/* the second chain contains 2 vertices */
+
+			tmp = slist_middle(v2, end);
+
+			find_intermediate_vertices(v2, tmp, points1,
+						   &num_points1,
+						   &vertices_found);
+
+			find_intermediate_vertices(tmp, end, points2,
+						   &num_points2,
+						   &vertices_found);
+
+			if (num_points1 == 1 && num_points2 == 1){
+
+				v3 = points1[0];
+				v4 = points2[0];
+
+			} else {
+
+				return NULL;
+
+			}// if 1 and 1
+
+
+		} else if (num_points1 > 1 && num_points2 == 0){
+
+			/* the first chain contains 2 vertices */
+
+			tmp = slist_middle(v1, v2);
+
+			find_intermediate_vertices(v1, tmp, points1,
+						   &num_points1,
+						   &vertices_found);
+
+			find_intermediate_vertices(tmp, v2, points2,
+						   &num_points2,
+						   &vertices_found);
+
+			if (num_points1 == 1 && num_points2 == 1){
+
+				v3 = points1[0];
+				v4 = points2[0];
+
+			} else {
+
+				return NULL;
+
+			}// if 1 and 1
+
+		} else {
+
+			return NULL;
+
+		}//if else-if else
+
+	}//if
+
+	return quad_from_vertices(v1, v2, v3, v4, contour);
+
+}

@@ -9,5 +9,6 @@
 #include "points.h"
 #include "labelling.h"
 #include "contour.h"
+#include "quad.h"
 
 #endif /* _KOKI_H_ */
