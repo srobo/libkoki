@@ -26,5 +26,6 @@ typedef struct {
 
 koki_quad_t* koki_quad_find_vertices(GSList *contour);
 
+void koki_quad_free(koki_quad_t *quad);
 
 #endif /* _KOKI_QUAD_H_ */

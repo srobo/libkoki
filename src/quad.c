@@ -472,3 +472,17 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 	return quad_from_vertices(v1, v2, v3, v4, contour);
 
 }
+
+
+
+/**
+ * @brief frees an allocated \c koki_quad_t*
+ *
+ * @param quad  a pointer to the allocated quad to free
+ */
+void koki_quad_free(koki_quad_t *quad)
+{
+
+	free(quad);
+
+}
