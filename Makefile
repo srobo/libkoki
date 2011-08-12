@@ -14,7 +14,7 @@ BUGS_HTML_DIR=$(BUGS_DIR)/html
 CFLAGS+=`pkg-config --cflags glib-2.0 opencv`
 LDFLAGS+=`pkg-config --libs glib-2.0 opencv`
 
-all: solib example docs docs_latex
+all: solib example docs docs_latex bugs_html
 
 %.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -c $< -o $@
@@ -47,4 +47,4 @@ clean:
 	rm -rf $(BUGS_HTML_DIR)
 
 
-.PHONY: clean solib example run_example docs docs_latex
+.PHONY: clean solib example run_example docs docs_latex bugs_html
