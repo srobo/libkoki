@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: function for drawing a quad to an IplImage
+desc: Much like drawing labels and contours, it would be good to be able to draw quads to an IplImage
+type: :feature
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-12 15:23:29.738933 Z
+references: []
+
+id: a7c94411e431430b7405d8109927a34899ebb196
+log_events: 
+- - 2011-08-12 15:23:30.834511 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
