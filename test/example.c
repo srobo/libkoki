@@ -28,7 +28,7 @@ int main(void)
 	IplImage *frame = cvLoadImage("test/test.jpg", CV_LOAD_IMAGE_COLOR);
 	assert(frame != NULL);
 
-	koki_labelled_image_t *l = koki_label_image(frame, 0.5);
+	koki_labelled_image_t *l = koki_label_image(frame, 0.3);
 
 	for(int i=0; i<l->clips->len; i++){
 
@@ -37,6 +37,7 @@ int main(void)
 
 		GSList *contour = koki_contour_find(l, i);
 
+/*
 		koki_point2Di_t *point;
 		GSList *gslist;
 
@@ -47,9 +48,25 @@ int main(void)
 			gslist = gslist->next;
 		}
 		printf("\n");
+*/
+
+		koki_quad_t *quad = koki_quad_find_vertices(contour);
+
+		if (quad == NULL){
+			koki_contour_free(contour);
+			continue;
+		}
 
 		koki_contour_draw_on_frame(frame, contour);
 
+		printf("(%f, %f), (%f, %f), (%f, %f), (%f, %f)\n",
+		       quad->vertices[0].x, quad->vertices[0].y,
+		       quad->vertices[1].x, quad->vertices[1].y,
+		       quad->vertices[2].x, quad->vertices[2].y,
+		       quad->vertices[3].x, quad->vertices[3].y);
+
+
+		koki_quad_free(quad);
 		koki_contour_free(contour);
 
 	}
