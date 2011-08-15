@@ -34,7 +34,7 @@ void koki_perform_pca(GSList *start, GSList *end,
 	CvMat *eigen_vals  = cvCreateMat(2, 1, CV_64FC1);
 	CvMat *eigen_vects = cvCreateMat(2, 2, CV_64FC1);
 
-	uint16_t count, len = 1;
+	uint16_t len = 1;
 	GSList *l;
 	koki_point2Di_t *p;
 
