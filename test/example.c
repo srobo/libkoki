@@ -67,6 +67,16 @@ int main(void)
 		       quad->vertices[2].x, quad->vertices[2].y,
 		       quad->vertices[3].x, quad->vertices[3].y);
 
+		koki_quad_refine_vertices(quad);
+
+		printf("(%f, %f), (%f, %f), (%f, %f), (%f, %f)\n",
+		       quad->vertices[0].x, quad->vertices[0].y,
+		       quad->vertices[1].x, quad->vertices[1].y,
+		       quad->vertices[2].x, quad->vertices[2].y,
+		       quad->vertices[3].x, quad->vertices[3].y);
+
+
+		koki_quad_draw_on_frame(frame, quad);
 
 		koki_quad_free(quad);
 		koki_contour_free(contour);

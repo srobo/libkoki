@@ -5,8 +5,8 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-08-11 21:53:37.841348 Z
 references: []
 
@@ -20,4 +20,8 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - changed status from unstarted to in_progress
   - PCA is done, just needs to be applied to the points.
+- - 2011-08-15 14:14:12.247780 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - done.
 git_branch: 

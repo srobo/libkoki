@@ -10,6 +10,7 @@
 
 #include "contour.h"
 #include "points.h"
+#include "pca.h"
 
 #include "quad.h"
 
@@ -476,6 +477,151 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 	}//if
 
 	return quad_from_vertices(v1, v2, v3, v4, contour);
+
+}
+
+
+
+/**
+ * @brief given 2 lines each defined by a point on the line (in this
+ *        case, the dataset's mean) and a vector for its direction,
+ *        the function find the point at which the 2 lines intersect
+ *
+ * A point of intersection can be calculated as follows:
+ *
+ *   \code point_of_intersection = mean + k * vect \endcode
+ *
+ * where \c k is a scale factor for the vector which, when positioned
+ * at \c mean, ends it at the point of intersection.
+ *
+ * For 2 such lines that intersect, the following statement holds:
+ *
+ *  \code a_mean + a_k * a_vect = b_mean + b_k * b_vect \endcode
+ *
+ * Doing some simultaneous equation stuff, one can remove one of the
+ * scale factors (\c a_k or \c b_k) from the equation, and solve.
+ *
+ * Below, we remove \c b_k and solve for \c a_k. The point of
+ * intersection can then be calculated in terms of \c a_k.
+ *
+ * @param a_mean  the mean of line A
+ * @param a_vect  the most significant eigen vector for line A
+ * @param b_mean  the mean of line B
+ * @param b_vect  the most significant eigen vector for line B
+ * @return        the point of intersection of lines A and B
+ */
+static koki_point2Df_t point_of_intersection(koki_point2Df_t a_mean,
+					     koki_point2Df_t a_vect,
+					     koki_point2Df_t b_mean,
+					     koki_point2Df_t b_vect)
+{
+
+	float a_k; /* vector scale factor */
+	koki_point2Df_t p;
+
+	a_k = b_vect.y * (a_mean.x - b_mean.x)
+		- b_vect.x * (a_mean.y - b_mean.y);
+
+	a_k = a_k / (-a_vect.x * b_vect.y - a_vect.y * b_vect.x);
+
+	p.x = a_mean.x + a_vect.x * a_k;
+	p.y = a_mean.y + a_vect.y * a_k;
+
+	return p;
+
+}
+
+
+
+/**
+ * @brief returns the most significant of the 2 eigen vectors
+ *
+ * The most significant eigen vector is the one who's corresponding eigen
+ * value is the greatest.
+ *
+ * @param vects  the eigen vectors
+ * @param vals   the corresponding eigen values
+ * @return       the most significant eigen vector of the two
+ */
+static koki_point2Df_t significant_eigen_vector(koki_point2Df_t vects[2],
+						     float vals[2])
+{
+
+	return vals[0] > vals[1] ? vects[0] : vects[1];
+
+}
+
+
+
+/**
+ * @brief given a quad, this function applies linear regression to the points
+ *        between each of the vertices to improve the estimate of where the
+ *        vertices actually are
+ *
+ * @param quad  the \c koki_quad_t* that should be refined
+ */
+void koki_quad_refine_vertices(koki_quad_t *quad)
+{
+
+	koki_point2Df_t vects[4][2];
+	float vals[4][2];
+	koki_point2Df_t avgs[4];
+
+	if (quad == NULL)
+		return;
+
+
+	/* perform PCA on edges between vertices */
+
+	/* side 0 (v0 --> v1) */
+	koki_perform_pca(quad->links[0], quad->links[1],
+			 vects[0], vals[0], &avgs[0]);
+
+	/* side 1 (v1 --> v2) */
+	koki_perform_pca(quad->links[1], quad->links[2],
+			 vects[1], vals[1], &avgs[1]);
+
+	/* side 2  (v2 --> v3) */
+	koki_perform_pca(quad->links[2], quad->links[3],
+			 vects[2], vals[2], &avgs[2]);
+
+	/* side 3 (v3 --> [end]) */
+	koki_perform_pca(quad->links[3], NULL,
+			 vects[3], vals[3], &avgs[3]);
+
+
+	/* set vertex positions based on the intersection of PCA's
+	   significant eigen vectors */
+
+	/* vertex 0 (intersection of e3 and e0) */
+	quad->vertices[0]
+		= point_of_intersection(avgs[3],
+					significant_eigen_vector(vects[3], vals[3]),
+					avgs[0],
+					significant_eigen_vector(vects[0], vals[0]));
+
+	/* vertex 1 (intersection of e0 and e1) */
+	quad->vertices[1]
+		= point_of_intersection(avgs[0],
+					significant_eigen_vector(vects[0], vals[0]),
+					avgs[1],
+					significant_eigen_vector(vects[1], vals[1]));
+
+	/* vertex 2 (intersection of e1 and e2) */
+	quad->vertices[2]
+		= point_of_intersection(avgs[1],
+					significant_eigen_vector(vects[1], vals[1]),
+					avgs[2],
+					significant_eigen_vector(vects[2], vals[2]));
+
+	/* vertex 3 (intersection of e2 and e3) */
+	quad->vertices[3]
+		= point_of_intersection(avgs[2],
+					significant_eigen_vector(vects[2], vals[2]),
+					avgs[3],
+					significant_eigen_vector(vects[3], vals[3]));
+
+
 
 }
 
