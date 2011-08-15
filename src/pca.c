@@ -38,11 +38,17 @@ void koki_perform_pca(GSList *start, GSList *end,
 	GSList *l;
 	koki_point2Di_t *p;
 
-	assert (start != NULL && end != NULL);
+	assert (start != NULL);
+
+	/* zero matrices */
+	cvSetZero(covar);
+	cvSetZero(avg);
+	cvSetZero(eigen_vals);
+	cvSetZero(eigen_vects);
 
 	/* work out how many elements we're dealing with */
 	l = start;
-	while (l != end && l != NULL){
+	while (l != end && l != NULL && l->next != NULL){
 		l = l->next;
 		len++;
 	}
@@ -52,15 +58,11 @@ void koki_perform_pca(GSList *start, GSList *end,
 	/* create and fill the data matrix */
 	data[0] = cvCreateMat(2, len, CV_64FC1);
 
-	count = 0;
 	l = start;
-
-	while (l != end && l != NULL){
+	for (uint16_t i = 0; i < len; i++, l = l->next){
 		p = l->data;
-		cvmSet(data[0], 0, count, p->x);
-		cvmSet(data[0], 1, count, p->y);
-		count++;
-		l = l->next;
+		cvmSet(data[0], 0, i, p->x);
+		cvmSet(data[0], 1, i, p->y);
 	}
 
 	/* calculate the covariance matrix */
