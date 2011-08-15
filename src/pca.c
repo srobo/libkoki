@@ -25,7 +25,7 @@
  */
 void koki_perform_pca(GSList *start, GSList *end,
 		      koki_point2Df_t eigen_vectors[2],
-		      float eigen_values[2])
+		      float eigen_values[2], koki_point2Df_t *averages)
 {
 
 	CvMat **data       = malloc(sizeof(CvMat));
@@ -82,6 +82,9 @@ void koki_perform_pca(GSList *start, GSList *end,
 	eigen_values[0] = cvmGet(eigen_vals, 0, 0);
 	eigen_values[1] = cvmGet(eigen_vals, 1, 0);
 
+	/* get averages */
+	averages->x = cvmGet(avg, 0, 0);
+	averages->y = cvmGet(avg, 1, 0);
 
 	/* clean up */
 	cvReleaseMat(&data[0]);
