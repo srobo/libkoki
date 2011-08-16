@@ -57,9 +57,9 @@ int main(void)
 			continue;
 		}
 
-		koki_contour_draw_on_frame(frame, contour);
+		//koki_contour_draw_on_frame(frame, contour);
 
-		koki_quad_draw_on_frame(frame, quad);
+		//koki_quad_draw_on_frame(frame, quad);
 
 		printf("(%f, %f), (%f, %f), (%f, %f), (%f, %f)\n",
 		       quad->vertices[0].x, quad->vertices[0].y,
