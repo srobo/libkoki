@@ -12,5 +12,6 @@
 #include "quad.h"
 #include "marker.h"
 #include "unwarp.h"
+#include "code_grid.h"
 
 #endif /* _KOKI_H_ */

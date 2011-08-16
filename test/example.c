@@ -83,7 +83,14 @@ int main(void)
 		printf("centre: (%f, %f)\n",
 		       marker->centre.image.x, marker->centre.image.y);
 
-		IplImage *uw = koki_unwarp_marker(marker, frame, 100);
+		IplImage *uw = koki_unwarp_marker(marker, frame, 50);
+
+		koki_cell_t grid[10][10];
+
+		koki_grid_from_IplImage(uw, 0.5, grid);
+
+		koki_grid_print(grid);
+
 		display_frame(uw);
 
 		cvReleaseImage(&uw);

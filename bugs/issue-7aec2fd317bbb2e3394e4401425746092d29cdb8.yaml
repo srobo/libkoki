@@ -7,7 +7,7 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2011-08-11 22:01:01.243014 Z
 references: []
@@ -18,4 +18,12 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - created
   - ""
+- - 2011-08-16 14:40:01.697182 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - changed status from unstarted to in_progress
+  - |-
+    implemented conversion to grid.
+    
+    There are currently some thresholding issues in that the required threshold is different to the one used to find the regions.
+    The threshold should ideally be automatically calcuated -- it's possible this could involve the auto-thresholing suggested.
 git_branch: 
