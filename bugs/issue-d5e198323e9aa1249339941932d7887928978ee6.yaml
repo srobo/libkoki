@@ -5,8 +5,8 @@ type: :task
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-08-12 15:30:02.047591 Z
 references: []
 
@@ -16,4 +16,8 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - created
   - ""
+- - 2011-08-16 13:16:26.317785 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - done, with a script for generation.
 git_branch: 
