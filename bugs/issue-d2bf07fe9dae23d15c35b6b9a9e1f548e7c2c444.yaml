@@ -5,8 +5,8 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-08-11 21:57:45.269063 Z
 references: []
 
@@ -16,4 +16,11 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - created
   - ""
+- - 2011-08-16 10:59:52.434807 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - |-
+    done.
+    
+    Given a marker (which is created from a quad), the unwarped image can be recovered.
 git_branch: 

@@ -78,6 +78,16 @@ int main(void)
 
 		koki_quad_draw_on_frame(frame, quad);
 
+		koki_marker_t *marker = koki_marker_new(quad);
+
+		printf("centre: (%f, %f)\n",
+		       marker->centre.image.x, marker->centre.image.y);
+
+		IplImage *uw = koki_unwarp_marker(marker, frame, 100);
+		display_frame(uw);
+
+		cvReleaseImage(&uw);
+
 		koki_quad_free(quad);
 		koki_contour_free(contour);
 

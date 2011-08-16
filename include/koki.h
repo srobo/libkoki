@@ -11,5 +11,6 @@
 #include "contour.h"
 #include "quad.h"
 #include "marker.h"
+#include "unwarp.h"
 
 #endif /* _KOKI_H_ */
