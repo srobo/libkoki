@@ -519,10 +519,10 @@ static koki_point2Df_t point_of_intersection(koki_point2Df_t a_mean,
 	float a_k; /* vector scale factor */
 	koki_point2Df_t p;
 
-	a_k = a_vect.y * (b_mean.x - a_mean.x)
-		- a_vect.x * (b_mean.y - a_mean.y);
+	a_k = b_vect.y * (b_mean.x - a_mean.x)
+		- b_vect.x * (b_mean.y - a_mean.y);
 
-	a_k = a_k / (-a_vect.x * b_vect.y - a_vect.y * b_vect.x);
+	a_k = a_k / (b_vect.x * a_vect.y - b_vect.y * a_vect.x);
 
 	p.x = a_mean.x + a_vect.x * a_k;
 	p.y = a_mean.y + a_vect.y * a_k;
