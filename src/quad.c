@@ -649,6 +649,9 @@ void koki_quad_free(koki_quad_t *quad)
  */
 static void draw_cross(IplImage *frame, koki_point2Di_t p)
 {
+	if (p.x == 0 || p.y == 0 ||
+	    p.x == frame->width-1 || p.y == frame->height-1)
+		return;
 
 	/* centre */
 	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, R) = KOKI_QUAD_RED;
@@ -695,9 +698,16 @@ void koki_quad_draw_on_frame(IplImage *frame, koki_quad_t *quad)
 	assert(quad != NULL);
 
 	for (uint8_t i=0; i<4; i++){
+
 		p.x = quad->vertices[i].x;
 		p.y = quad->vertices[i].y;
+
+		if (p.x < 0 || p.x > frame->width ||
+		    p.y < 0 || p.y > frame->height)
+			continue;
+
 		draw_cross(frame, p);
+
 	}
 
 }
