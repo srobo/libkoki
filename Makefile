@@ -55,7 +55,6 @@ clean:
 	rm -rf $(LIB_DIR) *.o
 	rm -rf $(DOCS_DIR)/html $(DOCS_DIR)/latex
 	rm -rf $(BUGS_HTML_DIR)
-	rm -rf AUTHORS
 	rm -rf $(TEST_DIR)/example $(TEST_DIR)/realtime
 
 .PHONY: clean solib examples run_example run_example_realtime docs docs_latex bugs_html AUTHORS
