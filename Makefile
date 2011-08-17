@@ -15,7 +15,7 @@ TOOLS_DIR=./tools
 CFLAGS+=`pkg-config --cflags glib-2.0 opencv`
 LDFLAGS+=`pkg-config --libs glib-2.0 opencv`
 
-all: solib example docs docs_latex bugs_html AUTHORS
+all: solib examples docs docs_latex bugs_html AUTHORS
 
 %.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -c $< -o $@
@@ -25,13 +25,19 @@ solib: $(OBJECTS)
 	$(CC) -shared -Wl,-soname,libkoki.so \
 		-o $(LIB_DIR)/libkoki.so $(OBJECTS)
 
-example: solib
+examples: solib
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
 		$(TEST_DIR)/example.c -o $(TEST_DIR)/example
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
+		$(TEST_DIR)/realtime.c -o $(TEST_DIR)/realtime
 
 run_example:
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
 		$(TEST_DIR)/example
+
+run_example_realtime:
+	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
+		$(TEST_DIR)/realtime
 
 docs:
 	doxygen $(DOCS_DIR)/Doxyfile
@@ -46,10 +52,10 @@ AUTHORS:
 	cd $(TOOLS_DIR) ; make AUTHORS
 
 clean:
-	rm -rf $(LIB_DIR) $(TEST_DIR)/example *.o
+	rm -rf $(LIB_DIR) *.o
 	rm -rf $(DOCS_DIR)/html $(DOCS_DIR)/latex
 	rm -rf $(BUGS_HTML_DIR)
 	rm -rf AUTHORS
+	rm -rf $(TEST_DIR)/example $(TEST_DIR)/realtime
 
-
-.PHONY: clean solib example run_example docs docs_latex bugs_html AUTHORS
+.PHONY: clean solib examples run_example run_example_realtime docs docs_latex bugs_html AUTHORS

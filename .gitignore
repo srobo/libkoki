@@ -1,6 +1,7 @@
 *.o
 lib/
 test/example
+test/realtime
 *~
 docs/html/
 docs/latex/
