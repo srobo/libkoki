@@ -13,5 +13,6 @@
 #include "marker.h"
 #include "unwarp.h"
 #include "code_grid.h"
+#include "threshold.h"
 
 #endif /* _KOKI_H_ */
