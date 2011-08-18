@@ -6,6 +6,7 @@
  * @brief The main header file for including absolutely everything
  */
 
+#include "debug.h"
 #include "points.h"
 #include "labelling.h"
 #include "contour.h"
