@@ -575,6 +575,78 @@ static void pca_output_debug(koki_point2Df_t vects[2], float vals[2],
 }
 
 
+
+/**
+ * @brief finds the number of nodes in a list between two points
+ *
+ * @param start  the start node
+ * @param end    the end node (can be \c NULL for the end of the list)
+ * @return       the length of sublist \c start --> \c end
+ */
+uint16_t length_between(GSList *start, GSList *end)
+{
+
+	uint16_t ret = 0;
+
+	while (start != NULL && start != end){
+		ret++;
+		start = start->next;
+	}
+
+	return ret;
+
+}
+
+
+
+/**
+ * @brief finds the middle of a chain (identified by a start and end node)
+ *        that is the same as the original, but with 5% of each end removed
+ *
+ * @param src_start  the start node of the original list
+ * @param src_end    the end node of the original list
+ * @param dst_start  a pointer to a \c GSList* to store the start node of the
+ *                   new list
+ * @param dst_end    a pointer to a \c GSList* to store the end node of the
+ *                   new list
+ * @return           the length of the new list
+ */
+uint16_t get_centre_section(GSList *src_start, GSList *src_end,
+			GSList **dst_start, GSList **dst_end)
+{
+
+	uint16_t len, start_offset, new_len;
+	GSList *l = NULL;
+
+	assert(src_start != NULL);
+	assert(dst_start != NULL && dst_end != NULL);
+
+	len = length_between(src_start, src_end);
+	if (len < 10){
+		*dst_start = NULL;
+		*dst_end = NULL;
+	}
+
+	new_len = (uint16_t)(len * 0.9);
+	start_offset = (uint16_t)(len * 0.05);
+
+	l = src_start;
+	for (uint16_t i=0; i<start_offset; i++)
+		l = l->next;
+
+	*dst_start = l;
+
+	for (uint16_t i=0; i<new_len; i++)
+		l = l->next;
+
+	*dst_end = l;
+
+	return new_len;
+
+}
+
+
+
 /**
  * @brief given a quad, this function applies linear regression to the points
  *        between each of the vertices to improve the estimate of where the
@@ -588,6 +660,7 @@ void koki_quad_refine_vertices(koki_quad_t *quad)
 	koki_point2Df_t vects[4][2];
 	float vals[4][2];
 	koki_point2Df_t avgs[4];
+	GSList *start, *end;
 
 	if (quad == NULL)
 		return;
@@ -598,28 +671,23 @@ void koki_quad_refine_vertices(koki_quad_t *quad)
 	koki_debug(KOKI_DEBUG_INFO, "-----------\n");
 
 	/* side 0 (v0 --> v1) */
-	koki_perform_pca(quad->links[0], quad->links[1],
-			 vects[0], vals[0], &avgs[0]);
-
+	get_centre_section(quad->links[0], quad->links[1], &start, &end);
+	koki_perform_pca(start, end, vects[0], vals[0], &avgs[0]);
 	pca_output_debug(vects[0], vals[0], avgs[0], 0);
 
 	/* side 1 (v1 --> v2) */
-	koki_perform_pca(quad->links[1], quad->links[2],
-			 vects[1], vals[1], &avgs[1]);
-
+	get_centre_section(quad->links[1], quad->links[2], &start, &end);
+	koki_perform_pca(start, end, vects[1], vals[1], &avgs[1]);
 	pca_output_debug(vects[1], vals[1], avgs[1], 1);
 
-
 	/* side 2  (v2 --> v3) */
-	koki_perform_pca(quad->links[2], quad->links[3],
-			 vects[2], vals[2], &avgs[2]);
-
+	get_centre_section(quad->links[2], quad->links[3], &start, &end);
+	koki_perform_pca(start, end, vects[2], vals[2], &avgs[2]);
 	pca_output_debug(vects[2], vals[2], avgs[2], 2);
 
 	/* side 3 (v3 --> [end]) */
-	koki_perform_pca(quad->links[3], NULL,
-			 vects[3], vals[3], &avgs[3]);
-
+	get_centre_section(quad->links[3], NULL, &start, &end);
+	koki_perform_pca(start, end, vects[3], vals[3], &avgs[3]);
 	pca_output_debug(vects[3], vals[3], avgs[3], 3);
 
 
