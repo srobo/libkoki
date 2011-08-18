@@ -37,9 +37,9 @@ int main(void)
 				continue;
 			}
 
-			koki_quad_refine_vertices(quad);
-
 			koki_contour_draw_on_frame(frame, contour);
+			//koki_quad_draw_on_frame(frame, quad);
+			koki_quad_refine_vertices(quad);
 			koki_quad_draw_on_frame(frame, quad);
 
 			koki_contour_free(contour);
