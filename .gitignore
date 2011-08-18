@@ -2,6 +2,7 @@
 lib/
 test/example
 test/realtime
+test/debug_img
 *~
 docs/html/
 docs/latex/

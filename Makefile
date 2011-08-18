@@ -30,6 +30,8 @@ examples: solib
 		$(TEST_DIR)/example.c -o $(TEST_DIR)/example
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
 		$(TEST_DIR)/realtime.c -o $(TEST_DIR)/realtime
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
+		$(TEST_DIR)/debug_img.c -o $(TEST_DIR)/debug_img
 
 run_example:
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
@@ -38,6 +40,10 @@ run_example:
 run_example_realtime:
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
 		$(TEST_DIR)/realtime
+
+run_debug_img:
+	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
+		$(TEST_DIR)/debug_img $(arg1)
 
 docs:
 	doxygen $(DOCS_DIR)/Doxyfile
