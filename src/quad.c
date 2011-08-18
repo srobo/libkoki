@@ -11,6 +11,7 @@
 #include "contour.h"
 #include "points.h"
 #include "pca.h"
+#include "debug.h"
 
 #include "quad.h"
 
@@ -552,6 +553,27 @@ static koki_point2Df_t significant_eigen_vector(koki_point2Df_t vects[2],
 }
 
 
+/**
+ * @brief outputs some debug info for the PCA reults
+ *
+ * @param vects  the eigen vectors
+ * @param vals   the eigen values
+ * @param avgs   the segment averages
+ * @param side   the side/edge of the quad (just for output purposes)
+ */
+static void pca_output_debug(koki_point2Df_t vects[2], float vals[2],
+			     koki_point2Df_t avgs, uint8_t side)
+{
+
+	koki_debug(KOKI_DEBUG_INFO, "side %d\n", side);
+	koki_debug(KOKI_DEBUG_INFO, "  vects: [%f, %f], [%f, %f]\n",
+		   vects[0].x, vects[0].y, vects[1].x, vects[1].y);
+	koki_debug(KOKI_DEBUG_INFO, "  vals : %f, %f\n", vals[0], vals[1]);
+	koki_debug(KOKI_DEBUG_INFO, "  avgs : (%f, %f)\n", avgs.x, avgs.y);
+
+
+}
+
 
 /**
  * @brief given a quad, this function applies linear regression to the points
@@ -572,22 +594,33 @@ void koki_quad_refine_vertices(koki_quad_t *quad)
 
 
 	/* perform PCA on edges between vertices */
+	koki_debug(KOKI_DEBUG_INFO, "PCA on quad\n");
+	koki_debug(KOKI_DEBUG_INFO, "-----------\n");
 
 	/* side 0 (v0 --> v1) */
 	koki_perform_pca(quad->links[0], quad->links[1],
 			 vects[0], vals[0], &avgs[0]);
 
+	pca_output_debug(vects[0], vals[0], avgs[0], 0);
+
 	/* side 1 (v1 --> v2) */
 	koki_perform_pca(quad->links[1], quad->links[2],
 			 vects[1], vals[1], &avgs[1]);
+
+	pca_output_debug(vects[1], vals[1], avgs[1], 1);
+
 
 	/* side 2  (v2 --> v3) */
 	koki_perform_pca(quad->links[2], quad->links[3],
 			 vects[2], vals[2], &avgs[2]);
 
+	pca_output_debug(vects[2], vals[2], avgs[2], 2);
+
 	/* side 3 (v3 --> [end]) */
 	koki_perform_pca(quad->links[3], NULL,
 			 vects[3], vals[3], &avgs[3]);
+
+	pca_output_debug(vects[3], vals[3], avgs[3], 3);
 
 
 	/* set vertex positions based on the intersection of PCA's
