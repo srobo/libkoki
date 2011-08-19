@@ -225,7 +225,7 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 
 	/* find out if the distance the furthest point is sufficently long
 	   enough compared to the length of to line from the start to the
-	   end point. Currently, anything less than 1/5 of start-end length
+	   end point. Currently, anything less than 1/4 of start-end length
 	   is considered too short. */
 	start_end_dist = (int32_t)sqrt((end_point->x - start_point->x) *
 				       (end_point->x - start_point->x) +
@@ -237,7 +237,7 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 	if (dist < 0)
 		return;
 
-	min_furthest_dist = start_end_dist / 5;
+	min_furthest_dist = start_end_dist / 4;
 
 	koki_debug(KOKI_DEBUG_INFO,
 		   "start-end d: %d, furthest d: %d, min d: %d\n",
