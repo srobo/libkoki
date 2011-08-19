@@ -15,5 +15,7 @@
 #include "unwarp.h"
 #include "code_grid.h"
 #include "threshold.h"
+#include "camera.h"
+#include "pose.h"
 
 #endif /* _KOKI_H_ */

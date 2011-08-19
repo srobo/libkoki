@@ -5,7 +5,7 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :unstarted
+status: :in_progress
 disposition: 
 creation_time: 2011-08-11 22:05:07.662702 Z
 references: []
@@ -16,4 +16,11 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - created
   - ""
+- - 2011-08-19 17:34:50.755795 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - changed status from unstarted to in_progress
+  - |-
+    code functions, but more testing of actual results required.
+    
+    calibration, etc... still needs to be looked at.
 git_branch: 
