@@ -22,8 +22,9 @@
  * @param eigen_vectors  the array that will have the eigen vectors written to
  * @param eigen values   the array that will have \c eigen_vector's corresponding
  *                       eigen values written to
+ * @return               \c 0 on success, anything else on failure
  */
-void koki_perform_pca(GSList *start, GSList *end,
+int8_t koki_perform_pca(GSList *start, GSList *end,
 		      koki_point2Df_t eigen_vectors[2],
 		      float eigen_values[2], koki_point2Df_t *averages)
 {
@@ -53,7 +54,8 @@ void koki_perform_pca(GSList *start, GSList *end,
 		len++;
 	}
 
-	assert(len >= 2);
+	if (len < 2)
+		return -1;
 
 	/* create and fill the data matrix */
 	data[0] = cvCreateMat(2, len, CV_64FC1);
@@ -93,5 +95,7 @@ void koki_perform_pca(GSList *start, GSList *end,
 	cvReleaseMat(&avg);
 	cvReleaseMat(&eigen_vects);
 	cvReleaseMat(&eigen_vals);
+
+	return 0;
 
 }
