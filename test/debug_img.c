@@ -9,6 +9,8 @@
 
 #include "koki.h"
 
+#define WAIT 1
+
 void debug(IplImage *frame, uint16_t thresh);
 
 int main(int argc, const char *argv[])
@@ -63,7 +65,7 @@ void debug(IplImage *frame, uint16_t thresh)
 		koki_contour_draw_on_frame(frame, contour);
 
 		cvShowImage("output", frame);
-		cvWaitKey(0);
+		cvWaitKey(WAIT);
 		waited = 1;
 
 		koki_quad_t *quad = koki_quad_find_vertices(contour);
@@ -82,13 +84,13 @@ void debug(IplImage *frame, uint16_t thresh)
 		koki_contour_free(contour);
 
 		cvShowImage("output", frame);
-		cvWaitKey(0);
+		cvWaitKey(WAIT);
 		waited = 1;
 
 	}//for
 
 	if (!waited)
-		cvWaitKey(0);
+		cvWaitKey(WAIT);
 
 	koki_labelled_image_free(l);
 
