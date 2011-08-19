@@ -12,8 +12,21 @@
 int main(void)
 {
 
+	koki_camera_params_t params;
+
+
 	CvCapture *cap = cvCaptureFromCAM(0);
 	cvNamedWindow("window", CV_WINDOW_AUTOSIZE);
+
+	IplImage *frame = cvQueryFrame(cap);
+	assert(frame != NULL);
+
+	params.size.x = frame->width;
+	params.size.y = frame->height;
+	params.principal_point.x = params.size.x / 2;
+	params.principal_point.y = params.size.y / 2;
+	params.focal_length.x = 571.0;
+	params.focal_length.y = 571.0;
 
 
 	while (1){
@@ -42,8 +55,21 @@ int main(void)
 			koki_quad_refine_vertices(quad);
 			koki_quad_draw_on_frame(frame, quad);
 
+			koki_marker_t *marker;
+			marker = koki_marker_new(quad);
+
+			koki_pose_estimate(marker, 0.11, &params);
+
+			printf("pose:\n");
+			for (int i=0; i<4; i++)
+				printf("%d: (%f, %f, %f)\n", i,
+				       marker->vertices[i].world.x,
+				       marker->vertices[i].world.y,
+				       marker->vertices[i].world.z);
+
 			koki_contour_free(contour);
 			koki_quad_free(quad);
+			koki_marker_free(marker);
 
 		}//for
 
