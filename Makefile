@@ -1,5 +1,5 @@
 CFLAGS+=-g -Wall -O2 -std=c99
-LDFLAGS+=-L./lib -lkoki
+LDFLAGS+=-L./lib -lkoki -lm
 INCLUDES+=-I. -I./include
 
 OBJECTS=labelling.o contour.o quad.o pca.o marker.o unwarp.o code_grid.o threshold.o

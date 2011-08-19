@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <glib.h>
 #include <cv.h>
+#include <math.h>
 
 #include "contour.h"
 #include "points.h"
@@ -94,26 +95,32 @@ static GSList* furthest_point(GSList *start, GSList *chain)
  * is sufficiently small enough for it to be considered a vertex.
 
  *
- * @param start  a pointer to the first item in the chain to be considered
- * @param end    a pointer to the last item in the chain to be considered
- * @return       a pointer to the chain link that is the furthest from the line.
- *               If no such point exists or if there is a problem, NULL is
- *               returned.
+ * @param start           a pointer to the first item in the chain to be
+ *                        considered
+ * @param end             a pointer to the last item in the chain to be
+ *                        considered
+ * @param furthest point  a pointer to a \c GSList* where the furthest point
+ *                        will be stored
+ * @return                the length of the line perpendicular to \c start -->
+ *                        \c end
  */
-static GSList* furthest_point_perpendicular_to_line(GSList *start, GSList *end)
+static int32_t furthest_point_perpendicular_to_line(GSList *start, GSList *end,
+						    GSList **furthest_point)
 {
 
 	int16_t ys_minus_ye, xe_minus_xs, xt_minus_xs, yt_minus_ys;
 	int16_t x_dist, y_dist;
-	int32_t dist_squared, max_dist_squared = 0;
+	int32_t dist_squared, max_dist_squared = -1;
 	int32_t threshold;
 	koki_point2Di_t *start_point, *end_point, *chain_point;
 	float scale_fraction, scale_fraction_dividend, scale_fraction_divisor;
 	GSList *link, *furthest = NULL;
 
 
-	if (start == NULL || end == NULL)
-		return NULL;
+	if (start == NULL || end == NULL){
+		*furthest_point = NULL;
+		return -1;
+	}
 
 	/* get the points out */
 	start_point = start->data;
@@ -122,16 +129,20 @@ static GSList* furthest_point_perpendicular_to_line(GSList *start, GSList *end)
 	xe_minus_xs = end_point->x - start_point->x;
 	ys_minus_ye = start_point->y - end_point->y;
 
-	if (xe_minus_xs == 0 && ys_minus_ye == 0)
-		return NULL;
+	if (xe_minus_xs == 0 && ys_minus_ye == 0){
+		*furthest_point = NULL;
+		return -1;
+	}
 
 	/* calculate a threshold based on the area involved. It will
 	   be used to decide whether or not furthest point is likely
 	   to be a vertex. If threshold is not exceeded, the the angle
 	   between the vectors start->point and end->point is too close
 	   to a straight line. */
+
+	int32_t n = 75;
 	threshold = (xe_minus_xs * xe_minus_xs +
-		     ys_minus_ye * ys_minus_ye) / 75;
+		     ys_minus_ye * ys_minus_ye) / n;
 
 	for (link = start->next; link != NULL && link != end; link = link->next){
 
@@ -165,11 +176,24 @@ static GSList* furthest_point_perpendicular_to_line(GSList *start, GSList *end)
 
 	}//for
 
-	/* is the angle at the point pointy enough? */
-	if (max_dist_squared < threshold)
-		return NULL;
 
-	return furthest;
+	/* is the angle at the point 'pointy' enough? */
+
+	if (max_dist_squared < threshold){
+
+		koki_debug(KOKI_DEBUG_INFO,
+			   "Not pointy enough, mds: %d, threshold:%d\n",
+			   max_dist_squared, threshold);
+
+		*furthest_point = NULL;
+		return -1;
+
+	}
+
+	*furthest_point = furthest;
+	double dist = sqrt((double)max_dist_squared);
+
+	return (int32_t)dist;
 
 }
 
@@ -193,17 +217,45 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 {
 
 	GSList *furthest;
+	int32_t dist, min_furthest_dist, start_end_dist;
+	koki_point2Di_t *start_point, *end_point;
 
-	furthest = furthest_point_perpendicular_to_line(start, end);
+	start_point = start->data;
+	end_point = end->data;
 
-	if (furthest == NULL)
+	/* find out if the distance the furthest point is sufficently long
+	   enough compared to the length of to line from the start to the
+	   end point. Currently, anything less than 1/5 of start-end length
+	   is considered too short. */
+	start_end_dist = (int32_t)sqrt((end_point->x - start_point->x) *
+				       (end_point->x - start_point->x) +
+				       (end_point->y - start_point->y) *
+				       (end_point->y - start_point->y));
+
+	dist = furthest_point_perpendicular_to_line(start, end, &furthest);
+
+	if (dist < 0)
 		return;
+
+	min_furthest_dist = start_end_dist / 5;
+
+	koki_debug(KOKI_DEBUG_INFO,
+		   "start-end d: %d, furthest d: %d, min d: %d\n",
+		   start_end_dist, dist, min_furthest_dist);
+
+	/* long enough? */
+	if (dist < min_furthest_dist)
+		return;
+
 
 	/* add the point as a found vertex */
 	(*vertices_found)++;
 	points[*num_points] = furthest;
 	(*num_points)++;
 
+	koki_debug(KOKI_DEBUG_INFO, "added vertex (%d, %d)\n",
+		   ((koki_point2Di_t*)furthest->data)->x,
+		   ((koki_point2Di_t*)furthest->data)->y);
 
 	/* now for the recursive bit */
 
