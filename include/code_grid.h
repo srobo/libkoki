@@ -33,4 +33,6 @@ void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
 
 void koki_grid_print(koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_WIDTH]);
 
+IplImage *koki_code_sub_image(IplImage *unwarped_frame);
+
 #endif /* _KOKI_CODE_GRID_H_ */

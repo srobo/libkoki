@@ -128,3 +128,49 @@ void koki_grid_print(koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_W
 	printf("+                      +\n");
 
 }
+
+
+
+/**
+ * @brief creates a new \c IplImage of just the code section of the possible
+ *        marker (i.e. the unwarped marker, sans the border)
+ *
+ * This is useful for auto-thresholding, for example.
+ *
+ * @param unwarped_frame  the square, unwarped frame of the possible marker
+ * @return                the code portion of the input image
+ */
+IplImage *koki_code_sub_image(IplImage *unwarped_frame)
+{
+
+	IplImage *sub = NULL;
+	CvRect rect;
+	float width_proportion, centre_offset;
+
+	assert(unwarped_frame != NULL);
+	assert(unwarped_frame->width == unwarped_frame->height);
+
+	width_proportion = (float)KOKI_CODE_GRID_WIDTH / KOKI_MARKER_GRID_WIDTH;
+	centre_offset = (float)(KOKI_MARKER_GRID_WIDTH - KOKI_CODE_GRID_WIDTH) /
+		2 / KOKI_MARKER_GRID_WIDTH;
+
+	rect.width = unwarped_frame->width * width_proportion;
+	rect.height = unwarped_frame->height * width_proportion;
+	rect.x = unwarped_frame->width * centre_offset;
+	rect.y = unwarped_frame->height * centre_offset;
+
+	sub = cvCreateImage(cvSize(rect.width, rect.height),
+			    unwarped_frame->depth,
+			    unwarped_frame->nChannels);
+
+	assert(sub != NULL);
+
+	cvSetImageROI(unwarped_frame, rect);
+
+	cvCopy(unwarped_frame, sub, NULL);
+
+	cvResetImageROI(unwarped_frame);
+
+	return sub;
+
+}
