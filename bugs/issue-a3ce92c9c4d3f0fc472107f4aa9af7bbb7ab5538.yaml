@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: quad detection failure on almost perfectly horizontal top edge of marker
+desc: |-
+  When the top edge of a marker (well, any quad) in the image is rotated ever so slightly anti-clockwise (i.e. the top-left vertex is lower than the top-right), the quad detection eroneously finds 5 vertices instead of 4.
+  This is because of the method used to find the first vertex.
+  The current method is a scan, left to right, of the top row of the clip region until the first region pixel is found.
+  When the top-right vertex is the first vertex, there can often be a gap between the identifed location and the actual location.
+  In some cases, this gap is big enough for the actual top-right vertex to be added as well.
+type: :bugfix
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-22 11:01:30.047373 Z
+references: []
+
+id: a3ce92c9c4d3f0fc472107f4aa9af7bbb7ab5538
+log_events: 
+- - 2011-08-22 11:01:33.351725 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
