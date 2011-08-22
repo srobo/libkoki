@@ -20,7 +20,7 @@
  * @param marker  the marker in question
  * @return        a \c CvRect representing the clip region
  */
-CvRect get_clip_rectangle(koki_marker_t *marker)
+static CvRect get_clip_rectangle(koki_marker_t *marker)
 {
 
 	uint16_t min_x, max_x, min_y, max_y;

@@ -635,7 +635,7 @@ static void pca_output_debug(koki_point2Df_t vects[2], float vals[2],
  * @param end    the end node (can be \c NULL for the end of the list)
  * @return       the length of sublist \c start --> \c end
  */
-uint16_t length_between(GSList *start, GSList *end)
+static uint16_t length_between(GSList *start, GSList *end)
 {
 
 	uint16_t ret = 0;
@@ -663,7 +663,7 @@ uint16_t length_between(GSList *start, GSList *end)
  *                   new list
  * @return           the length of the new list
  */
-uint16_t get_centre_section(GSList *src_start, GSList *src_end,
+static uint16_t get_centre_section(GSList *src_start, GSList *src_end,
 			GSList **dst_start, GSList **dst_end)
 {
 
