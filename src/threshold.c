@@ -13,6 +13,11 @@
 #include "threshold.h"
 
 
+#define KOKI_RGB_SUM(frame, x, y)					\
+	( KOKI_IPLIMAGE_ELEM(frame, x, y, 0) +				\
+	  KOKI_IPLIMAGE_ELEM(frame, x, y, 1) +				\
+	  KOKI_IPLIMAGE_ELEM(frame, x, y, 2) )				\
+
 /**
  * @brief thresholds a specific pixel with the provided threshold
  *
@@ -27,10 +32,7 @@ bool koki_threshold_rgb_pixel(IplImage *frame, uint16_t x, uint16_t y,
 			      uint16_t threshold)
 {
 
-	return (KOKI_IPLIMAGE_ELEM(frame, x, y, 0) +
-		KOKI_IPLIMAGE_ELEM(frame, x, y, 1) +
-		KOKI_IPLIMAGE_ELEM(frame, x, y, 2))
-		> threshold * 3;
+	return KOKI_RGB_SUM(frame, x, y) > threshold * 3;
 
 }
 
