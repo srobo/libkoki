@@ -1,0 +1,19 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: standardize thresholds
+desc: currently, there's 0-->1 and 0-->255
+type: :task
+component: libkoki
+release: "1.0"
+reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2011-08-22 14:24:30.780254 Z
+references: []
+
+id: 961ee390856d097742ea1dab3cb79ca6c64288e1
+log_events: 
+- - 2011-08-22 14:24:32.020176 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - created
+  - ""
+git_branch: 
