@@ -10,7 +10,7 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :closed
+status: :in_progress
 disposition: :fixed
 creation_time: 2011-08-11 21:49:12.606556 Z
 references: []
@@ -25,4 +25,10 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - closed with disposition fixed
   - done.
+- - 2011-08-23 11:05:49.494659 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - changed status from closed to in_progress
+  - |-
+    Turns out the IsoData algorithm didn't work great on the image as a whole, so more work is necessary.
+    Perhaps a choice of thresholding methods, IsoData and some other.
 git_branch: 
