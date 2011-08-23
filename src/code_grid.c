@@ -18,15 +18,15 @@
  *
  * @param grid  the grid to zero
  */
-static void zero_grid(koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_WIDTH])
+static void zero_grid(koki_grid_t *grid)
 {
 
 	for (uint8_t i=0; i<KOKI_MARKER_GRID_WIDTH; i++){
 		for (uint8_t j=0; j<KOKI_MARKER_GRID_WIDTH; j++){
 
-			grid[i][j].sum = 0;
-			grid[i][j].num_pixels = 0;
-			grid[i][j].val = 0;
+			grid->data[i][j].sum = 0;
+			grid->data[i][j].num_pixels = 0;
+			grid->data[i][j].val = 0;
 
 		}//for
 	}//for
@@ -41,10 +41,10 @@ static void zero_grid(koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_
  *
  * @brief unwarped_image  the square, unwarped image
  * @brief threshold       the threshold in the range \c 0-1 to apply
- * @brief grid            the grid of \c koki_cell_t to output to
+ * @brief grid            the grid to output to
  */
 void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
-			     koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_WIDTH])
+			     koki_grid_t *grid)
 {
 
 	uint16_t thresh;
@@ -85,15 +85,15 @@ void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
 					b = KOKI_IPLIMAGE_ELEM(unwarped_frame,
 							       x, y, 2);
 
-					grid[row][col].sum += r + g + b;
-					grid[row][col].num_pixels++;
+					grid->data[row][col].sum += r + g + b;
+					grid->data[row][col].num_pixels++;
 
 				}//for j
 			}//for i
 
 			/* threshold the cell */
-			avg = grid[row][col].sum / grid[row][col].num_pixels;
-			grid[row][col].val = avg > thresh ? 1 : 0;
+			avg = grid->data[row][col].sum / grid->data[row][col].num_pixels;
+			grid->data[row][col].val = avg > thresh ? 1 : 0;
 
 		}//for col
 	}//for row
@@ -107,7 +107,7 @@ void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
  *
  * @param the grid
  */
-void koki_grid_print(koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_WIDTH])
+void koki_grid_print(koki_grid_t *grid)
 {
 
 	printf("+                      +\n");
@@ -118,7 +118,7 @@ void koki_grid_print(koki_cell_t grid[KOKI_MARKER_GRID_WIDTH][KOKI_MARKER_GRID_W
 
 		for (uint8_t j=0; j<KOKI_MARKER_GRID_WIDTH; j++){
 
-			printf(grid[i][j].val == 0 ? "# " : "  ");
+			printf(grid->data[i][j].val == 0 ? "# " : "  ");
 
 		}
 
