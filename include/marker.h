@@ -22,11 +22,24 @@ typedef struct {
 
 
 /**
+ * @brief a structure for representing marker rotation about its centre
+ */
+typedef struct {
+	float x;  /**< roatation about the X axis */
+	float y;  /**< roatation about the Y axis */
+	float z;  /**< roatation about the Z axis */
+} koki_marker_rotation_t;
+
+
+/**
  * @brief a structure detailing a single marker
  */
 typedef struct {
-	koki_marker_vertex_t centre;      /**< the centre of the marker */
-	koki_marker_vertex_t vertices[4]; /**< the 4 vertices of the marker */
+	uint8_t code;                      /**< the marker number/code */
+	koki_marker_vertex_t centre;       /**< the centre of the marker */
+	koki_marker_vertex_t vertices[4];  /**< the 4 vertices of the marker */
+	koki_marker_rotation_t rotation;   /**< the rotation of the marker
+					        about its centre point */
 } koki_marker_t;
 
 
