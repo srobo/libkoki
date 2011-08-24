@@ -38,6 +38,11 @@ koki_marker_t* koki_marker_new(koki_quad_t *quad)
 	marker->centre.image.x = sum[0]/4;
 	marker->centre.image.y = sum[1]/4;
 
+	/* zero the rotations */
+	marker->rotation.x = 0;
+	marker->rotation.y = 0;
+	marker->rotation.z = 0;
+
 	return marker;
 
 }
