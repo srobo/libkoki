@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <cv.h>
 
+#include "marker.h"
+
 IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
 			     uint16_t unwarped_width);
 

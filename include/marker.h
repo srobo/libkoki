@@ -7,6 +7,8 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <cv.h>
 
 #include "points.h"
 #include "quad.h"
@@ -48,5 +50,6 @@ koki_marker_t* koki_marker_new(koki_quad_t *quad);
 
 void koki_marker_free(koki_marker_t *marker);
 
+bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame);
 
 #endif /* _KOKI_MARKER_H_ */

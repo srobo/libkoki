@@ -5,8 +5,13 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <cv.h>
 
 #include "quad.h"
+#include "code_grid.h"
+#include "unwarp.h"
+#include "threshold.h"
 
 #include "marker.h"
 
@@ -58,5 +63,62 @@ void koki_marker_free(koki_marker_t *marker)
 {
 
 	free(marker);
+
+}
+
+
+
+/**
+ * @brief recovers the code from a marker, if possible
+ *
+ * @param marker  the marker to try and get the code for
+ * @param frame   the original image, used to extract the marker's pixels from
+ * @return        TRUE if a good code is found, indicating the marker structure
+ *                has been changed to reflect this; FALSE if no success
+ */
+bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
+{
+
+	IplImage *unwarped, *sub;
+	koki_grid_t grid;
+	uint16_t grid_thresh;
+	float rotation;
+	int16_t code;
+
+	assert(marker != NULL);
+	assert(frame != NULL);
+
+	/* unwarp */
+	unwarped = koki_unwarp_marker(marker, frame, 50);
+	assert(unwarped != NULL);
+
+	/* get auto threshold for marker -- threshold just the pixels
+	   in the code area/grid */
+	sub = koki_code_sub_image(unwarped);
+	assert(sub != NULL);
+
+	grid_thresh = koki_threshold_auto(sub);
+	koki_grid_from_IplImage(unwarped, grid_thresh/255.0, &grid);
+
+
+	/* recover code */
+	code = koki_code_recover_from_grid(&grid, &rotation);
+
+	if (code < 0){ /* code not recovered */
+
+		cvReleaseImage(&unwarped);
+		cvReleaseImage(&sub);
+		return FALSE;
+
+	}
+
+	/* add code to the marker */
+	marker->code = code;
+
+	/* add rotation info to the marker, with 0-360 degree angles */
+	marker->rotation.z = (marker->rotation.z + rotation);
+	marker->rotation.z -= marker->rotation.z >= 360 ? 360 : 0;
+
+	return TRUE;
 
 }
