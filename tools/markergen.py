@@ -5,7 +5,7 @@ import sys, math, os
 import CrcMoose
 import cairo
 
-MARKER_VERSION = "v0.3"
+MARKER_VERSION = "v0.4"
 MARKER_DIR = "markers"
 
 G = np.matrix([[1, 1, 0, 1],
@@ -89,7 +89,10 @@ def get_code(marker_num):
     marker_chr = chr(int((marker_num+1) % 256))
     crc = CRC12.calcString(marker_chr)
 
-    code = (crc << 12) | marker_num
+    code = (crc << 8) | marker_num
+    # print "Marker No:", marker_num, "\t\t(", hex(marker_num), ")"
+    # print "      CRC:", crc, "\t(", hex(crc), ")"
+    # print "     Code:", code, "\t(", hex(code), ")"
 
     return code
 
