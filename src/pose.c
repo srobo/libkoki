@@ -131,8 +131,11 @@ void koki_pose_estimate(koki_marker_t *marker, float marker_width,
 
 	koki_point2Df_t image[4];
 	koki_point3Df_t world[4];
+	koki_point3Df_t centre = {0, 0, 0};
 
 	assert(marker != NULL);
+	assert(marker_width > 0);
+	assert(params != NULL);
 
 	/* prepare array: use co-ordinates with origin being
 	   the principal point */
@@ -149,9 +152,16 @@ void koki_pose_estimate(koki_marker_t *marker, float marker_width,
 	/* perform estimation */
 	koki_pose_estimate_arrays(image, world, marker_width, params);
 
-	/* copy results */
-	for (uint8_t i=0; i<4; i++)
+	/* copy results and calc centre point */
+	for (uint8_t i=0; i<4; i++){
 		marker->vertices[i].world = world[i];
+		centre.x += world[i].x;
+		centre.y += world[i].y;
+		centre.z += world[i].z;
+	}
 
+	marker->centre.world.x = centre.x/4;
+	marker->centre.world.y = centre.y/4;
+	marker->centre.world.z = centre.z/4;
 
 }
