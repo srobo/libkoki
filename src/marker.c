@@ -217,3 +217,29 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	return markers;
 
 }
+
+
+
+/**
+ * @brief frees all the markers pointed to from the array, then frees the
+ *        array itself
+ *
+ * @param markers  the markers pointer array to free
+ */
+void koki_markers_free(GPtrArray *markers)
+{
+
+	if (markers == NULL)
+		return;
+
+	for (int i=0; i<markers->len; i++){
+
+		koki_marker_t *marker;
+		marker = g_ptr_array_index(markers, i);
+		koki_marker_free(marker);
+
+	}
+
+	g_ptr_array_free(markers, TRUE);
+
+}
