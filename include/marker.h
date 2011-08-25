@@ -9,8 +9,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <cv.h>
+#include <glib.h>
 
 #include "points.h"
+#include "camera.h"
+
 #include "quad.h"
 
 
@@ -51,5 +54,8 @@ koki_marker_t* koki_marker_new(koki_quad_t *quad);
 void koki_marker_free(koki_marker_t *marker);
 
 bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame);
+
+GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
+			     koki_camera_params_t *params);
 
 #endif /* _KOKI_MARKER_H_ */

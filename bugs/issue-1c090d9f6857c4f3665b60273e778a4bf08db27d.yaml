@@ -5,8 +5,8 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-08-11 22:07:40.926802 Z
 references: []
 
@@ -16,4 +16,11 @@ log_events:
   - Chris Kirkham <chrisjameskirkham@gmail.com>
   - created
   - ""
+- - 2011-08-25 14:37:29.378329 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - |-
+    done, for markers of one size.
+    In the future, it may be possible to pass a function pointer to a function
+    that lets the user decide what the size is based on the marker's code.
 git_branch: 
