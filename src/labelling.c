@@ -290,14 +290,14 @@ static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
  * @brief produces a new labelled image from the given \c IplImage
  *
  * @param image      the \c IplImage to threshold and label
- * @param threshold  the threshold to apply (in the range \c 0-1)
+ * @param threshold  the threshold to apply (in the range \c 0-255)
  * @return           a pointer to a new labelled image
  */
-koki_labelled_image_t* koki_label_image(IplImage *image, float threshold)
+koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
 {
 
 	/* threshold for (R+G+B) with R, G and B being in the range 0-255 */
-	uint16_t threshold_x_3 = (255 * threshold) * 3;
+	uint16_t threshold_x_3 = threshold * 3;
 
 	/* create and initialise a labelled image */
 	koki_labelled_image_t *labelled_image;

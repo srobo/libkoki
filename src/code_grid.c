@@ -56,14 +56,13 @@ static void zero_grid(koki_grid_t *grid)
  *        thresholded grid
  *
  * @brief unwarped_image  the square, unwarped image
- * @brief threshold       the threshold in the range \c 0-1 to apply
+ * @brief threshold       the threshold in the range \c 0-255 to apply
  * @brief grid            the grid to output to
  */
-void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
+void koki_grid_from_IplImage(IplImage *unwarped_frame, uint16_t threshold,
 			     koki_grid_t *grid)
 {
 
-	uint16_t thresh;
 	uint8_t r, g, b;
 	uint8_t cell_pixel_width;
 	uint16_t x, y;
@@ -76,9 +75,9 @@ void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
 
 	cell_pixel_width = unwarped_frame->width / KOKI_MARKER_GRID_WIDTH;
 
-	/* calculate int threshold */
-	assert(threshold <= 1.0 && threshold >= 0.0);
-	thresh = threshold * 255 * 3;
+	/* scale threshold */
+	assert(threshold <= 255 && threshold >= 0);
+	threshold *= 3;
 
 	/* clear the grid */
 	zero_grid(grid);
@@ -109,7 +108,7 @@ void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
 
 			/* threshold the cell */
 			avg = grid->data[row][col].sum / grid->data[row][col].num_pixels;
-			grid->data[row][col].val = avg > thresh ? 1 : 0;
+			grid->data[row][col].val = avg > threshold ? 1 : 0;
 
 		}//for col
 	}//for row

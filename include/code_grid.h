@@ -38,7 +38,7 @@ typedef struct {
 
 
 
-void koki_grid_from_IplImage(IplImage *unwarped_frame, float threshold,
+void koki_grid_from_IplImage(IplImage *unwarped_frame, uint16_t threshold,
 			     koki_grid_t *grid);
 
 void koki_grid_print(koki_grid_t *grid);

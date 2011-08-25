@@ -103,7 +103,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	assert(sub != NULL);
 
 	grid_thresh = koki_threshold_auto(sub);
-	koki_grid_from_IplImage(unwarped, grid_thresh/255.0, &grid);
+	koki_grid_from_IplImage(unwarped, grid_thresh, &grid);
 
 
 	/* recover code */
@@ -156,7 +156,7 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	assert(marker_width > 0);
 
 	/* labelling */
-	labelled_image = koki_label_image(frame, 0.3);
+	labelled_image = koki_label_image(frame, 0.3 * 255);
 
 	if (labelled_image == NULL)
 		return NULL;

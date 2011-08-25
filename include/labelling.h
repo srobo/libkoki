@@ -106,7 +106,7 @@ koki_labelled_image_t* koki_labelled_image_new(uint16_t w, uint16_t h);
 
 void koki_labelled_image_free(koki_labelled_image_t *labelled_image);
 
-koki_labelled_image_t* koki_label_image(IplImage *image, float threshold);
+koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold);
 
 bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region);
 
