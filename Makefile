@@ -32,6 +32,8 @@ examples: solib
 		$(TEST_DIR)/realtime.c -o $(TEST_DIR)/realtime
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
 		$(TEST_DIR)/debug_img.c -o $(TEST_DIR)/debug_img
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
+		$(TEST_DIR)/marker_info.c -o $(TEST_DIR)/marker_info
 
 run_example:
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
