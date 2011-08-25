@@ -3,6 +3,7 @@ lib/
 test/example
 test/realtime
 test/debug_img
+test/marker_info
 *~
 docs/html/
 docs/latex/
