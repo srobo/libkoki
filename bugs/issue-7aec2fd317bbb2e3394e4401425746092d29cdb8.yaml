@@ -7,8 +7,8 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-08-11 22:01:01.243014 Z
 references: []
 
@@ -26,4 +26,8 @@ log_events:
     
     There are currently some thresholding issues in that the required threshold is different to the one used to find the regions.
     The threshold should ideally be automatically calcuated -- it's possible this could involve the auto-thresholing suggested.
+- - 2011-08-25 16:45:00.371385 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - done.
 git_branch: 
