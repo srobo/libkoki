@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "labelling.h"
+#include "crc12.h"
 
 #include "code_grid.h"
 
@@ -441,9 +442,11 @@ static uint8_t hamming_decode(uint8_t block)
 static bool crc_check(uint8_t num, uint16_t crc)
 {
 
-	//TODO: implement!
-
-	return TRUE;
+	/* note the 'num+1'. koki_crc12(0) == 0, which would be
+	   bad bacause that'd be very common in an image. Adding
+	   one alleviates this issue.  The same has been done in
+	   the marker generation scripts. */
+	return koki_crc12(num+1) == crc;
 
 
 }
