@@ -1,68 +1,23 @@
-CFLAGS+=-g -Wall -O2 -std=c99
-LDFLAGS+=-L./lib -lkoki -lm
-INCLUDES+=-I. -I./include
+CFLAGS += -g -Wall -O2 -std=c99
+LDFLAGS += -L./lib -lkoki -lm
 
-OBJECTS=labelling.o contour.o quad.o pca.o marker.o unwarp.o code_grid.o threshold.o pose.o crc12.o
+CFLAGS += -I. -I./include
 
-SRC_DIR=./src
-LIB_DIR=./lib
-TEST_DIR=./test
-DOCS_DIR=./docs
-BUGS_DIR=./bugs
-BUGS_HTML_DIR=$(BUGS_DIR)/html
-TOOLS_DIR=./tools
+CLEAN :=
 
 CFLAGS+=`pkg-config --cflags glib-2.0 opencv`
 LDFLAGS+=`pkg-config --libs glib-2.0 opencv`
 
+world: solib examples
+
+include */include.mk
+
 all: solib examples docs docs_latex bugs_html AUTHORS
 
-%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -c $< -o $@
+AUTHORS: tools/generate_authors
+	tools/generate_authors AUTHORS
 
-solib: $(OBJECTS)
-	mkdir -p $(LIB_DIR)
-	$(CC) -shared -Wl,-soname,libkoki.so \
-		-o $(LIB_DIR)/libkoki.so $(OBJECTS)
-
-examples: solib
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
-		$(TEST_DIR)/example.c -o $(TEST_DIR)/example
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
-		$(TEST_DIR)/realtime.c -o $(TEST_DIR)/realtime
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
-		$(TEST_DIR)/debug_img.c -o $(TEST_DIR)/debug_img
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) \
-		$(TEST_DIR)/marker_info.c -o $(TEST_DIR)/marker_info
-
-run_example:
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
-		$(TEST_DIR)/example
-
-run_example_realtime:
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
-		$(TEST_DIR)/realtime
-
-run_debug_img:
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(LIB_DIR) \
-		$(TEST_DIR)/debug_img $(arg1)
-
-docs:
-	doxygen $(DOCS_DIR)/Doxyfile
-
-docs_latex: docs
-	cd $(DOCS_DIR)/latex ; make
-
-bugs_html:
-	ditz html $(BUGS_HTML_DIR)
-
-AUTHORS:
-	cd $(TOOLS_DIR) ; make AUTHORS
+.PHONY: clean
 
 clean:
-	rm -rf $(LIB_DIR) *.o
-	rm -rf $(DOCS_DIR)/html $(DOCS_DIR)/latex
-	rm -rf $(BUGS_HTML_DIR)
-	rm -rf $(TEST_DIR)/example $(TEST_DIR)/realtime
-
-.PHONY: clean solib examples run_example run_example_realtime docs docs_latex bugs_html AUTHORS
+	-rm -rf $(CLEAN)
