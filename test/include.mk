@@ -1,6 +1,6 @@
 EXAMPLE_BINS := $(addprefix test/,example realtime debug_img marker_info)
 
-CLEAN += $(EXAMPLE_BINS)
+CLEAN += $(EXAMPLE_BINS) test/*.o
 
 include test/depend
 
@@ -13,3 +13,5 @@ test/depend: src/*.c
 examples: $(EXAMPLE_BINS)
 
 $(EXAMPLE_BINS): % : %.o lib/libkoki.so
+
+test/%.o: test/%.c
