@@ -172,7 +172,7 @@ def mm_to_pt(x):
     return 72 * mm_to_in(x)
 
 
-def render_marker_to_pdf(marker_num, marker_width, page_width,
+def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
                          page_height, show_text=1):
 
     marker_offset_x = (page_width - marker_width) / 2
@@ -188,8 +188,7 @@ def render_marker_to_pdf(marker_num, marker_width, page_width,
         os.mkdir(MARKER_DIR)
 
     # setup a place to draw
-    filename = os.path.join(MARKER_DIR, str(marker_num))
-    surface = cairo.PDFSurface("%s.pdf" % filename,
+    surface = cairo.PDFSurface("%s" % outfname,
                                page_width, page_height)
 
     # get a context
@@ -241,11 +240,14 @@ def render_marker_to_pdf(marker_num, marker_width, page_width,
 
 if __name__ == '__main__':
 
-    if len(sys.argv) != 2:
-        print "Usage: ./markergen.py <code>"
+    if len(sys.argv) != 3:
+        print "Usage: ./markergen.py <code> <output_prefix>"
         sys.exit(1)
 
-    render_marker_to_pdf(int(sys.argv[1]),
+    CODE = int(sys.argv[1])
+    OUTFNAME = "%s-%i.pdf" % (sys.argv[2], CODE)
+
+    render_marker_to_pdf( CODE, OUTFNAME,
                          mm_to_pt(55*2),
                          mm_to_pt(210),
                          mm_to_pt(297))
