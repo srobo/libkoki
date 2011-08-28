@@ -6,7 +6,6 @@ import CrcMoose
 import cairo
 
 MARKER_VERSION = "v0.4"
-MARKER_DIR = "markers"
 
 G = np.matrix([[1, 1, 0, 1],
                [1, 0, 1, 1],
@@ -182,10 +181,6 @@ def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
     cell_grid_offset_y = cell_width * 2
 
     grid = code_grid(get_code(marker_num))
-
-    # ensure marker directory exists
-    if not os.path.exists(MARKER_DIR):
-        os.mkdir(MARKER_DIR)
 
     # setup a place to draw
     surface = cairo.PDFSurface("%s" % outfname,
