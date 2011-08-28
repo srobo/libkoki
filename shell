@@ -1,10 +1,12 @@
 #!/bin/bash
 
+DIR="$( cd -P "$( dirname "$0" )" && pwd )"
+
 if [[ "$LD_LIBRARY_PATH" != "" ]]
     then
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DIR/lib
 else
-    export LD_LIBRARY_PATH=`pwd`/lib
+    export LD_LIBRARY_PATH=$DIR/lib
 fi
 
 export LIBKOKI_DEVSHELL=1
