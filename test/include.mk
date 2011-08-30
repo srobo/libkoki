@@ -1,4 +1,4 @@
-EXAMPLE_BINS := $(addprefix test/,example realtime debug_img marker_info)
+EXAMPLE_BINS := $(addprefix test/,example realtime debug_img marker_info speed_test)
 
 CLEAN += $(EXAMPLE_BINS) test/*.o
 
