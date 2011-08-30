@@ -11,4 +11,9 @@ fi
 
 export LIBKOKI_DEVSHELL=1
 
-$SHELL -l
+if [[ "$@" == "" ]]
+then
+    $SHELL -l
+else
+    $SHELL "$@"
+fi
