@@ -13,7 +13,7 @@ export LIBKOKI_DEVSHELL=1
 
 if [[ "$@" == "" ]]
 then
-    $SHELL -l
+    exec $SHELL -l
 else
-    $SHELL "$@"
+    exec $SHELL "$@"
 fi
