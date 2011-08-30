@@ -74,6 +74,9 @@ IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
 	CvMat *map_matrix = cvCreateMat(3, 3, CV_64FC1);
 	IplImage *ret;
 
+	assert(marker != NULL);
+	assert(frame != NULL);
+	assert(unwarped_width > 0 && unwarped_width % 10 == 0);
 
 	/* get clip region */
 	clip_rect = get_clip_rectangle(marker);
