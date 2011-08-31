@@ -57,6 +57,11 @@ int main(int argc, const char *argv[])
 		       marker->rotation.y,
 		       marker->rotation.z);
 
+		printf("\n\tRelative bearing (world, in degrees):\n\t\t(%f,\t%f\t%f)\n",
+		       marker->bearing.x,
+		       marker->bearing.y,
+		       marker->bearing.z);
+
 		printf("\n\tVertex location (image, in pixels):\n");
 
 		for (int i=0; i<4; i++){

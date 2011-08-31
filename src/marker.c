@@ -17,6 +17,7 @@
 #include "labelling.h"
 #include "contour.h"
 #include "pose.h"
+#include "bearing.h"
 
 #include "marker.h"
 
@@ -194,6 +195,7 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 
 			assert(marker != NULL);
 			koki_pose_estimate(marker, 0.11, params);
+			koki_bearing_estimate(marker);
 
 			/* append the marker to the output array */
 			g_ptr_array_add(markers, marker);

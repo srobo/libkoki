@@ -37,6 +37,16 @@ typedef struct {
 
 
 /**
+ * @brief a structure for representing a 3-dimensional bearing
+ */
+typedef struct {
+	float x; /**< the angle about the x-axis */
+	float y; /**< the angle about the y-axis */
+	float z; /**< the angle about the z-axis */
+} koki_bearing_t;
+
+
+/**
  * @brief a structure detailing a single marker
  */
 typedef struct {
@@ -45,6 +55,8 @@ typedef struct {
 	koki_marker_vertex_t vertices[4];  /**< the 4 vertices of the marker */
 	koki_marker_rotation_t rotation;   /**< the rotation of the marker
 					        about its centre point */
+	koki_bearing_t bearing;            /**< the relative bearing to the
+					        marker */
 } koki_marker_t;
 
 

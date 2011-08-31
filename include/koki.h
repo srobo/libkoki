@@ -17,5 +17,6 @@
 #include "threshold.h"
 #include "camera.h"
 #include "pose.h"
+#include "bearing.h"
 
 #endif /* _KOKI_H_ */
