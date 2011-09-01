@@ -10,7 +10,7 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :in_progress
+status: :closed
 disposition: :fixed
 creation_time: 2011-08-11 21:49:12.606556 Z
 references: []
@@ -31,4 +31,8 @@ log_events:
   - |-
     Turns out the IsoData algorithm didn't work great on the image as a whole, so more work is necessary.
     Perhaps a choice of thresholding methods, IsoData and some other.
+- - 2011-09-01 14:34:55.061388 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - done, both global auto (good for marker code recovery) and local adaptive (good for an input image of varying brightness).
 git_branch: 

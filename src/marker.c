@@ -152,12 +152,15 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	koki_quad_t *quad;
 	koki_marker_t *marker;
 	GPtrArray *markers = NULL;
+	IplImage *thresholded;
 
 	assert(frame != NULL);
 	assert(marker_width > 0);
 
+	thresholded = koki_threshold_adaptive(frame, 5, 5, KOKI_ADAPTIVE_MEAN);
+
 	/* labelling */
-	labelled_image = koki_label_image(frame, 0.3 * 255);
+	labelled_image = koki_label_image(thresholded, 127);
 
 	if (labelled_image == NULL)
 		return NULL;
@@ -215,6 +218,7 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 
 	/* clean up */
 	koki_labelled_image_free(labelled_image);
+	cvReleaseImage(&thresholded);
 
 	return markers;
 
