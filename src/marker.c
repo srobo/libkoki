@@ -197,7 +197,7 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 		if (koki_marker_recover_code(marker, frame)){
 
 			assert(marker != NULL);
-			koki_pose_estimate(marker, 0.11, params);
+			koki_pose_estimate(marker, marker_width, params);
 			koki_bearing_estimate(marker);
 
 			/* append the marker to the output array */
