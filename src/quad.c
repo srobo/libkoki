@@ -436,6 +436,12 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 	v1 = contour;
 	v2 = furthest_point(v1, contour->next);
 
+	koki_debug(KOKI_DEBUG_INFO, "v1: (%d, %d), v2: (%d, %d)\n",
+		   ((koki_point2Di_t*)v1->data)->x,
+		   ((koki_point2Di_t*)v1->data)->y,
+		   ((koki_point2Di_t*)v2->data)->x,
+		   ((koki_point2Di_t*)v2->data)->y);
+
 	/* find the last in the chain */
 	end = last_in_slist(contour);
 
