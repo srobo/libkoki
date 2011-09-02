@@ -19,12 +19,12 @@
 
 
 /**
- * @brief identifies the first point on the top row of the clip region that is
- *        in the region
+ * @brief identifies the most extreme point on the top row of the clip region
  *
  * The clip region is the smallest rectangle that completely encloses the
  * labelled region.  This function identifies the first point, scanning
- * left to right, which is part of the region in question.
+ * left, right, left, right, etc...  working towards the centre of the top
+ * row of the region.
  *
  * @param labelled_image  the labelled image containing the required clip
  *                        regions
@@ -37,37 +37,67 @@ static koki_point2Di_t* first_labeled_on_top_row(koki_labelled_image_t *labelled
 {
 
 	koki_clip_region_t clip;
-	koki_point2Di_t *ret, *point;
+	koki_point2Di_t *ret = NULL, *point;
+	uint16_t width;
 
 	point = g_slice_new(koki_point2Di_t);
 	assert(point != NULL);
 
-	ret = NULL;
-
 	assert(region < labelled_image->clips->len);
 	clip = g_array_index(labelled_image->clips, koki_clip_region_t, region);
 
-	uint16_t x;
-	for (x=clip.min.x; x<=clip.max.x; x++){
+	width = clip.max.x - clip.min.x + 1;
+
+	if (width % 2 == 1) /* make it even */
+		width++;
+
+
+	for (uint16_t i = 0; i < width/2; i++){
 
 		uint16_t label, alias;
 
+		/* check left side */
 		label = KOKI_LABELLED_IMAGE_LABEL(labelled_image,
-						  x, clip.min.y);
+						  clip.min.x + i,
+						  clip.min.y);
 
-		if (label == 0)
-			continue;
+		if (label != 0){
 
-		alias = g_array_index(labelled_image->aliases,
-				      uint16_t, label-1);
+			alias = g_array_index(labelled_image->aliases,
+					      uint16_t, label-1);
 
-		if (alias != region+1)
-			continue;
+			if (alias == region+1){
 
-		point->x = x;
-		point->y = clip.min.y;
-		ret = point;
-		break;
+				point->x = clip.min.x + i;
+				point->y = clip.min.y;
+				ret = point;
+				break;
+
+			}
+
+		}// if label != 0
+
+
+		/* check right side */
+		label = KOKI_LABELLED_IMAGE_LABEL(labelled_image,
+						  clip.max.x - i,
+						  clip.min.y);
+
+		if (label != 0){
+
+			alias = g_array_index(labelled_image->aliases,
+					      uint16_t, label-1);
+
+			if (alias == region+1){
+
+				point->x = clip.max.x - i;
+				point->y = clip.min.y;
+				ret = point;
+				break;
+
+			}
+
+		}// if label != 0
 
 	}//for
 
