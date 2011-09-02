@@ -339,7 +339,7 @@ static GSList* slist_middle(GSList *start, GSList *end)
 
 	l = start;
 
-	while (l->next != NULL){
+	while (l->next != end){
 		len++;
 		l = l->next;
 	}
