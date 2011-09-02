@@ -16,7 +16,8 @@ int main(void)
 
 
 	CvCapture *cap = cvCaptureFromCAM(0);
-	cvNamedWindow("window", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("frame", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("thresh", CV_WINDOW_AUTOSIZE);
 
 	IplImage *frame = cvQueryFrame(cap);
 	assert(frame != NULL);
@@ -34,7 +35,12 @@ int main(void)
 		IplImage *frame = cvQueryFrame(cap);
 		assert(frame != NULL);
 
-		koki_labelled_image_t *l = koki_label_image(frame, 0.3);
+		IplImage *thresholded;
+		thresholded = koki_threshold_adaptive(frame, 5, 3,
+						      KOKI_ADAPTIVE_MEAN);
+		cvShowImage("thresh", thresholded);
+
+		koki_labelled_image_t *l = koki_label_image(thresholded, 128);
 
 		for (int i=0; i<l->clips->len; i++){
 
@@ -59,30 +65,32 @@ int main(void)
 			marker = koki_marker_new(quad);
 
 			koki_pose_estimate(marker, 0.11, &params);
-
+/*
 			printf("pose:\n");
 			for (int i=0; i<4; i++)
 				printf("%d: (%f, %f, %f)\n", i,
 				       marker->vertices[i].world.x,
 				       marker->vertices[i].world.y,
 				       marker->vertices[i].world.z);
-
+*/
 			koki_contour_free(contour);
 			koki_quad_free(quad);
 			koki_marker_free(marker);
 
 		}//for
 
-		cvShowImage("window", frame);
+		cvShowImage("frame", frame);
 		cvWaitKey(1);
 
 		koki_labelled_image_free(l);
+		cvReleaseImage(&thresholded);
 
 	}
 
 	return 0;
 
 	cvReleaseCapture(&cap);
-	cvDestroyWindow("window");
+	cvDestroyWindow("frame");
+	cvDestroyWindow("thresh");
 
 }
