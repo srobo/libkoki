@@ -140,9 +140,9 @@ static int32_t furthest_point_perpendicular_to_line(GSList *start, GSList *end,
 	   between the vectors start->point and end->point is too close
 	   to a straight line. */
 
-	int32_t n = 75;
+	int32_t n = 300;
 	threshold = (xe_minus_xs * xe_minus_xs +
-		     ys_minus_ye * ys_minus_ye) / n;
+		     ys_minus_ye * ys_minus_ye) / n + 1;
 
 	for (link = start->next; link != NULL && link != end; link = link->next){
 
@@ -182,7 +182,8 @@ static int32_t furthest_point_perpendicular_to_line(GSList *start, GSList *end,
 	if (max_dist_squared < threshold){
 
 		koki_debug(KOKI_DEBUG_INFO,
-			   "Not pointy enough, mds: %d, threshold:%d\n",
+			   "(%d, %d)<-->(%d, %d) Not pointy enough, mds: %d, threshold:%d\n",
+			   start_point->x, start_point->y, end_point->x, end_point->y,
 			   max_dist_squared, threshold);
 
 		*furthest_point = NULL;
@@ -223,30 +224,13 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 	start_point = start->data;
 	end_point = end->data;
 
-	/* find out if the distance the furthest point is sufficently long
-	   enough compared to the length of to line from the start to the
-	   end point. Currently, anything less than 1/4 of start-end length
-	   is considered too short. */
-	start_end_dist = (int32_t)sqrt((end_point->x - start_point->x) *
-				       (end_point->x - start_point->x) +
-				       (end_point->y - start_point->y) *
-				       (end_point->y - start_point->y));
+	koki_debug(KOKI_DEBUG_INFO, "f_i_v: start: (%d, %d), end: (%d, %d)\n",
+		   start_point->x, start_point->y, end_point->x, end_point->y);
 
 	dist = furthest_point_perpendicular_to_line(start, end, &furthest);
 
 	if (dist < 0)
 		return;
-
-	min_furthest_dist = start_end_dist / 4;
-
-	koki_debug(KOKI_DEBUG_INFO,
-		   "start-end d: %d, furthest d: %d, min d: %d\n",
-		   start_end_dist, dist, min_furthest_dist);
-
-	/* long enough? */
-	if (dist < min_furthest_dist)
-		return;
-
 
 	/* add the point as a found vertex */
 	(*vertices_found)++;
@@ -260,6 +244,7 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 	/* now for the recursive bit */
 
 	/* start --> furthest */
+	koki_debug(KOKI_DEBUG_INFO, "First f_i_v recursive call\n");
 	find_intermediate_vertices(start, furthest, points, num_points,
 				   vertices_found);
 
@@ -268,6 +253,7 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 		return;
 
 	/* furthest --> end */
+	koki_debug(KOKI_DEBUG_INFO, "Second f_i_v recursive call\n");
 	find_intermediate_vertices(furthest, end, points, num_points,
 				   vertices_found);
 
@@ -454,9 +440,11 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 	vertices_found = 2;
 	num_points1 = num_points2 = 0;
 
+	koki_debug(KOKI_DEBUG_INFO, "First *initial* f_i_v call\n");
 	find_intermediate_vertices(v1, v2, points1, &num_points1,
 				   &vertices_found);
 
+	koki_debug(KOKI_DEBUG_INFO, "Second *initial* f_i_v call\n");
 	find_intermediate_vertices(v2, end, points2, &num_points2,
 				   &vertices_found);
 
@@ -465,6 +453,7 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 
 		/* v1 and v2 are opposite corners of a square,
 		   add the found vertices as v3 and v4 */
+		koki_debug(KOKI_DEBUG_INFO, "'perfect' square (v1 opposite v2)\n");
 		v3 = points1[0];
 		v4 = points2[0];
 
@@ -477,6 +466,8 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 		if (num_points1 == 0 && num_points2 > 1){
 
 			/* the second chain contains 2 vertices */
+			koki_debug(KOKI_DEBUG_INFO,
+				   "v1-->v2 contains 0 vertices, v2-->end has more than 1\n");
 
 			tmp = slist_middle(v2, end);
 
@@ -505,6 +496,8 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 		} else if (num_points1 > 1 && num_points2 == 0){
 
 			/* the first chain contains 2 vertices */
+			koki_debug(KOKI_DEBUG_INFO,
+				   "v1-->v2 contains more than 1 vertices, v2-->end has 0\n");
 
 			tmp = slist_middle(v1, v2);
 
