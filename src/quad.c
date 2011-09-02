@@ -357,6 +357,7 @@ static koki_quad_t* quad_from_vertices(GSList *v1, GSList *v2, GSList *v3,
 
 	koki_quad_t *quad;
 	uint8_t n = 1;
+	koki_point2Df_t centre;
 
 	quad = malloc(sizeof(koki_quad_t));
 	assert(quad != NULL);
@@ -389,6 +390,20 @@ static koki_quad_t* quad_from_vertices(GSList *v1, GSList *v2, GSList *v3,
 		p = quad->links[i]->data;
 		quad->vertices[i].x = p->x;
 		quad->vertices[i].y = p->y;
+	}
+
+
+	/* check we don't ave a boomerang shape */
+	centre.x = (float)(quad->vertices[0].x + quad->vertices[2].x) / 2;
+
+	if ( (centre.x - quad->vertices[1].x) *
+	     (centre.x - quad->vertices[3].x) > 0){
+
+	  /* it's a boomerang shape */
+
+	  free(quad);
+	  quad = NULL;
+
 	}
 
 	return quad;
