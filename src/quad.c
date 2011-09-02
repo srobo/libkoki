@@ -473,8 +473,6 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 		/* one of the chains (v1 -> v2, v2 -> end) */
 
 		vertices_found = 2;
-		num_points1 = num_points2 = 0;
-
 
 		if (num_points1 == 0 && num_points2 > 1){
 
@@ -482,10 +480,12 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 
 			tmp = slist_middle(v2, end);
 
+			num_points1 = 0;
 			find_intermediate_vertices(v2, tmp, points1,
 						   &num_points1,
 						   &vertices_found);
 
+			num_points2 = 0;
 			find_intermediate_vertices(tmp, end, points2,
 						   &num_points2,
 						   &vertices_found);
@@ -508,10 +508,12 @@ koki_quad_t* koki_quad_find_vertices(GSList *contour)
 
 			tmp = slist_middle(v1, v2);
 
+			num_points1 = 0;
 			find_intermediate_vertices(v1, tmp, points1,
 						   &num_points1,
 						   &vertices_found);
 
+			num_points2 = 0;
 			find_intermediate_vertices(tmp, v2, points2,
 						   &num_points2,
 						   &vertices_found);
