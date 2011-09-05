@@ -19,7 +19,7 @@
  *        a grid
  */
 typedef struct {
-	uint16_t sum;        /**< the sum of \c (r+g+b) for all pixels in
+	uint32_t sum;        /**< the sum of \c (r+g+b) for all pixels in
                                   the cell */
 	uint16_t num_pixels; /**< the number of pixels for the cell */
 	uint8_t  val;        /**< the thresholded value, \c 0 or \c 1, for
