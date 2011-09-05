@@ -18,6 +18,11 @@
 #include "contour.h"
 #include "pose.h"
 #include "bearing.h"
+#include "debug.h"
+
+#if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
+#include <highgui.h>
+#endif
 
 #include "marker.h"
 
@@ -95,7 +100,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	assert(frame != NULL);
 
 	/* unwarp */
-	unwarped = koki_unwarp_marker(marker, frame, 50);
+	unwarped = koki_unwarp_marker(marker, frame, 100);
 	assert(unwarped != NULL);
 
 	/* get auto threshold for marker -- threshold just the pixels
@@ -103,9 +108,25 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	sub = koki_code_sub_image(unwarped);
 	assert(sub != NULL);
 
+#if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
+	cvNamedWindow("w", CV_WINDOW_AUTOSIZE);
+	cvShowImage("w", sub);
+	cvWaitKey(0);
+	cvDestroyWindow("w");
+#endif
+
 	grid_thresh = koki_threshold_auto(sub);
 	koki_grid_from_IplImage(unwarped, grid_thresh, &grid);
 
+#if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
+	IplImage *ts = koki_threshold_frame(sub, grid_thresh);
+	cvNamedWindow("w", CV_WINDOW_AUTOSIZE);
+	cvShowImage("w", ts);
+	cvWaitKey(0);
+	cvDestroyWindow("w");
+	cvReleaseImage(&ts);
+	koki_grid_print(&grid);
+#endif
 
 	/* recover code */
 	code = koki_code_recover_from_grid(&grid, &rotation);
