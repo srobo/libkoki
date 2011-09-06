@@ -264,3 +264,80 @@ int koki_v4l_set_control(int fd, unsigned int id, unsigned int value)
 }
 
 
+
+/**
+ * @brief allocates all of the buffers required for memory mapped IO with
+ *        the camera
+ *
+ * @param fd     the camera's file descriptor
+ * @param count  the number of buffers to allocate (and where to store the
+ *               number of actually allocated buffers)
+ * @return       an array of \c koki_buffer_ts of length \c count (note that
+ *               \c count may have changed after this function returns)
+ */
+koki_buffer_t* koki_v4l_prepare_buffers(int fd, int *count)
+{
+
+	struct v4l2_requestbuffers reqbuf;
+	struct v4l2_buffer buffer;
+	int ret;
+	koki_buffer_t *buffers;
+
+	CLEAR(reqbuf);
+
+	reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	reqbuf.memory = V4L2_MEMORY_MMAP;
+	reqbuf.count = *count;
+
+	ret = ioctl(fd, VIDIOC_REQBUFS, &reqbuf);
+
+	if (ret < 0){
+		fprintf(stderr, "couldn't request buffers\n");
+		*count = 0;
+		return NULL;
+	}
+
+	*count = reqbuf.count;
+
+	buffers = calloc(*count, sizeof(koki_buffer_t));
+	if (buffers == NULL){
+		fprintf(stderr, "couldn't allocate buffer pointers\n");
+		return NULL;
+	}
+
+	for (int i=0; i < *count; i++){
+
+		CLEAR(buffer);
+
+		buffer.type = reqbuf.type;
+		buffer.memory = V4L2_MEMORY_MMAP;
+		buffer.index = i;
+
+		ret = ioctl(fd, VIDIOC_QUERYBUF, &buffer);
+		if (ret < 0){
+			fprintf(stderr, "querybuf request failure\n");
+			free(buffers);
+			return NULL;
+		}
+
+		buffers[i].length = buffer.length;
+		buffers[i].start = mmap(NULL, buffer.length,
+					PROT_READ | PROT_WRITE,
+					MAP_SHARED, fd,
+					buffer.m.offset);
+
+		if (buffers[i].start == MAP_FAILED){
+			fprintf(stderr, "map failed\n");
+			free(buffers);
+			return NULL;
+		}
+
+		memset(buffers[i].start, 0x41, buffers[i].length);
+
+	}
+
+	return buffers;
+
+}
+
+

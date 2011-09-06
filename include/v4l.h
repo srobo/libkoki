@@ -10,6 +10,13 @@
 #include <linux/videodev2.h>
 #include <stdint.h>
 
+/**
+ * @brief a structure for representing a memory-mapped buffer
+ */
+typedef struct {
+	uint8_t *start; /**< the start of the data array */
+	size_t length;  /**< the length of the array */
+} koki_buffer_t;
 
 int koki_v4l_open_cam(const char* filename);
 
@@ -30,5 +37,7 @@ void koki_v4l_print_capability(struct v4l2_capability cap);
 int koki_v4l_get_control(int fd, unsigned int id);
 
 int koki_v4l_set_control(int fd, unsigned int id, unsigned int value);
+
+koki_buffer_t* koki_v4l_prepare_buffers(int fd, int *count);
 
 #endif /* _KOKI_V4L_H_ */
