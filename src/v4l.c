@@ -14,6 +14,9 @@
 #include <assert.h>
 #include <sys/time.h> /* for videodev2.h */
 #include <linux/videodev2.h>
+#include <cv.h>
+
+#include "labelling.h" /* for KOKI_IPLIMAGE_ELEM */
 
 #include "v4l.h"
 
@@ -431,3 +434,119 @@ uint8_t* koki_v4l_get_frame_array(int fd, koki_buffer_t *buffers)
 
 }
 
+
+/**
+ * @brief recovers the Y, U and V values from a YUYV data array
+ */
+#define GET_YUV(yuyv_frame, x, y, w, h, Y, U, V) do {	\
+		uint8_t *tmp;				\
+		tmp = &yuyv_frame[((w) * 2 * (y)) +	\
+				 (((x) & ~1) * 2)];	\
+		U = tmp[1];				\
+		V = tmp[3];				\
+		Y = ((x) & 1) ? tmp[2] : tmp[0];	\
+	}  while (0);					\
+
+#ifndef MIN
+#define MIN(a, b) a < b ? a : b;
+#endif
+
+#ifndef MAX
+#define MAX(a, b) a > b ? a : b;
+#endif
+
+#define CLIP(x) MIN(255, MAX(0, (x)))
+
+
+/**
+ * @brief performs the conversion from Y, U and V to R, G and B
+ */
+#define YUV_TO_RGB(Y, U, V, R, G, B) do {			\
+		int32_t c, d, e;				\
+		c = Y - 16;					\
+		d = U - 128;					\
+		e = V - 128;					\
+		R = CLIP((298*c + 409*e + 128) >> 8);		\
+		G = CLIP((298*c - 100*d - 208*e + 128) >> 8);	\
+		B = CLIP((298*c + 516*d + 128) >> 8);		\
+	} while (0);						\
+
+
+
+/**
+ * @brief creates an RGB \c IplImage from a YUYV image data array
+ *
+ * @param frame  the YUYV image data, as recovered by
+ *               \c koki_v4l_get_frame_array()
+ * @param w      the image width
+ * @param h      the image hieght
+ * @return       an RGB \c IplImage of the data array
+ */
+IplImage *koki_v4l_YUYV_frame_to_RGB_image(uint8_t *frame,
+					   uint16_t w, uint16_t h)
+{
+
+	IplImage *output;
+
+	assert(frame != NULL);
+
+	output = cvCreateImage(cvSize(w, h), IPL_DEPTH_8U, 3);
+
+	assert(output != NULL);
+
+	for (uint16_t y=0; y<h; y++){
+		for (uint16_t x=0; x<w; x++){
+
+			uint8_t Y, U, V, r, g, b;
+			GET_YUV(frame, x, y, w, h, Y, U, V);
+			YUV_TO_RGB(Y, U, V, r, g, b);
+
+			KOKI_IPLIMAGE_ELEM(output, x, y, 2) = r;
+			KOKI_IPLIMAGE_ELEM(output, x, y, 1) = g;
+			KOKI_IPLIMAGE_ELEM(output, x, y, 0) = b;
+
+		}//for
+	}//for
+
+	return output;
+
+}
+
+
+
+/**
+ * @brief creates a grayscale \c IplImage from a YUYV image data array
+ *
+ * The Y value is effectively the grayscale value, so that's used.
+ *
+ * @param frame  the YUYV image data, as recovered by
+ *               \c koki_v4l_get_frame_array()
+ * @param w      the image width
+ * @param h      the image hieght
+ * @return       a grayscale \c IplImage of the data array
+ */
+IplImage *koki_v4l_YUYV_frame_to_grayscale_image(uint8_t *frame,
+						 uint16_t w, uint16_t h)
+{
+
+	IplImage *output;
+
+	assert(frame != NULL);
+
+	output = cvCreateImage(cvSize(w, h), IPL_DEPTH_8U, 1);
+
+	assert(output != NULL);
+
+	for (uint16_t y=0; y<h; y++){
+		for (uint16_t x=0; x<w; x++){
+
+			uint8_t Y, U, V;
+			GET_YUV(frame, x, y, w, h, Y, U, V);
+			((uint8_t*)(output->imageData + output->widthStep*y))[x] = Y;
+
+		}//for
+	}//for
+
+	return output;
+
+}

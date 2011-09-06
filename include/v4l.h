@@ -46,4 +46,10 @@ int koki_v4l_stop_stream(int fd);
 
 uint8_t* koki_v4l_get_frame_array(int fd, koki_buffer_t *buffers);
 
+IplImage *koki_v4l_YUYV_frame_to_RGB_image(uint8_t *frame,
+					   uint16_t w, uint16_t h);
+
+IplImage *koki_v4l_YUYV_frame_to_grayscale_image(uint8_t *frame,
+						 uint16_t w, uint16_t h);
+
 #endif /* _KOKI_V4L_H_ */
