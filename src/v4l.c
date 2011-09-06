@@ -341,3 +341,53 @@ koki_buffer_t* koki_v4l_prepare_buffers(int fd, int *count)
 }
 
 
+
+/**
+ * @brief tells the camera to start streaming so that frames can be grabbed
+ *
+ * @param fd  the camera's file descriptor
+ * @return    a negative value on failure
+ */
+int koki_v4l_start_stream(int fd)
+{
+
+	int type, ret;
+
+	type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+	ret = ioctl(fd, VIDIOC_STREAMON, &type);
+	if (ret < 0){
+		fprintf(stderr, "failed to start stream\n");
+	}
+
+	return ret;
+
+}
+
+
+
+/**
+ * @brief tells the camera to stop stremaing
+ *
+ * This shoud be done before the camera is closed.
+ *
+ * @param fd  the camera's file descriptor
+ * @return    a negative number on failure
+ */
+int koki_v4l_stop_stream(int fd)
+{
+
+	int type, ret;
+
+	type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+	ret = ioctl(fd, VIDIOC_STREAMOFF, &type);
+	if (ret < 0){
+		fprintf(stderr, "failed to stop stream\n");
+	}
+
+	return ret;
+
+}
+
+

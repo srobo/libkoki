@@ -40,4 +40,8 @@ int koki_v4l_set_control(int fd, unsigned int id, unsigned int value);
 
 koki_buffer_t* koki_v4l_prepare_buffers(int fd, int *count);
 
+int koki_v4l_start_stream(int fd);
+
+int koki_v4l_stop_stream(int fd);
+
 #endif /* _KOKI_V4L_H_ */
