@@ -44,4 +44,6 @@ int koki_v4l_start_stream(int fd);
 
 int koki_v4l_stop_stream(int fd);
 
+uint8_t* koki_v4l_get_frame_array(int fd, koki_buffer_t *buffers);
+
 #endif /* _KOKI_V4L_H_ */

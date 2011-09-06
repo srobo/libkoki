@@ -391,3 +391,43 @@ int koki_v4l_stop_stream(int fd)
 }
 
 
+
+/**
+ * @brief grabs a frame from the camera
+ *
+ * @param fd       the camera's file descriptor
+ * @param buffers  the already allocated buffers structure
+ * @return         a pointer to the image data array
+ */
+uint8_t* koki_v4l_get_frame_array(int fd, koki_buffer_t *buffers)
+{
+
+	struct v4l2_buffer buffer;
+	int ret;
+
+	assert(buffers != NULL);
+
+	CLEAR(buffer);
+
+	buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	buffer.memory = V4L2_MEMORY_MMAP;
+	buffer.index = 0;
+
+	/* queue */
+	ret = ioctl(fd, VIDIOC_QBUF, &buffer);
+	if (ret < 0){
+		fprintf(stderr, "failed to queue buffer\n");
+		return NULL;
+	}
+
+	/* dequeue */
+	ret = ioctl(fd, VIDIOC_DQBUF, &buffer);
+	if (ret < 0){
+		fprintf(stderr, "failed to dequeue buffer\n");
+		return NULL;
+	}
+
+	return buffers[0].start;
+
+}
+
