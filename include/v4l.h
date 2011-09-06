@@ -27,4 +27,8 @@ struct v4l2_capability koki_v4l_get_capability(int fd);
 
 void koki_v4l_print_capability(struct v4l2_capability cap);
 
+int koki_v4l_get_control(int fd, unsigned int id);
+
+int koki_v4l_set_control(int fd, unsigned int id, unsigned int value);
+
 #endif /* _KOKI_V4L_H_ */

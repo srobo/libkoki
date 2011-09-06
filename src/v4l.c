@@ -209,3 +209,58 @@ void koki_v4l_print_capability(struct v4l2_capability cap)
 
 
 
+/**
+ * @brief returns the control value for the specified V4L2 control ID
+ *
+ * @param fd  the camera's file descriptor
+ * @param id  the V4L2 control ID
+ * @return    the value associated with the given control value
+ */
+int koki_v4l_get_control(int fd, unsigned int id)
+{
+
+	struct v4l2_control ctrl;
+	int ret;
+
+	CLEAR(ctrl);
+
+	ctrl.id = id;
+
+	ret = ioctl(fd, VIDIOC_G_CTRL, &ctrl);
+	if (ret < 0){
+		fprintf(stderr, "unable to get control\n");
+	}
+
+	return ctrl.value;
+
+}
+
+
+/**
+ * @brief sets the V4L2 control ID as the given value
+ *
+ * @param fd     the camera's file descriptor
+ * @param id     the V4L2 control ID to modify
+ * @param value  the new value to set the control to
+ */
+int koki_v4l_set_control(int fd, unsigned int id, unsigned int value)
+{
+
+	struct v4l2_control ctrl;
+	int ret;
+
+	CLEAR(ctrl);
+
+	ctrl.id = id;
+	ctrl.value = value;
+
+	ret = ioctl(fd, VIDIOC_S_CTRL, &ctrl);
+	if (ret < 0){
+		fprintf(stderr, "unable to set control\n");
+	}
+
+	return ret;
+
+}
+
+
