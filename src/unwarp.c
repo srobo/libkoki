@@ -71,12 +71,27 @@ IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
 
 	CvRect clip_rect;
 	CvPoint2D32f src[4], dst[4];
-	CvMat *map_matrix = cvCreateMat(3, 3, CV_64FC1);
+	CvMat *map_matrix;
 	IplImage *ret;
 
 	assert(marker != NULL);
 	assert(frame != NULL);
 	assert(unwarped_width > 0 && unwarped_width % 10 == 0);
+
+	/* make sure we're within bounds */
+	for (uint8_t i=0; i<4; i++){
+		if (marker->vertices[i].image.x < 0 ||
+		    marker->vertices[i].image.y < 0 ||
+		    marker->vertices[i].image.x >= frame->width ||
+		    marker->vertices[i].image.y >= frame->height){
+
+			return NULL;
+
+		}//if
+	}//for
+
+	/* create map mat */
+	map_matrix = cvCreateMat(3, 3, CV_64FC1);
 
 	/* get clip region */
 	clip_rect = get_clip_rectangle(marker);

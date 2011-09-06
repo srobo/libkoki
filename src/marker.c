@@ -101,7 +101,10 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 
 	/* unwarp */
 	unwarped = koki_unwarp_marker(marker, frame, 100);
-	assert(unwarped != NULL);
+
+	/* can we continue? */
+	if (unwarped == NULL)
+		return FALSE;
 
 	/* get auto threshold for marker -- threshold just the pixels
 	   in the code area/grid */
