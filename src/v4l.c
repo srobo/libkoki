@@ -17,6 +17,9 @@
 
 #include "v4l.h"
 
+#define CLEAR(x) memset(&(x), 0, sizeof((x)))
+
+
 
 /**
  * @brief opens a camera device and returns its file descriptor
@@ -53,4 +56,111 @@ void koki_v4l_close_cam(int fd)
 	close(fd);
 
 }
+
+
+
+/**
+ * @brief gets the camera's current format (size, colour format, etc...)
+ *
+ * @param fd  the camera's file descriptor
+ * @return    a filled V4L2's format structure
+ */
+struct v4l2_format koki_v4l_get_format(int fd)
+{
+
+	struct v4l2_format fmt;
+	int ret;
+
+	CLEAR(fmt);
+
+	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	ret = ioctl(fd, VIDIOC_G_FMT, &fmt);
+
+	assert(ret >= 0);
+
+	return fmt;
+
+}
+
+
+
+/**
+ * @brief outputs to \c stdout a format structure
+ *
+ * @param fmt  the V4L2 format structure
+ */
+void koki_v4l_print_format(struct v4l2_format fmt)
+{
+	printf("Camera Format:\n");
+
+	printf("  bufer type: %d\n", fmt.type);
+
+	printf("  dimensions: %d x %d\n",
+	       fmt.fmt.pix.width, fmt.fmt.pix.height);
+
+#define pix_fmt fmt.fmt.pix.pixelformat
+	printf("  colour format: %c%c%c%c\n",
+	        pix_fmt        & 0xFF,
+	       (pix_fmt >> 8)  & 0xFF,
+	       (pix_fmt >> 16) & 0xFF,
+	       (pix_fmt >> 24) & 0xFF);
+#undef pix_fmt
+
+	printf("  field: %d\n", fmt.fmt.pix.field);
+
+	printf("  bytes per line: %d\n", fmt.fmt.pix.bytesperline);
+
+}
+
+
+
+/**
+ * @brief returns a YUYV format structure ready to send to the camera
+ *
+ * @param w  the desired width of the image
+ * @param h  the desired height of the image
+ * @return   a YUYV V4L2 format structure
+ */
+struct v4l2_format koki_v4l_create_YUYV_format(unsigned int w, unsigned int h)
+{
+
+	struct v4l2_format fmt;
+
+	CLEAR(fmt);
+
+	fmt.type                 = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	fmt.fmt.pix.width        = w;
+	fmt.fmt.pix.height       = h;
+	fmt.fmt.pix.pixelformat  = V4L2_PIX_FMT_YUYV;
+	fmt.fmt.pix.bytesperline = 2 * w;
+	fmt.fmt.pix.sizeimage    = 2 * w * h;
+
+	return fmt;
+
+}
+
+
+
+/**
+ * @brief tries to set the format of the camera to the format specified
+ *
+ * @param fd  the camera's file descriptor
+ * @param fmt the format to set
+ * @return    a negative value on failure
+ */
+int koki_v4l_set_format(int fd, struct v4l2_format fmt)
+{
+
+	int ret;
+
+	ret = ioctl(fd, VIDIOC_S_FMT, &fmt);
+	if (ret < 0){
+		fprintf(stderr, "unable to set format\n");
+	}
+
+	return ret;
+
+}
+
+
 

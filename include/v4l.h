@@ -15,4 +15,12 @@ int koki_v4l_open_cam(const char* filename);
 
 void koki_v4l_close_cam(int fd);
 
+struct v4l2_format koki_v4l_get_format(int fd);
+
+void koki_v4l_print_format(struct v4l2_format fmt);
+
+int koki_v4l_set_format(int fd, struct v4l2_format fmt);
+
+struct v4l2_format koki_v4l_create_YUYV_format(unsigned int w, unsigned int h);
+
 #endif /* _KOKI_V4L_H_ */
