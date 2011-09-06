@@ -18,5 +18,7 @@
 #include "camera.h"
 #include "pose.h"
 #include "bearing.h"
+#include <sys/time.h> /* needed for videodev2.h */
+#include "v4l.h"
 
 #endif /* _KOKI_H_ */
