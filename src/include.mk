@@ -15,7 +15,7 @@ solib: lib/libkoki.so
 
 lib/libkoki.so: $(SO_OBJS)
 	mkdir -p `dirname $@`
-	$(CC) -shared -Wl,-soname,libkoki.so \
+	$(CC) $(CFLAGS) -shared -Wl,-soname,libkoki.so \
 		-o $@ $^
 
 
