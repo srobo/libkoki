@@ -164,3 +164,48 @@ int koki_v4l_set_format(int fd, struct v4l2_format fmt)
 
 
 
+/**
+ * @brief returns the camera's capabilities (e.g. driver, streaming, etc...)
+ *
+ * @param fd  the camera's file descriptor
+ * @return    a filled V4L2 capabilities structure for the camera
+ */
+struct v4l2_capability koki_v4l_get_capability(int fd)
+{
+
+	struct v4l2_capability cap;
+	int ret;
+
+	CLEAR(cap);
+
+	ret = ioctl(fd, VIDIOC_QUERYCAP, &cap);
+	if (ret < 0){
+		fprintf(stderr, "couldn't get capabilities\n");
+	}
+
+	return cap;
+
+}
+
+
+
+/**
+ * @brief prints to \c stdout a V4L2 capabilities structure
+ *
+ * @param cap  a V4L2 capability structure to output
+ */
+void koki_v4l_print_capability(struct v4l2_capability cap)
+{
+
+	printf("Capability:\n");
+	printf("  driver: %s\n", cap.driver);
+	printf("  card: %s\n", cap.card);
+	printf("  version: %X\n", cap.version);
+	printf("  capabilities: %X\n", cap.capabilities);
+	printf("   - streaming?  %s\n",
+	       cap.capabilities & V4L2_CAP_STREAMING ? "YES" : "NO");
+
+}
+
+
+
