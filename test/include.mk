@@ -13,5 +13,6 @@ test/depend: src/*.c
 examples: $(EXAMPLE_BINS)
 
 $(EXAMPLE_BINS): % : %.o lib/libkoki.so
+	$(CC) $(LDFLAGS) -o $@ $<
 
 test/%.o: test/%.c
