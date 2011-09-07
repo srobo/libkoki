@@ -1,4 +1,4 @@
-CFLAGS += -g -Wall -O3 -std=c99
+CFLAGS += -g -Wall -O3 -std=gnu99
 LDFLAGS += -L./lib -lkoki -lm
 
 #CFLAGS += -DKOKI_DEBUG_LEVEL=KOKI_DEBUG_INFO
