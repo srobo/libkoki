@@ -447,6 +447,17 @@ uint8_t* koki_v4l_get_frame_array(int fd, koki_buffer_t *buffers)
 		Y = ((x) & 1) ? tmp[2] : tmp[0];	\
 	}  while (0);					\
 
+/**
+ * @brief recovers just the Y value from a YUYV data array
+ */
+#define GET_Y(yuyv_frame, x, y, w, h, Y) do {		\
+		uint8_t *tmp;				\
+		tmp = &yuyv_frame[((w) * 2 * (y)) +	\
+				  (((x) & ~1) * 2)];	\
+		Y = CLIP(((x) & 1) ? tmp[2] : tmp[0]);	\
+	}  while (0);					\
+
+
 #ifndef MIN
 #define MIN(a, b) a < b ? a : b;
 #endif
@@ -540,8 +551,8 @@ IplImage *koki_v4l_YUYV_frame_to_grayscale_image(uint8_t *frame,
 	for (uint16_t y=0; y<h; y++){
 		for (uint16_t x=0; x<w; x++){
 
-			uint8_t Y, U, V;
-			GET_YUV(frame, x, y, w, h, Y, U, V);
+			uint8_t Y;
+			GET_Y(frame, x, y, w, h, Y);
 			((uint8_t*)(output->imageData + output->widthStep*y))[x] = Y;
 
 		}//for
