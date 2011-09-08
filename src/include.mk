@@ -1,5 +1,6 @@
 SO_OBJS := $(addprefix src/,labelling.o contour.o quad.o pca.o marker.o \
-	unwarp.o code_grid.o threshold.o pose.o crc12.o bearing.o v4l.o)
+	unwarp.o code_grid.o threshold.o pose.o crc12.o bearing.o v4l.o \
+	yaml_config.o)
 
 CLEAN += $(SO_OBJS) src/*.o lib
 

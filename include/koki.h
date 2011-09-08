@@ -20,5 +20,6 @@
 #include "bearing.h"
 #include <sys/time.h> /* needed for videodev2.h */
 #include "v4l.h"
+#include "yaml_config.h"
 
 #endif /* _KOKI_H_ */
