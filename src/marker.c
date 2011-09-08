@@ -54,6 +54,22 @@ koki_marker_t* koki_marker_new(koki_quad_t *quad)
 	marker->centre.image.x = sum[0]/4;
 	marker->centre.image.y = sum[1]/4;
 
+	/* ensure the top-left vertex is the first */
+	if (marker->vertices[0].image.y > marker->vertices[1].image.y){
+
+		/* first vertex is top right, rotate indices so that
+		   vertices[0] is the top left */
+
+		koki_point2Df_t tmp;
+
+		tmp = marker->vertices[0].image;
+		marker->vertices[0].image = marker->vertices[1].image;
+		marker->vertices[1].image = marker->vertices[2].image;
+		marker->vertices[2].image = marker->vertices[3].image;
+		marker->vertices[3].image = tmp;
+
+	}
+
 	/* zero the rotations */
 	marker->rotation.x = 0;
 	marker->rotation.y = 0;
