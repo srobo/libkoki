@@ -70,6 +70,8 @@ koki_marker_t* koki_marker_new(koki_quad_t *quad)
 
 	}
 
+	marker->rotation_offset = 0;
+
 	/* zero the rotations */
 	marker->rotation.x = 0;
 	marker->rotation.y = 0;
@@ -161,9 +163,8 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	/* add code to the marker */
 	marker->code = code;
 
-	/* add rotation info to the marker, with 0-360 degree angles */
-	marker->rotation.z = (marker->rotation.z + rotation);
-	marker->rotation.z -= marker->rotation.z >= 360 ? 360 : 0;
+	/* add rotation info to the marker */
+	marker->rotation_offset = rotation;
 
 	return TRUE;
 

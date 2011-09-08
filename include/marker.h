@@ -53,6 +53,9 @@ typedef struct {
 	uint8_t code;                      /**< the marker number/code */
 	koki_marker_vertex_t centre;       /**< the centre of the marker */
 	koki_marker_vertex_t vertices[4];  /**< the 4 vertices of the marker */
+	float rotation_offset;             /**< a multiple of 90 degrees,
+					        indicating how many times the
+						code grid has been rotated */
 	koki_marker_rotation_t rotation;   /**< the rotation of the marker
 					        about its centre point */
 	koki_bearing_t bearing;            /**< the relative bearing to the
