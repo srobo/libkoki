@@ -46,7 +46,7 @@ static void add_param(char *key, char *value, koki_camera_params_t *params)
 		if (value != endp && *endp == '\0')
 			params->principal_point.x = f;
 
-	} else if (strcmp(key, "principalPointX") == 0){  /* principal point y */
+	} else if (strcmp(key, "principalPointY") == 0){  /* principal point y */
 
 		f = strtod(value, &endp);
 		if (value != endp && *endp == '\0')
