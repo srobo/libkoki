@@ -17,6 +17,7 @@
 #include "threshold.h"
 #include "camera.h"
 #include "pose.h"
+#include "rotation.h"
 #include "bearing.h"
 #include <sys/time.h> /* needed for videodev2.h */
 #include "v4l.h"
