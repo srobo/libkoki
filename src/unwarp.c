@@ -96,6 +96,13 @@ IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
 	/* get clip region */
 	clip_rect = get_clip_rectangle(marker);
 
+	/* ensure there is actually something to unwarp -- this
+	   may happen with shapes that aren't actually quads */
+	if (clip_rect.width == 0 || clip_rect.height == 0){
+		cvReleaseMat(&map_matrix);
+		return NULL;
+	}
+
 	/* use the clip rect as region of interest */
 	cvSetImageROI(frame, clip_rect);
 
