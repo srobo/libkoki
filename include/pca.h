@@ -11,9 +11,9 @@
 
 #include "points.h"
 
-int8_t koki_perform_pca(GSList *start, GSList *end,
-		      koki_point2Df_t eigen_vectors[2],
-		      float eigen_values[2], koki_point2Df_t *averages);
+int8_t koki_pca(GSList *start, GSList *end,
+		koki_point2Df_t eigen_vectors[2],
+		float eigen_values[2], koki_point2Df_t *averages);
 
 
 #endif /* _KOKI_PCA_H_ */

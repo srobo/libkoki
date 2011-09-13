@@ -24,9 +24,9 @@
  *                       eigen values written to
  * @return               \c 0 on success, anything else on failure
  */
-int8_t koki_perform_pca(GSList *start, GSList *end,
-		      koki_point2Df_t eigen_vectors[2],
-		      float eigen_values[2], koki_point2Df_t *averages)
+int8_t koki_pca(GSList *start, GSList *end,
+		koki_point2Df_t eigen_vectors[2],
+		float eigen_values[2], koki_point2Df_t *averages)
 {
 
 	CvMat **data       = malloc(sizeof(CvMat));

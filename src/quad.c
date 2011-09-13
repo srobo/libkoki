@@ -740,22 +740,22 @@ void koki_quad_refine_vertices(koki_quad_t *quad)
 
 	/* side 0 (v0 --> v1) */
 	get_centre_section(quad->links[0], quad->links[1], &start, &end);
-	koki_perform_pca(start, end, vects[0], vals[0], &avgs[0]);
+	koki_pca(start, end, vects[0], vals[0], &avgs[0]);
 	pca_output_debug(vects[0], vals[0], avgs[0], 0);
 
 	/* side 1 (v1 --> v2) */
 	get_centre_section(quad->links[1], quad->links[2], &start, &end);
-	koki_perform_pca(start, end, vects[1], vals[1], &avgs[1]);
+	koki_pca(start, end, vects[1], vals[1], &avgs[1]);
 	pca_output_debug(vects[1], vals[1], avgs[1], 1);
 
 	/* side 2  (v2 --> v3) */
 	get_centre_section(quad->links[2], quad->links[3], &start, &end);
-	koki_perform_pca(start, end, vects[2], vals[2], &avgs[2]);
+	koki_pca(start, end, vects[2], vals[2], &avgs[2]);
 	pca_output_debug(vects[2], vals[2], avgs[2], 2);
 
 	/* side 3 (v3 --> [end]) */
 	get_centre_section(quad->links[3], NULL, &start, &end);
-	koki_perform_pca(start, end, vects[3], vals[3], &avgs[3]);
+	koki_pca(start, end, vects[3], vals[3], &avgs[3]);
 	pca_output_debug(vects[3], vals[3], avgs[3], 3);
 
 
