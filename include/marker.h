@@ -60,6 +60,8 @@ typedef struct {
 					        about its centre point */
 	koki_bearing_t bearing;            /**< the relative bearing to the
 					        marker */
+	float distance;                    /**< the straight line distance to
+					        the centre of the marker */
 } koki_marker_t;
 
 

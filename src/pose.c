@@ -164,4 +164,9 @@ void koki_pose_estimate(koki_marker_t *marker, float marker_width,
 	marker->centre.world.y = centre.y/4;
 	marker->centre.world.z = centre.z/4;
 
+	/* calc straight line distance to centre */
+	marker->distance = sqrt(pow(marker->centre.world.x, 2) +
+				pow(marker->centre.world.y, 2) +
+				pow(marker->centre.world.z, 2));
+
 }
