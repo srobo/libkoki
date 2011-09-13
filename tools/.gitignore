@@ -1,2 +1,4 @@
 markers/
 *.pyc
+*.pdf
+depend
