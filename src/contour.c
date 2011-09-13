@@ -313,7 +313,7 @@ void koki_contour_free(GSList *contour)
  * @param frame    a pointer the the \c IplImage to draw on to
  * @param contour  the contour to draw
  */
-void koki_contour_draw_on_frame(IplImage *frame, GSList *contour)
+void koki_contour_draw(IplImage *frame, GSList *contour)
 {
 
 	while (contour != NULL){
