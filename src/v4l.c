@@ -346,6 +346,26 @@ koki_buffer_t* koki_v4l_prepare_buffers(int fd, int *count)
 
 
 /**
+ * @brief releases the mapped memory
+ *
+ * @oaram buffers  the array of \c koki_buffer_t that has been allocated
+ * @param count    the length of the buffers array, i.e. the number of
+ *                 actually allocated buffers (may not be the same as what
+ *                 was requested)
+ */
+void koki_v4l_free_buffers(koki_buffer_t *buffers, int count)
+{
+
+	for (int i=0; i<count; i++)
+		munmap(buffers[i].start, buffers[i].length);
+
+	free(buffers);
+
+}
+
+
+
+/**
  * @brief tells the camera to start streaming so that frames can be grabbed
  *
  * @param fd  the camera's file descriptor
