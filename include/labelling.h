@@ -110,7 +110,7 @@ koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold);
 
 bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region);
 
-IplImage* koki_labelled_image_to_IplImage(koki_labelled_image_t *labelled_image);
+IplImage* koki_labelled_image_to_image(koki_labelled_image_t *labelled_image);
 
 uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
 				    uint16_t x, uint16_t y,

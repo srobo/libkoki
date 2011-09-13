@@ -390,7 +390,7 @@ koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
  * @param labelled_image  the labeled image to represent
  * @return                an \c IplImage representation of the labelled image
  */
-IplImage* koki_labelled_image_to_IplImage(koki_labelled_image_t *labelled_image)
+IplImage* koki_labelled_image_to_image(koki_labelled_image_t *labelled_image)
 {
 
 	IplImage *image;
