@@ -59,7 +59,7 @@ static void zero_grid(koki_grid_t *grid)
  * @brief threshold       the threshold in the range \c 0-255 to apply
  * @brief grid            the grid to output to
  */
-void koki_grid_from_IplImage(IplImage *unwarped_frame, uint16_t threshold,
+void koki_grid_from_image(IplImage *unwarped_frame, uint16_t threshold,
 			     koki_grid_t *grid)
 {
 

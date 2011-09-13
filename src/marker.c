@@ -138,7 +138,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 #endif
 
 	grid_thresh = koki_threshold_auto(sub);
-	koki_grid_from_IplImage(unwarped, grid_thresh, &grid);
+	koki_grid_from_image(unwarped, grid_thresh, &grid);
 
 #if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
 	IplImage *ts = koki_threshold_frame(sub, grid_thresh);
