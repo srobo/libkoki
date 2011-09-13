@@ -166,7 +166,7 @@ static void classify_and_average(IplImage *frame, uint16_t threshold,
  * @param frame  the \c IplImage to threshold
  * @return       the threshold, in the range \c 0-255
  */
-uint16_t koki_threshold_auto(IplImage *frame)
+uint16_t koki_threshold_global(IplImage *frame)
 {
 
 	uint16_t avg_black, avg_white, threshold;

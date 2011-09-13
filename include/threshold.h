@@ -18,7 +18,7 @@ bool koki_threshold_rgb_pixel(IplImage *frame, uint16_t x, uint16_t y,
 
 IplImage* koki_threshold_frame(IplImage *frame, uint16_t threshold);
 
-uint16_t koki_threshold_auto(IplImage *frame);
+uint16_t koki_threshold_global(IplImage *frame);
 
 IplImage* koki_threshold_adaptive(IplImage *frame, uint16_t window_size,
 				  int16_t c, uint8_t method);

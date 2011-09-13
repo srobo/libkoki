@@ -125,7 +125,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	if (unwarped == NULL)
 		return FALSE;
 
-	/* get auto threshold for marker -- threshold just the pixels
+	/* get global threshold for marker -- threshold just the pixels
 	   in the code area/grid */
 	sub = koki_code_sub_image(unwarped);
 	assert(sub != NULL);
@@ -137,7 +137,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	cvDestroyWindow("w");
 #endif
 
-	grid_thresh = koki_threshold_auto(sub);
+	grid_thresh = koki_threshold_global(sub);
 	koki_grid_from_image(unwarped, grid_thresh, &grid);
 
 #if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
