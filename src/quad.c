@@ -858,7 +858,7 @@ static void draw_cross(IplImage *frame, koki_point2Di_t p)
  * @param frame  the \c IplImage to draw on to
  * @param quad   the quad that should be drawn
  */
-void koki_quad_draw_on_frame(IplImage *frame, koki_quad_t *quad)
+void koki_quad_draw(IplImage *frame, koki_quad_t *quad)
 {
 
 	koki_point2Di_t p;
