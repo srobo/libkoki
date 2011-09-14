@@ -167,6 +167,10 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	/* add rotation info to the marker */
 	marker->rotation_offset = rotation;
 
+	/* clean up */
+	cvReleaseImage(&unwarped);
+	cvReleaseImage(&sub);
+
 	return TRUE;
 
 }
