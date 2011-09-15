@@ -5,8 +5,8 @@ type: :feature
 component: libkoki
 release: "1.0"
 reporter: Chris Kirkham <chrisjameskirkham@gmail.com>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-08-11 22:05:07.662702 Z
 references: []
 
@@ -23,4 +23,8 @@ log_events:
     code functions, but more testing of actual results required.
     
     calibration, etc... still needs to be looked at.
+- - 2011-09-15 10:54:08.790140 Z
+  - Chris Kirkham <chrisjameskirkham@gmail.com>
+  - closed with disposition fixed
+  - done, inc. rotations.
 git_branch: 

@@ -47,12 +47,12 @@ koki_marker_rotation_t koki_rotation_estimate_array(koki_point3Df_t points[4])
 	CvMat *a;
 	CvMat *b;
 	CvMat *n;
+	CvMat *R;
 	float scale;
+	float cos_x, cos_y, sin_x, sin_y;
 	koki_marker_rotation_t output;
 
 	assert(points != NULL);
-
-	output.z = 0; /* TODO: z currently unused */
 
 	/* calculate normal */
 	a = cvCreateMat(3, 1, CV_64FC1);
@@ -89,30 +89,67 @@ koki_marker_rotation_t koki_rotation_estimate_array(koki_point3Df_t points[4])
 	/* rotation about Y --> atan2(n_x, n_z) */
 	output.y = atan2(cvmGet(n, 0, 0), cvmGet(n, 2, 0));
 
-	/* rotation about Z */
-	// TODO: implement
 
-
-	/* clean up */
-	cvReleaseMat(&a);
-	cvReleaseMat(&b);
+	/* clean up (mat a and b will be used later) */
 	cvReleaseMat(&n);
+
+	/* re-jiggle the numbers to be between +/- 180 degrees (M_PI radians) */
+	output.x = M_PI - output.x;
+	output.y = M_PI - output.y;
+
+	/* put in range: -180 < angle <= 180 (but in radians) */
+	output.x -= output.x >= M_PI ? 2 * M_PI : 0;
+	output.y -= output.y >= M_PI ? 2 * M_PI : 0;
+
+	/* invert Y so that +ve rotations are looking towards the +ve
+	   end of the axis from (0, 0, 0), and rotating anti-clockwise */
+	output.y = -output.y;
+
+
+	/* rotation about Z -- unrotate about X and Y as calculated, then
+	   calculate Z rotation from there */
+
+	R = cvCreateMat(3, 3, CV_64FC1); /* a rotation matrix about the X
+					    and Y axes */
+
+	sin_x = sin(-output.x);
+	sin_y = sin(-output.y);
+	cos_x = cos(-output.x);
+	cos_y = cos(-output.y);
+
+	/* fill R */
+	cvmSet(R, 0, 0, cos_y);
+	cvmSet(R, 0, 1, 0);
+	cvmSet(R, 0, 2, sin_y);
+
+	cvmSet(R, 1, 0, -sin_x * -sin_y);
+	cvmSet(R, 1, 1, cos_x);
+	cvmSet(R, 1, 2, -sin_x * cos_y);
+
+	cvmSet(R, 2, 0, -sin_y * cos_x);
+	cvmSet(R, 2, 1, sin_x);
+	cvmSet(R, 2, 2, cos_x * cos_y);
+
+	/* fill a -- the point in between the first 2 vertices,
+	   i.e. the centre point of the top edge */
+	cvmSet(a, 0, 0, (points[0].x + points[1].x) / 2);
+	cvmSet(a, 1, 0, (points[0].y + points[1].y) / 2);
+	cvmSet(a, 2, 0, (points[0].z + points[1].z) / 2);
+
+	/* unrotate about X and Y */
+	cvMatMulAdd(R, a, NULL, b);
+
+	output.z = atan2(cvmGet(b, 0, 0), cvmGet(b, 1, 0));
 
 	/* convert to degrees */
 	output.x *= 180.0 / M_PI;
 	output.y *= 180.0 / M_PI;
 	output.z *= 180.0 / M_PI;
 
-	output.x = 180.0 - output.x;
-	output.y = 180.0 - output.y;
-
-	/* put in range: -180 < angle <= 180 */
-	output.x -= output.x >= 180.0 ? 360.0 : 0;
-	output.y -= output.y >= 180.0 ? 360.0 : 0;
-
-	/* invert Y so that +ve rotations are looking towards the +ve
-	   end of the axis from (0, 0, 0), and rotating anti-clockwise */
-	output.y = -output.y;
+	/* clean up */
+	cvReleaseMat(&a);
+	cvReleaseMat(&b);
+	cvReleaseMat(&R);
 
 	return output;
 
@@ -158,7 +195,16 @@ void koki_rotation_estimate(koki_marker_t *marker)
 	marker->rotation.y += rotation.y;
 	marker->rotation.y -= marker->rotation.y >= 360 ? 360 : 0;
 
-	marker->rotation.z += rotation.z;
+	/* add code rotation offset */
+	marker->rotation.z += rotation.z + marker->rotation_offset;
 	marker->rotation.z -= marker->rotation.z >= 360 ? 360 : 0;
+
+	/* put in range -180 < angle <= 180 */
+	if (marker->rotation.z > 180.0)
+		marker->rotation.z = -(360.0 - marker->rotation.z);
+
+	/* negate so +ve rotation is anti-clockwise looking from (0, 0, 0)
+	   towards +ve Z (in the distance) */
+	marker->rotation.z = -marker->rotation.z;
 
 }
