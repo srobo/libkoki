@@ -13,6 +13,9 @@
 
 #include "code_grid.h"
 
+#include "code_table.h" /* int fwd_code_table[256]... */
+
+
 #define ROT_000(grid, gw, bw, x, y)		\
 	(grid->data[bw+y][bw+x].val)
 
@@ -504,5 +507,27 @@ int16_t koki_code_recover_from_grid(koki_grid_t *grid, float *rotation_offset)
 
 	/* no good code, return -1 to indicate this */
 	return -1;
+
+}
+
+
+
+/**
+ * @brief translates between from marker code space to user code space
+ *
+ * Some codes have a low hamming distance and have been ignored for
+ * use in user code space.  This function performs the necessary lookup
+ * to find the user code values.
+ *
+ * @param code  the code observed by thr camera
+ * @return      the code the user expects to see
+ */
+int16_t koki_code_translation(int code)
+{
+
+	if (code == -1)
+		return -1;
+
+	return fwd_code_table[code];
 
 }

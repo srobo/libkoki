@@ -4,8 +4,9 @@ import numpy as np
 import sys, math, os
 import CrcMoose
 import cairo
+from code_table import *
 
-MARKER_VERSION = "v0.4"
+MARKER_VERSION = "v0.5"
 
 G = np.matrix([[1, 1, 0, 1],
                [1, 0, 1, 1],
@@ -174,13 +175,16 @@ def mm_to_pt(x):
 def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
                          page_height, show_text=1):
 
+    fwd = gen_forwards_table()
+    rev = gen_reverse_table(fwd)
+
     marker_offset_x = (page_width - marker_width) / 2
     marker_offset_y = (page_height - marker_width) / 2
     cell_width = marker_width / 10
     cell_grid_offset_x = cell_width * 2
     cell_grid_offset_y = cell_width * 2
 
-    grid = code_grid(get_code(marker_num))
+    grid = code_grid(get_code(rev[marker_num]))
 
     # setup a place to draw
     surface = cairo.PDFSurface("%s" % outfname,
@@ -212,6 +216,9 @@ def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
                 cr.arc(marker_offset_x + cell_grid_offset_x + col * cell_width + cell_width/2,
                        marker_offset_y + cell_grid_offset_y + row * cell_width +cell_width/2,
                        cell_width/2, 0, 2 * math.pi)
+                cr.rectangle(marker_offset_x + cell_grid_offset_x + col * cell_width,
+                             marker_offset_y + cell_grid_offset_y + row * cell_width,
+                             marker_width * 0.1, marker_width * 0.1)
 
             cr.fill()
 
@@ -243,6 +250,6 @@ if __name__ == '__main__':
     OUTFNAME = "%s-%i.pdf" % (sys.argv[2], CODE)
 
     render_marker_to_pdf( CODE, OUTFNAME,
-                         mm_to_pt(55*2),
+                         mm_to_pt(83),
                          mm_to_pt(210),
                          mm_to_pt(297))

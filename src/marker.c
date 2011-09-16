@@ -162,7 +162,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	}
 
 	/* add code to the marker */
-	marker->code = code;
+	marker->code = koki_code_translation(code);
 
 	/* add rotation info to the marker */
 	marker->rotation_offset = rotation;

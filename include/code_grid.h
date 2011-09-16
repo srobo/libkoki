@@ -46,4 +46,7 @@ void koki_grid_print(koki_grid_t *grid);
 IplImage *koki_code_sub_image(IplImage *unwarped_frame);
 
 int16_t koki_code_recover_from_grid(koki_grid_t *grid, float *rotation_offset);
+
+int16_t koki_code_translation(int code);
+
 #endif /* _KOKI_CODE_GRID_H_ */
