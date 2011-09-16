@@ -6,7 +6,12 @@
 #include <highgui.h>
 #include <stdlib.h>
 
+#include <linux/videodev2.h>
+
 #include "koki.h"
+
+#define WIDTH  640
+#define HEIGHT 480
 
 
 int main(void)
@@ -14,26 +19,27 @@ int main(void)
 
 	koki_camera_params_t params;
 
-
-	CvCapture *cap = cvCaptureFromCAM(0);
-	cvNamedWindow("frame", CV_WINDOW_AUTOSIZE);
-	cvNamedWindow("thresh", CV_WINDOW_AUTOSIZE);
-
-	IplImage *frame = cvQueryFrame(cap);
-	assert(frame != NULL);
-
-	params.size.x = frame->width;
-	params.size.y = frame->height;
+	params.size.x = WIDTH;
+	params.size.y = HEIGHT;
 	params.principal_point.x = params.size.x / 2;
 	params.principal_point.y = params.size.y / 2;
 	params.focal_length.x = 571.0;
 	params.focal_length.y = 571.0;
 
+	int fd = koki_v4l_open_cam("/dev/video0");
+	struct v4l2_format fmt = koki_v4l_create_YUYV_format(WIDTH, HEIGHT);
+	koki_v4l_set_format(fd, fmt);
+
+	int num_buffers = 1;
+	koki_buffer_t *buffers;
+	buffers = koki_v4l_prepare_buffers(fd, &num_buffers);
+
+	koki_v4l_start_stream(fd);
 
 	while (1){
 
-		IplImage *frame = cvQueryFrame(cap);
-		assert(frame != NULL);
+		uint8_t *yuyv = koki_v4l_get_frame_array(fd, buffers);
+		IplImage *frame = koki_v4l_YUYV_frame_to_RGB_image(yuyv, WIDTH, HEIGHT);
 
 		IplImage *thresholded;
 		thresholded = koki_threshold_adaptive(frame, 5, 3,
@@ -56,23 +62,22 @@ int main(void)
 				continue;
 			}
 
-			koki_contour_draw_on_frame(frame, contour);
-			//koki_quad_draw_on_frame(frame, quad);
+			koki_contour_draw(frame, contour);
 			koki_quad_refine_vertices(quad);
-			koki_quad_draw_on_frame(frame, quad);
+			koki_quad_draw(frame, quad);
 
 			koki_marker_t *marker;
 			marker = koki_marker_new(quad);
 
-			koki_pose_estimate(marker, 0.11, &params);
-/*
-			printf("pose:\n");
-			for (int i=0; i<4; i++)
-				printf("%d: (%f, %f, %f)\n", i,
-				       marker->vertices[i].world.x,
-				       marker->vertices[i].world.y,
-				       marker->vertices[i].world.z);
-*/
+			if (koki_marker_recover_code(marker, frame)){
+
+				koki_pose_estimate(marker, 0.11, &params);
+				koki_bearing_estimate(marker);
+
+				printf("marker code: %d\n", marker->code);
+
+			}
+
 			koki_contour_free(contour);
 			koki_quad_free(quad);
 			koki_marker_free(marker);
@@ -84,12 +89,12 @@ int main(void)
 
 		koki_labelled_image_free(l);
 		cvReleaseImage(&thresholded);
+		cvReleaseImage(&frame);
 
 	}
 
 	return 0;
 
-	cvReleaseCapture(&cap);
 	cvDestroyWindow("frame");
 	cvDestroyWindow("thresh");
 
