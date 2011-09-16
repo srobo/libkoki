@@ -1,0 +1,28 @@
+#######################################################
+###                                                 ###
+###  libkoki Camera Configuration/Calibration File  ###
+###                                                 ###
+#######################################################
+
+### A nice name from the camera
+
+name                 : "Logitech c500"
+
+### Captured image dimensions
+
+frameWidth           : 1280         # the width of the image
+frameHeight          : 1024         # the height of the image
+
+
+### The principal point is the focal centre of the image
+
+principalPointX      : 640         # approx. width / 2
+principalPointY      : 512         # approx. height / 2
+
+
+### Focal length(s) -- these values are normally quite similar.
+# The values specified should be in pixel related units, as
+# per OpenCV's definition.
+
+focalLengthX         : 570
+focalLengthY         : 570
