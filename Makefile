@@ -1,5 +1,5 @@
 CFLAGS += -g -Wall -O3 -std=gnu99
-LDFLAGS += -L./lib -lkoki -lm -lyaml
+LDFLAGS += -L./lib -lm -lyaml
 
 #CFLAGS += -DKOKI_DEBUG_LEVEL=KOKI_DEBUG_INFO
 
