@@ -218,7 +218,7 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 {
 
 	GSList *furthest;
-	int32_t dist, min_furthest_dist, start_end_dist;
+	int32_t dist;
 	koki_point2Di_t *start_point, *end_point;
 
 	start_point = start->data;
