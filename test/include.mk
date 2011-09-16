@@ -1,5 +1,5 @@
 
-TEST_BINS := $(addprefix test/, speed_test)
+TEST_BINS := $(addprefix test/, speed_test debug_img)
 
 CLEAN += $(TEST_BINS) test/*.o
 

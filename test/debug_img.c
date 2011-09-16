@@ -9,9 +9,9 @@
 
 #include "koki.h"
 
-#define WAIT 1
+#define WAIT 0
 
-void debug(IplImage *frame, uint16_t thresh);
+void debug(IplImage *frame);
 
 int main(int argc, const char *argv[])
 {
@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
 	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
 	assert(frame != NULL);
 
-	debug(frame, (uint16_t)(0.3 * 255));
+	debug(frame);
 
 	cvReleaseImage(&frame);
 
@@ -35,34 +35,32 @@ int main(int argc, const char *argv[])
 }
 
 
-void debug(IplImage *frame, uint16_t thresh)
+void debug(IplImage *frame)
 {
 
 	cvNamedWindow("thresholded", CV_WINDOW_AUTOSIZE);
 	cvNamedWindow("output", CV_WINDOW_AUTOSIZE);
 
-	IplImage *thresholded = koki_threshold_frame(frame, thresh);
+	IplImage *thresholded = koki_threshold_adaptive(frame, 5, 5, KOKI_ADAPTIVE_MEAN);
+
 	assert(thresholded != NULL);
 	cvShowImage("thresholded", thresholded);
-	cvReleaseImage(&thresholded);
+	//cvWaitKey(0);
 
-	koki_labelled_image_t *l = koki_label_image(frame, thresh / 255.0);
+	koki_labelled_image_t *l = koki_label_image(frame, 128);
 
 	int waited = 0;
 
 	for (int i=0; i<l->clips->len; i++){
 
-		if (!koki_label_useable(l, i)){
-			//printf("=====================================\nlabel %d\n", i);
-			//printf("Label considered unuseable\n");
+		if (!koki_label_useable(l, i))
 			continue;
-		}
 
 		printf("=====================================\nlabel %d\n", i);
 
 		GSList *contour = koki_contour_find(l, i);
 
-		koki_contour_draw_on_frame(frame, contour);
+		koki_contour_draw(frame, contour);
 
 		cvShowImage("output", frame);
 		cvWaitKey(WAIT);
@@ -76,10 +74,23 @@ void debug(IplImage *frame, uint16_t thresh)
 			continue;
 		}
 
-		//koki_quad_draw_on_frame(frame, quad);
 		koki_quad_refine_vertices(quad);
-		koki_quad_draw_on_frame(frame, quad);
+		koki_quad_draw(frame, quad);
 
+		koki_marker_t *marker;
+		marker = koki_marker_new(quad);
+		assert(marker != NULL);
+
+		if (koki_marker_recover_code(marker, frame)){
+			printf("Marker found. Code: %d, Z rotation: %f\n",
+			       marker->code, marker->rotation.z);
+		} else {
+
+			printf("Either not a marker, or failed to recover code\n");
+
+		}
+
+		koki_marker_free(marker);
 		koki_quad_free(quad);
 		koki_contour_free(contour);
 
