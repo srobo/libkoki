@@ -1,6 +1,7 @@
-EXAMPLE_BINS := $(addprefix test/,example realtime debug_img marker_info speed_test)
 
-CLEAN += $(EXAMPLE_BINS) test/*.o
+TEST_BINS := $(addprefix test/, speed_test)
+
+CLEAN += $(TEST_BINS) test/*.o
 
 include test/depend
 
@@ -10,9 +11,9 @@ test/depend: src/*.c
 		$(CC) $(CFLAGS) -MM $$file -o - >> $@ ; \
 	done ;
 
-examples: $(EXAMPLE_BINS)
+tests: $(TEST_BINS)
 
-$(EXAMPLE_BINS): % : %.o lib/libkoki.so
-	$(CC) $(LDFLAGS) -o $@ $<
+$(TEST_BINS): % : %.o lib/libkoki.so
+	$(CC) $(LDFLAGS) -lkoki -o $@ $<
 
 test/%.o: test/%.c
