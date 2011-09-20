@@ -5,6 +5,7 @@ import sys, math, os
 import CrcMoose
 import cairo
 from code_table import *
+import getopt
 
 MARKER_VERSION = "v0.5"
 
@@ -172,37 +173,56 @@ def mm_to_pt(x):
     return 72 * mm_to_in(x)
 
 
-def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
-                         page_height, show_text=1):
+def get_pdf_surface(page_width, page_height, filename):
+
+    surface = cairo.PDFSurface(filename, page_width, page_height)
+    return surface
+
+
+def finish_surface(surface):
+
+    surface.finish()
+
+
+def short_description(desc):
+    if desc == "":
+        return ""
+    return "'%s'" % (desc)
+
+
+def render_marker(surface, marker_num, overall_width, offset_x, offset_y,
+                  desc="", show_text=1):
 
     fwd = gen_forwards_table()
     rev = gen_reverse_table(fwd)
 
-    marker_offset_x = (page_width - marker_width) / 2
-    marker_offset_y = (page_height - marker_width) / 2
+    grid = code_grid(get_code(rev[marker_num]))
+
+    marker_width = overall_width * (10.0/12.0)
     cell_width = marker_width / 10
     cell_grid_offset_x = cell_width * 2
     cell_grid_offset_y = cell_width * 2
 
-    grid = code_grid(get_code(rev[marker_num]))
-
-    # setup a place to draw
-    surface = cairo.PDFSurface("%s" % outfname,
-                               page_width, page_height)
-
-    # get a context
     cr = cairo.Context(surface)
 
-    # draw border
+    # draw outline
+    cr.set_line_width(1)
+    grey = 0.7
+    cr.set_source_rgb(grey, grey, grey)
+    cr.rectangle(offset_x, offset_y, overall_width, overall_width)
+    cr.stroke()
+
+    # draw black border
     cr.set_source_rgb(0, 0, 0)
-    cr.rectangle(marker_offset_x, marker_offset_y,
+    cr.rectangle(offset_x + cell_width,
+                 offset_y + cell_width,
                  marker_width, marker_width)
     cr.fill()
 
-    #draw centre
+    # draw white grid background (i.e. zero grid)
     cr.set_source_rgb(1, 1, 1)
-    cr.rectangle(marker_offset_x + cell_grid_offset_x,
-                 marker_offset_y + cell_grid_offset_y,
+    cr.rectangle(offset_x + cell_width + cell_width * 2,
+                 offset_y + cell_width + cell_width * 2,
                  marker_width * 0.6, marker_width * 0.6)
     cr.fill()
 
@@ -212,16 +232,14 @@ def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
         for col in range(6):
 
             if grid[row][col] == 1:
-                #draw the circle
-                cr.arc(marker_offset_x + cell_grid_offset_x + col * cell_width + cell_width/2,
-                       marker_offset_y + cell_grid_offset_y + row * cell_width +cell_width/2,
-                       cell_width/2, 0, 2 * math.pi)
-                cr.rectangle(marker_offset_x + cell_grid_offset_x + col * cell_width,
-                             marker_offset_y + cell_grid_offset_y + row * cell_width,
+                #draw the 1 bit
+                cr.rectangle(offset_x + cell_width + cell_width * 2 + col * cell_width,
+                             offset_y + cell_width + cell_width * 2 + row * cell_width,
                              marker_width * 0.1, marker_width * 0.1)
 
             cr.fill()
 
+    # write on marker
     if show_text:
 
         font_size = 6
@@ -231,25 +249,63 @@ def render_marker_to_pdf(marker_num, outfname, marker_width, page_width,
         cr.set_font_size(font_size)
         cr.set_source_rgb(grey, grey, grey)
 
-        cr.move_to(marker_offset_x + font_size, marker_offset_y + marker_width - font_size)
-        cr.show_text('libkoki marker #%d (%s)' % (marker_num, MARKER_VERSION))
+        cr.move_to(offset_x + cell_width + font_size, offset_y + cell_width + marker_width - font_size)
+        cr.show_text('libkoki marker #%d (%s)   %s' % (marker_num, MARKER_VERSION, short_description(desc)))
 
-    surface.finish()
-
+    # put dot in top left
+    grey = 0.2
+    cr.set_source_rgb(grey, grey, grey)
+    cr.arc(offset_x + cell_width + cell_width,
+           offset_y + cell_width + cell_width,
+           cell_width/8, 0, 2 * math.pi)
+    cr.fill()
 
 
 
 
 if __name__ == '__main__':
 
-    if len(sys.argv) != 3:
-        print "Usage: ./markergen.py <code> <output_prefix>"
+    if len(sys.argv) < 3:
+        print "Usage: ./markergen.py [--4up] [--desc val] <code> <output_prefix>"
         sys.exit(1)
 
-    CODE = int(sys.argv[1])
-    OUTFNAME = "%s-%i.pdf" % (sys.argv[2], CODE)
+    optlist, args = getopt.getopt(sys.argv[1:], '', ['4up', 'desc='])
 
-    render_marker_to_pdf( CODE, OUTFNAME,
-                         mm_to_pt(83),
-                         mm_to_pt(210),
-                         mm_to_pt(297))
+    if len(args) != 2:
+        print "Usage: ./markergen.py [--4up] [--desc val] <code> <output_prefix>"
+        sys.exit(1)
+
+    CODE = int(args[0])
+    OUTFNAME = "%s-%i.pdf" % (args[1], CODE)
+
+    FOURUP = False
+    DESC = ""
+
+    # check for options
+    for opt in optlist:
+
+        if opt[0] == "--4up":
+            FOURUP = True
+
+        elif opt[0] == "--desc":
+            DESC = opt[1]
+
+
+    surface = get_pdf_surface(mm_to_pt(210), mm_to_pt(297), OUTFNAME)
+
+    if not FOURUP:
+        render_marker(surface, CODE, mm_to_pt(100),
+                      mm_to_pt((210 - 100) / 2),
+                      mm_to_pt((297 - 100) / 2), DESC)
+
+    else:
+        render_marker(surface, CODE, mm_to_pt(100),
+                      mm_to_pt(5), mm_to_pt(10), DESC)
+        render_marker(surface, CODE, mm_to_pt(100),
+                      mm_to_pt(105), mm_to_pt(10), DESC)
+        render_marker(surface, CODE, mm_to_pt(100),
+                      mm_to_pt(5), mm_to_pt(110), DESC)
+        render_marker(surface, CODE, mm_to_pt(100),
+                      mm_to_pt(105), mm_to_pt(110), DESC)
+
+    finish_surface(surface)
