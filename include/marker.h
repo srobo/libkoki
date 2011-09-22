@@ -75,6 +75,9 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame);
 GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 			     koki_camera_params_t *params);
 
+GPtrArray* koki_find_markers_fp(IplImage *frame, float (*fp)(int),
+				koki_camera_params_t *params);
+
 void koki_markers_free(GPtrArray *markers);
 
 

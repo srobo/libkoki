@@ -274,6 +274,104 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 
 
 /**
+ * @brief a higher-level function that does everything necessary to return
+ *        an array of markers that thare in the given frame, with a user-
+ *        specified function for determining the marker width based on the
+ *        code
+ *
+ * The function pointer, \c fp, should point to a function that takes as
+ * argument a marker code, and returns a float representing the width of
+ * a marker with said code.
+ *
+ * @param frame   the input image
+ * @param fp      the function pointer
+ * @param params  the camera params for the camera at \c frame's resolution
+ * @return        a \c GptrArray* containing all of the found markers
+ */
+GPtrArray* koki_find_markers_fp(IplImage *frame, float (*fp)(int),
+				koki_camera_params_t *params)
+{
+
+	koki_labelled_image_t *labelled_image;
+	GSList *contour;
+	koki_quad_t *quad;
+	koki_marker_t *marker;
+	GPtrArray *markers = NULL;
+	IplImage *thresholded;
+
+	assert(frame != NULL);
+
+	thresholded = koki_threshold_adaptive(frame, 5, 5, KOKI_ADAPTIVE_MEAN);
+
+	/* labelling */
+	labelled_image = koki_label_image(thresholded, 127);
+
+	if (labelled_image == NULL)
+		return NULL;
+
+	/* init markers array */
+	markers = g_ptr_array_new();
+
+	/* loop though all regions */
+	for (uint16_t i=0; i<labelled_image->clips->len; i++){
+
+		/* make sure it's big enough, etc... */
+		if (!koki_label_useable(labelled_image, i))
+			continue;
+
+		/* get contour */
+		contour = koki_contour_find(labelled_image, i);
+
+		/* find vertices */
+		quad = koki_quad_find_vertices(contour);
+
+		if (quad == NULL){
+			koki_contour_free(contour);
+			continue;
+		}
+
+		/* refine vertices */
+		koki_quad_refine_vertices(quad);
+
+		/* create a base marker */
+		marker = koki_marker_new(quad);
+		assert(marker != NULL);
+
+		/* recover code */
+		if (koki_marker_recover_code(marker, frame)){
+
+			assert(marker != NULL);
+			koki_pose_estimate(marker, fp(marker->code), params);
+			koki_rotation_estimate(marker);
+			koki_bearing_estimate(marker);
+
+			/* append the marker to the output array */
+			g_ptr_array_add(markers, marker);
+
+		} else {
+
+			/* not a useful marker, free it */
+			koki_marker_free(marker);
+
+		}
+
+		/* cleanup */
+		koki_contour_free(contour);
+		koki_quad_free(quad);
+
+	}//for
+
+	/* clean up */
+	koki_labelled_image_free(labelled_image);
+	cvReleaseImage(&thresholded);
+
+	return markers;
+
+}
+
+
+
+/**
  * @brief frees all the markers pointed to from the array, then frees the
  *        array itself
  *
