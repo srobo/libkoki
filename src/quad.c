@@ -243,6 +243,10 @@ static void find_intermediate_vertices(GSList *start, GSList *end,
 
 	/* now for the recursive bit */
 
+	/* make sure we don't find too many for a quad */
+	if (*vertices_found > 4)
+		return;
+
 	/* start --> furthest */
 	koki_debug(KOKI_DEBUG_INFO, "First f_i_v recursive call\n");
 	find_intermediate_vertices(start, furthest, points, num_points,
