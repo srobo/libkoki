@@ -253,6 +253,7 @@ def render_marker(surface, marker_num, overall_width, offset_x, offset_y,
         cr.show_text('libkoki marker #%d (%s)   %s' % (marker_num, MARKER_VERSION, short_description(desc)))
 
     # put dot in top left
+    cr.new_sub_path()
     grey = 0.2
     cr.set_source_rgb(grey, grey, grey)
     cr.arc(offset_x + cell_width + cell_width,
