@@ -23,8 +23,9 @@
  *
  *    positive x => marker centre is above the principle point of the camera
  *    negative x => marker centre is below the principle point of the camer
- *    positive y => marker centre is left of the principle point of the camera
- *    negative y => marker centre is right of the principle point of the camera
+ *    negative y => marker centre is left of the principle point of the camera
+ *    positive y => marker centre is right of the principle point of the camera
+ * ... just like Cartesian graph quadrants.
  *             z => (currently unused)
  *
  * @param point  the 3D point to get the relative bearing to
