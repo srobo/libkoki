@@ -397,7 +397,7 @@ static void threshold_window(IplImage *frame, IplImage *output,
  * centre of the large black areas can end up thresholded white because of a
  * lack of variation in brightness.
  *
- * @param frame        the frame the threshold
+ * @param frame        the frame to threshold
  * @param window_size  the size of the window to use (must be odd, small is
  *                     faster and less susceptible to illumination variations)
  * @param c            a constant to subtract from the threshold before it's
