@@ -34,9 +34,13 @@ koki_bearing_t koki_bearing_estimate_point(koki_point3Df_t point)
 {
 
 	koki_bearing_t bearing;
+	float r;
 
 	bearing.y = atan2(point.x, point.z);
-	bearing.x = atan2(point.y, point.z);
+
+	r = sqrt(pow(point.x, 2) + pow(point.y, 2) + pow(point.z, 2));
+	bearing.x = asin(point.y / r);
+
 	bearing.z = 0; /* not used (yet) */
 
 	return bearing;
