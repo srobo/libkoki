@@ -48,7 +48,7 @@ koki_marker_rotation_t koki_rotation_estimate_array(koki_point3Df_t points[4])
 	CvMat *b;
 	CvMat *n;
 	CvMat *R;
-	float scale;
+	float len;
 	float cos_x, cos_y, sin_x, sin_y;
 	koki_marker_rotation_t output;
 
@@ -75,26 +75,26 @@ koki_marker_rotation_t koki_rotation_estimate_array(koki_point3Df_t points[4])
 	cvCrossProduct(a, b, n);
 
 	/* normalise -- unit vector */
-	scale = sqrt(pow(cvmGet(n, 0, 0), 2) +
-		     pow(cvmGet(n, 1, 0), 2) +
-		     pow(cvmGet(n, 2, 0), 2));
+	len = sqrt(pow(cvmGet(n, 0, 0), 2) +
+		   pow(cvmGet(n, 1, 0), 2) +
+		   pow(cvmGet(n, 2, 0), 2));
 
 	for (uint8_t i=0; i<3; i++)
-		cvmSet(n, i, 0, cvmGet(n, i, 0) / scale);
+		cvmSet(n, i, 0, cvmGet(n, i, 0) / len);
 
-
-	/* rotation about X --> atan2(n_y, n_z) */
-	output.x = atan2(cvmGet(n, 1, 0), cvmGet(n, 2, 0));
 
 	/* rotation about Y --> atan2(n_x, n_z) */
 	output.y = atan2(cvmGet(n, 0, 0), cvmGet(n, 2, 0));
+
+	/* rotation about X --> atan2(n_y, len) */
+	output.x = asin(cvmGet(n, 1, 0) / 1);
 
 
 	/* clean up (mat a and b will be used later) */
 	cvReleaseMat(&n);
 
+
 	/* re-jiggle the numbers to be between +/- 180 degrees (M_PI radians) */
-	output.x = M_PI - output.x;
 	output.y = M_PI - output.y;
 
 	/* put in range: -180 < angle <= 180 (but in radians) */
