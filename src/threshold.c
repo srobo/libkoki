@@ -24,6 +24,8 @@
 #define KOKI_THRESHOLD_UPPER_BOUND 160
 #define KOKI_THRESHOLD_INCREMENT     1
 
+#define INT_IMG_ELEM(img, x, y) \
+	(((int32_t*)((img)->imageData + (img)->widthStep*(y)))[x])
 
 /**
  * @brief thresholds a specific pixel with the provided threshold
@@ -188,7 +190,44 @@ uint16_t koki_threshold_global(IplImage *frame)
 
 }
 
+/**
+ * @brief calculate the sum of the given region within the image
+ *        that the passed integral image is based on.
+ *
+ * This is the main purpose of using integral images.  Summing
+ * rectangular regions requires fewer operations when using an
+ * integral image than just summing the elements individually.  
+ *
+ * @param intimg	the integral image
+ * @param roi		the region to sum over
+ *
+ * @return The sum of the pixels within the given region. */
+static uint16_t integral_image_sum_window( IplImage *intimg, CvRect roi )
+{
+	int32_t v;
+	uint16_t w, h, x, y;
+	x = roi.x;
+	y = roi.y;
+	w = roi.width;
+	h = roi.height;
 
+	/* Bottom right corner */
+	v = INT_IMG_ELEM( intimg, x + w - 1, y + h - 1 );
+
+	if( x > 0 )
+		/* E of bottom left corner */
+		v -= INT_IMG_ELEM( intimg, x - 1, y + h - 1 );
+
+	if( y > 0 )
+		/* N of top right corner */
+		v -= INT_IMG_ELEM( intimg, x + w - 1, y - 1 );
+
+	if( x > 0 && y > 0 )
+		/* NW of top left corner */
+		v += INT_IMG_ELEM( intimg, x - 1, y - 1 );
+
+	return v;
+}
 
 /**
  * @brief sets \c output(x,y) to the thresholded value of \c frame in the region of
@@ -200,13 +239,14 @@ uint16_t koki_threshold_global(IplImage *frame)
  * just enough to prevent tiny 'features' being noticed.
  *
  * @param frame   the frame being thresholded
+ * @param intimg  the integral image of the frame being thresholded
  * @param output  the RGB image to output the thresholded image to
  * @param x       the X co-ordinate of current pixel (probably the centre of the roi)
  * @param y       the Y co-ordinate of current pixel (probably the centre of the roi)
  * @param roi     the \c CvRect describing the regoin we're interested in
  * @param c       the constant to subtract from mean to use as the threshold
  */
-static void threshold_window_mean(IplImage *frame, IplImage *output,
+static void threshold_window_mean(IplImage *frame, IplImage *intimg, IplImage *output,
 				  uint16_t x, uint16_t y, CvRect roi, int16_t c)
 {
 
@@ -216,10 +256,7 @@ static void threshold_window_mean(IplImage *frame, IplImage *output,
 	h = roi.height;
 
 	/* calculate threshold */
-	sum = 0;
-	for (uint16_t win_y = 0; win_y < h; win_y++)
-		for (uint16_t win_x = 0; win_x < w; win_x++)
-			sum += KOKI_RGB_SUM(frame, roi.x + win_x, roi.y + win_y);
+	sum = integral_image_sum_window( intimg, roi );
 
 	threshold = sum / (w * h);
 
@@ -324,7 +361,7 @@ static void threshold_window_median(IplImage *frame, IplImage *output,
  * @param method       the thresholding method to use, one of { KOKI_ADAPTIVE_MEAN,
  *                     KOKI_ADAPTIVE_MEDIAN }
  */
-static void threshold_window(IplImage *frame, IplImage *output,
+static void threshold_window(IplImage *frame, IplImage *intimg, IplImage *output,
 			     uint16_t x, uint16_t y, uint16_t window_size,
 			     int16_t c, uint8_t method)
 {
@@ -375,7 +412,7 @@ static void threshold_window(IplImage *frame, IplImage *output,
 
 	/* threshold */
 	if (method == KOKI_ADAPTIVE_MEAN)
-		threshold_window_mean(frame, output, x, y, roi, c);
+		threshold_window_mean(frame, intimg, output, x, y, roi, c);
 
 	else if (method == KOKI_ADAPTIVE_MEDIAN)
 		threshold_window_median(frame, output, x, y, roi, c);
@@ -385,7 +422,43 @@ static void threshold_window(IplImage *frame, IplImage *output,
 
 }
 
+/**
+ * @brief create an integral image from the given source image. 
+ *
+ * Integral images allow constant-time area summations.
+ *
+ * @param src		the source image.
+ *
+ * @return a freshly allocated integral image. 
+ */
+static IplImage* integral_image_create( IplImage* src )
+{
+	IplImage *out = NULL;
+	uint16_t x,y;
 
+	out = cvCreateImage( cvGetSize(src), IPL_DEPTH_32S, 1 );
+	assert( out != NULL );
+
+	for( x=0; x<src->width; x++ ) {
+		int32_t sum = 0;
+		
+		for( y=0; y<src->height; y++ ) {
+			int32_t v = 0;
+			uint8_t i;
+
+			for( i=0; i<3; i++ )
+				sum += KOKI_IPLIMAGE_ELEM(src, x, y, i);
+
+			v = sum;
+			if( x > 0 )
+				v += INT_IMG_ELEM(out, x-1, y);
+
+			INT_IMG_ELEM(out, x, y) = v;
+		}
+	}
+
+	return out;
+}
 
 /**
  * @brief thresholds an image in a localised, adaptive way, allowing large
@@ -411,9 +484,14 @@ IplImage* koki_threshold_adaptive(IplImage *frame, uint16_t window_size,
 {
 
 	IplImage *output = NULL;
+	IplImage *intimg = NULL;
 
 	assert(frame != NULL);
 	assert(window_size % 2 == 1);
+
+	/* create the integral image to accelerate window summation */
+	intimg = integral_image_create( frame );
+	assert( intimg != NULL );
 
 	/* create output image */
 	output = cvCreateImage(cvGetSize(frame),
@@ -430,11 +508,13 @@ IplImage* koki_threshold_adaptive(IplImage *frame, uint16_t window_size,
 	for (uint16_t y=0; y<frame->height; y++){
 		for (uint16_t x=0; x<frame->width; x++){
 
-			threshold_window(frame, output, x, y,
+			threshold_window(frame, intimg, output, x, y,
 					 window_size, c, method);
 
 		}//for
 	}//for
+
+	cvReleaseImage( &intimg );
 
 	return output;
 
