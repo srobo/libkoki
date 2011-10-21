@@ -1,5 +1,5 @@
 
-EXAMPLE_BINS := $(addprefix examples/,marker_info realtime_quads)
+EXAMPLE_BINS := $(addprefix examples/,marker_info realtime_quads realtime_text)
 GL_EXAMPLE_BINS := $(addprefix examples/,realtime_gl)
 
 CLEAN += $(EXAMPLE_BINS) $(GL_EXAMPLE_BINS) examples/*.o
