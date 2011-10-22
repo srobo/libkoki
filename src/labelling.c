@@ -176,22 +176,44 @@ uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
 }
 
 /**
+ * @brief find the canonical number for the given label
+ *
+ * @param l	The label number to find the canonical number for.
+ *
+ * @return The canonical number of the given label
+  */
+static uint16_t label_find_canonical( koki_labelled_image_t *lmg,
+			       uint16_t l )
+{
+	while(1) {
+		uint16_t a = g_array_index( lmg->aliases, uint16_t, l-1 );
+
+		if( a == l )
+			/* Found the lowest alias */
+			return a;
+
+		l = a;
+	}
+}
+
+/**
  * @brief marks a label number as an alias of another.
  *
  * @param lmg		The labelled image
- * @param l_min		The canonical label number to alias to
- * @param l_max		The label number to mark as an alias
+ * @param l_canon	The canonical label number to alias to
+ * @param l_alias	The label number to mark as an alias
  */
-static void label_alias( koki_labelled_image_t *lmg, uint16_t l_min, uint16_t l_max )
+static void label_alias( koki_labelled_image_t *lmg, uint16_t l_canon, uint16_t l_alias )
 {
-	/* maintain lowest label for all aliases */
-	for (int i=0; i<(lmg->aliases->len); i++){
-		uint16_t *label = &g_array_index( lmg->aliases,
-						  uint16_t, i );
+	uint16_t *l;
 
-		if (*label == l_max)
-			*label = l_min;
-	}
+	/* Resolve to the minimum alias of l_alias */
+	l_alias = label_find_canonical( lmg, l_alias );
+	l_canon = label_find_canonical( lmg, l_canon );
+
+	/* Alias l_alias to l_canon */
+	l = &g_array_index( lmg->aliases, uint16_t, l_alias-1 );
+	*l = l_canon;
 }
 
 /**
@@ -319,7 +341,12 @@ koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
 		}//for col
 	}//for row
 
+	/* Now renumber all labels to ensure they're all canonical */
+	for( uint16_t i=1; i<labelled_image->aliases->len; i++ ) {
+		uint16_t *a = &g_array_index( labelled_image->aliases, uint16_t, i-1 );
 
+		*a = label_find_canonical( labelled_image, i );
+	}
 
 	/* collect label statistics (mass, bounding box) */
 
