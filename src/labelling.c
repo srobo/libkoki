@@ -175,7 +175,24 @@ uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
 
 }
 
+/**
+ * @brief marks a label number as an alias of another.
+ *
+ * @param lmg		The labelled image
+ * @param l_min		The canonical label number to alias to
+ * @param l_max		The label number to mark as an alias
+ */
+static void label_alias( koki_labelled_image_t *lmg, uint16_t l_min, uint16_t l_max )
+{
+	/* maintain lowest label for all aliases */
+	for (int i=0; i<(lmg->aliases->len); i++){
+		uint16_t *label = &g_array_index( lmg->aliases,
+						  uint16_t, i );
 
+		if (*label == l_max)
+			*label = l_min;
+	}
+}
 
 /**
  * @brief performs the labelling algortihm on a particular pixel, setting its
@@ -240,19 +257,7 @@ static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
 			}
 
 			set_label(labelled_image, x, y, label_min);
-
-			/* maintain lowest label for all aliases */
-			for (int i=0; i<(labelled_image->aliases->len); i++){
-
-				uint16_t *label = &g_array_index(
-					labelled_image->aliases,
-					uint16_t, i);
-
-				if (*label == label_max)
-					*label = label_min;
-
-			}//for
-
+			label_alias( labelled_image, label_min, label_max );
 		} else {
 
 			set_label(labelled_image, x, y, label_tmp);
