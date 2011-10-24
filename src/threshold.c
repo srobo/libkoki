@@ -187,6 +187,40 @@ uint16_t koki_threshold_global(IplImage *frame)
 
 }
 
+/**
+ * @brief adaptively threshold the given pixel
+ *
+ * @param frame		the frame to threshold
+ * @param iimg		the integral image for the frame
+ * @param roi		the region to use for adaptive thresholding
+ * @param x		the x-coordinate of the pixel to threshold
+ * @param y		the y-coordinate of the pixel to threshold
+ * @param c       	the constant to subtract from mean to use as the threshold
+ *
+ * @return true if the pixel exceeds the local threshold.
+ */
+bool koki_threshold_adaptive_pixel( const IplImage *frame,
+				    const koki_integral_image_t *iimg,
+				    const CvRect *roi,
+				    uint16_t x, uint16_t y, int16_t c )
+{
+	uint16_t w, h, sum;
+	uint32_t threshold;
+
+	w = roi->width;
+	h = roi->height;
+
+	/* calculate threshold */
+	sum = koki_integral_image_sum( iimg, roi );
+
+	threshold = sum / (w * h);
+
+	/* apply threshold */
+	if( KOKI_RGB_SUM(frame, x, y) > (threshold - (c * 3)) )
+		return true;
+
+	return false;
+}
 
 /**
  * @brief sets \c output(x,y) to the thresholded value of \c frame in the region of
@@ -210,21 +244,10 @@ static void threshold_window_mean(IplImage *frame,
 				  IplImage *output,
 				  uint16_t x, uint16_t y, CvRect roi, int16_t c)
 {
+	uint8_t grey = 0;
 
-	uint16_t w, h, sum, threshold, grey;
-
-	w = roi.width;
-	h = roi.height;
-
-	/* calculate threshold */
-	sum = koki_integral_image_sum( iimg, &roi );
-
-	threshold = sum / (w * h);
-
-	/* apply threshold */
-	grey = KOKI_RGB_SUM(frame, x, y) > threshold - (c * 3)
-		? 255
-		: 0;
+	if( koki_threshold_adaptive_pixel( frame, iimg, &roi, x, y, c ) )
+		grey = 255;
 
 	KOKI_IPLIMAGE_ELEM(output, x, y, 0) = grey;
 	KOKI_IPLIMAGE_ELEM(output, x, y, 1) = grey;
