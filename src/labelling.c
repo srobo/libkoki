@@ -216,6 +216,78 @@ static void label_alias( koki_labelled_image_t *lmg, uint16_t l_canon, uint16_t 
 	*l = l_canon;
 }
 
+static void label_dark_pixel( koki_labelled_image_t *lmg,
+			      uint16_t x, uint16_t y )
+{
+	uint16_t label_tmp;
+
+	/* if pixel above is labelled, join that label */
+	label_tmp = get_connected_label(lmg, x, y, N);
+	if (label_tmp > 0){
+		set_label(lmg, x, y, label_tmp);
+		return;
+	}
+
+	/* if NE pixel is labelled, some merging may need to occur */
+	label_tmp = get_connected_label(lmg, x, y, NE);
+	if (label_tmp > 0){
+
+		int16_t label_w, label_nw, l1, l2, label_min, label_max;
+		label_w  = get_connected_label(lmg, x, y, W);
+		label_nw = get_connected_label(lmg, x, y, NW);
+
+		/* if one of the pixels W or NW are labelled, they should
+		   be merged together */
+		if (label_w > 0 || label_nw > 0){
+
+			l1 = g_array_index(lmg->aliases,
+					   uint16_t, label_tmp-1);
+
+			l2 = label_nw > 0
+				? g_array_index(lmg->aliases,
+						uint16_t, label_nw-1)
+				: g_array_index(lmg->aliases,
+						uint16_t, label_w-1);
+
+			/* identify lowest label */
+			label_max = l2;
+			label_min = l1;
+			if (label_max < label_min){
+				label_min = l2;
+				label_max = l1;
+			}
+
+			set_label(lmg, x, y, label_min);
+			label_alias( lmg, label_min, label_max );
+		} else {
+
+			set_label(lmg, x, y, label_tmp);
+
+		}
+
+		return;
+	}
+
+	/* Otherwise, take the NW label, if present */
+	label_tmp = get_connected_label(lmg, x, y, NW);
+	if (label_tmp > 0){
+		set_label(lmg, x, y, label_tmp);
+		return;
+	}
+
+	/* Otherwise, take the W label, if present */
+	label_tmp = get_connected_label(lmg, x, y, W);
+	if (label_tmp > 0){
+		set_label(lmg, x, y, label_tmp);
+		return;
+	}
+
+	/* If we get this far, a new region has been found */
+	label_tmp = lmg->aliases->len + 1;
+	g_array_append_val(lmg->aliases, label_tmp);
+	set_label(lmg, x, y, label_tmp);
+}
+
 /**
  * @brief performs the labelling algortihm on a particular pixel, setting its
  *        value in the labelled image.
@@ -231,9 +303,6 @@ static void label_alias( koki_labelled_image_t *lmg, uint16_t l_canon, uint16_t 
 static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
 			uint16_t x, uint16_t y, uint16_t threshold_x_3)
 {
-
-	uint16_t label_tmp;
-
 	/* white thresholded pixel, not important */
 	if (above_threshold(image, x, y, threshold_x_3)){
 		set_label(labelled_image, x, y, 0);
@@ -241,74 +310,7 @@ static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
 	}
 
 	/* must be a black pixel then... */
-
-	/* if pixel above is labelled, join that label */
-	label_tmp = get_connected_label(labelled_image, x, y, N);
-	if (label_tmp > 0){
-		set_label(labelled_image, x, y, label_tmp);
-		return;
-	}
-
-	/* if NE pixel is labelled, some merging may need to occur */
-	label_tmp = get_connected_label(labelled_image, x, y, NE);
-	if (label_tmp > 0){
-
-		int16_t label_w, label_nw, l1, l2, label_min, label_max;
-		label_w  = get_connected_label(labelled_image, x, y, W);
-		label_nw = get_connected_label(labelled_image, x, y, NW);
-
-		/* if one of the pixels W or NW are labelled, they should
-		   be merged together */
-		if (label_w > 0 || label_nw > 0){
-
-			l1 = g_array_index(labelled_image->aliases,
-					   uint16_t, label_tmp-1);
-
-			l2 = label_nw > 0
-				? g_array_index(labelled_image->aliases,
-						uint16_t, label_nw-1)
-				: g_array_index(labelled_image->aliases,
-						uint16_t, label_w-1);
-
-			/* identify lowest label */
-			label_max = l2;
-			label_min = l1;
-			if (label_max < label_min){
-				label_min = l2;
-				label_max = l1;
-			}
-
-			set_label(labelled_image, x, y, label_min);
-			label_alias( labelled_image, label_min, label_max );
-		} else {
-
-			set_label(labelled_image, x, y, label_tmp);
-
-		}
-
-		return;
-
-	}
-
-	/* Otherwise, take the NW label, if present */
-	label_tmp = get_connected_label(labelled_image, x, y, NW);
-	if (label_tmp > 0){
-		set_label(labelled_image, x, y, label_tmp);
-		return;
-	}
-
-	/* Otherwise, take the W label, if present */
-	label_tmp = get_connected_label(labelled_image, x, y, W);
-	if (label_tmp > 0){
-		set_label(labelled_image, x, y, label_tmp);
-		return;
-	}
-
-	/* If we get this far, a new region has been found */
-	label_tmp = labelled_image->aliases->len + 1;
-	g_array_append_val(labelled_image->aliases, label_tmp);
-	set_label(labelled_image, x, y, label_tmp);
-
+	label_dark_pixel( labelled_image, x, y );
 }
 
 
