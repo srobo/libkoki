@@ -30,4 +30,9 @@ bool koki_threshold_adaptive_pixel( const IplImage *frame,
 				    const CvRect *roi,
 				    uint16_t x, uint16_t y, int16_t c );
 
+void koki_threshold_adaptive_calc_window( const IplImage *frame,
+					  CvRect *win,
+					  uint16_t width,
+					  uint16_t x, uint16_t y );
+
 #endif /* _KOKI_THRESHOLD_H_ */

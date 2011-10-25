@@ -352,50 +352,10 @@ static void threshold_window(IplImage *frame,
 			     uint16_t x, uint16_t y, uint16_t window_size,
 			     int16_t c, uint8_t method)
 {
-
 	CvRect roi;
-	uint16_t width, height;
 
-	width = frame->width;
-	height = frame->height;
-	assert(x >= 0 && x < width);
-	assert(y >= 0 && y < height);
-
-	/* identify the window - x */
-	if (x >= window_size / 2 &&
-	    x < (width-1) - window_size / 2){
-
-		/* normal case, away from frame edges */
-		roi.x      = x - window_size/2;
-		roi.width  = window_size;
-
-	} else {
-
-		/* we're at the edge, limit roi accordingly */
-		roi.width = window_size / 2 + 1;
-		roi.x = x < window_size / 2
-			? 0
-			: (width-1) - window_size / 2;
-
-	}
-
-	/* identify the window - y */
-	if (y >= window_size / 2 &&
-	    y < (height-1) - window_size / 2){
-
-		/* normal case, away from frame edges */
-		roi.y      = y - window_size/2;
-		roi.height = window_size;
-
-	} else {
-
-		/* we're at the edge, limit roi accordingly */
-		roi.height = window_size / 2 + 1;
-		roi.y = y < window_size / 2
-			? 0
-			: (height-1) - window_size / 2;
-
-	}
+	koki_threshold_adaptive_calc_window( frame, &roi,
+					     window_size, x, y );
 
 	/* threshold */
 	if (method == KOKI_ADAPTIVE_MEAN)
@@ -466,4 +426,53 @@ IplImage* koki_threshold_adaptive(IplImage *frame, uint16_t window_size,
 
 	return output;
 
+}
+
+void koki_threshold_adaptive_calc_window( const IplImage *frame,
+					  CvRect *win,
+					  uint16_t window_size,
+					  uint16_t x, uint16_t y )
+{
+	uint16_t width, height;
+
+	width = frame->width;
+	height = frame->height;
+	assert(x >= 0 && x < width);
+	assert(y >= 0 && y < height);
+
+	/* identify the window - x */
+	if (x >= window_size / 2 &&
+	    x < (width-1) - window_size / 2){
+
+		/* normal case, away from frame edges */
+		win->x      = x - window_size/2;
+		win->width  = window_size;
+
+	} else {
+
+		/* we're at the edge, limit roi accordingly */
+		win->width = window_size / 2 + 1;
+		win->x = x < window_size / 2
+			? 0
+			: (width-1) - window_size / 2;
+
+	}
+
+	/* identify the window - y */
+	if (y >= window_size / 2 &&
+	    y < (height-1) - window_size / 2){
+
+		/* normal case, away from frame edges */
+		win->y      = y - window_size/2;
+		win->height = window_size;
+
+	} else {
+
+		/* we're at the edge, limit roi accordingly */
+		win->height = window_size / 2 + 1;
+		win->y = y < window_size / 2
+			? 0
+			: (height-1) - window_size / 2;
+
+	}
 }
