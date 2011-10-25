@@ -313,36 +313,8 @@ static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
 	label_dark_pixel( labelled_image, x, y );
 }
 
-
-
-/**
- * @brief produces a new labelled image from the given \c IplImage
- *
- * @param image      the \c IplImage to threshold and label
- * @param threshold  the threshold to apply (in the range \c 0-255)
- * @return           a pointer to a new labelled image
- */
-koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
+static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 {
-
-	/* threshold for (R+G+B) with R, G and B being in the range 0-255 */
-	uint16_t threshold_x_3 = threshold * 3;
-
-	/* create and initialise a labelled image */
-	koki_labelled_image_t *labelled_image;
-	labelled_image = koki_labelled_image_new(image->width, image->height);
-	assert(labelled_image != NULL);
-
-	/* label all the pixels */
-	for (uint16_t row=0; row<image->height; row++){
-		for (uint16_t col=0; col<image->width; col++){
-
-			label_pixel(image, labelled_image, col, row,
-				    threshold_x_3);
-
-		}//for col
-	}//for row
-
 	/* Now renumber all labels to ensure they're all canonical */
 	for( uint16_t i=1; i<labelled_image->aliases->len; i++ ) {
 		uint16_t *a = &g_array_index( labelled_image->aliases, uint16_t, i-1 );
@@ -377,8 +349,8 @@ koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
 	}
 
 	/* gather stats */
-	for (uint16_t y=0; y<image->height; y++){
-		for (uint16_t x=0; x<image->width; x++){
+	for (uint16_t y=0; y<labelled_image->h; y++){
+		for (uint16_t x=0; x<labelled_image->w; x++){
 
 			uint16_t label, alias;
 			koki_clip_region_t *clip;
@@ -407,9 +379,38 @@ koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
 
 		}//for col
 	}//for row
+}
+
+/**
+ * @brief produces a new labelled image from the given \c IplImage
+ *
+ * @param image      the \c IplImage to threshold and label
+ * @param threshold  the threshold to apply (in the range \c 0-255)
+ * @return           a pointer to a new labelled image
+ */
+koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
+{
+	/* threshold for (R+G+B) with R, G and B being in the range 0-255 */
+	uint16_t threshold_x_3 = threshold * 3;
+
+	/* create and initialise a labelled image */
+	koki_labelled_image_t *labelled_image;
+	labelled_image = koki_labelled_image_new(image->width, image->height);
+	assert(labelled_image != NULL);
+
+	/* label all the pixels */
+	for (uint16_t row=0; row<image->height; row++){
+		for (uint16_t col=0; col<image->width; col++){
+
+			label_pixel(image, labelled_image, col, row,
+				    threshold_x_3);
+
+		}//for col
+	}//for row
+
+	label_image_calc_stats( labelled_image );
 
 	return labelled_image;
-
 }
 
 
