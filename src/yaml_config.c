@@ -117,7 +117,7 @@ bool koki_cam_read_params(const char *filename, koki_camera_params_t *params)
 
 			value = token.data.scalar.value;
 
-			add_param(key, value, params);
+			add_param((char*)key, (char*)value, params);
 
 		}
 
