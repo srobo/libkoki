@@ -396,7 +396,6 @@ IplImage* koki_threshold_adaptive(IplImage *frame, uint16_t window_size,
 	koki_integral_image_t *iimg = NULL;
 
 	assert(frame != NULL);
-	assert(window_size % 2 == 1);
 
 	/* create the integral image to accelerate window summation */
 	iimg = koki_integral_image_new( frame, true );
@@ -434,6 +433,7 @@ void koki_threshold_adaptive_calc_window( const IplImage *frame,
 					  uint16_t x, uint16_t y )
 {
 	uint16_t width, height;
+	assert(window_size % 2 == 1);
 
 	width = frame->width;
 	height = frame->height;
