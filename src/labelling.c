@@ -11,7 +11,8 @@
 #include <cv.h>
 
 #include "labelling.h"
-
+#include "integral-image.h"
+#include "threshold.h"
 
 #define KOKI_MIN_REGION_MASS 64
 #define KOKI_MIN_DISTANCE_FROM_BORDER 3
@@ -496,4 +497,59 @@ bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region)
 
 	return TRUE;
 
+}
+
+/**
+ * @brief threshold and label the provided image
+ *
+ * This function wraps two stages of work together: it adaptively
+ * thresholds the provided image, and labels it.  This function
+ * performs a similar task to calling \c koki_threshold_frame and then 
+ * \c koki_label_image, but it does it in a considerably more cache
+ * friendly way.  (Furthermore, it internally progressively generates
+ * and uses an integral image to speed up the adaptive thresholding.)
+ *
+ * @return the labelled image
+ */
+koki_labelled_image_t* koki_label_adaptive( const IplImage *frame,
+					    uint16_t window_size,
+					    int16_t thresh_margin )
+{
+	uint16_t x, y;
+	koki_integral_image_t *iimg;
+	koki_labelled_image_t *lmg;
+
+	iimg = koki_integral_image_new( frame, false );
+	lmg = koki_labelled_image_new( frame->width, frame->height );
+
+	for( y=0; y<frame->height; y++ )
+		for( x=0; x<frame->width; x++ ) {
+			CvRect win;
+
+			/* Get the ROI from the thresholder */
+			koki_threshold_adaptive_calc_window( frame, &win,
+							     window_size, x, y );
+
+			/* Advance the integral image */
+			if( x == 0 )
+				koki_integral_image_advance( iimg,
+							     frame->width - 1,
+							     win.y + win.height - 1 );
+
+			if( koki_threshold_adaptive_pixel( frame,
+							   iimg,
+							   &win, x, y, thresh_margin ) )
+				/* Nothing exciting */
+				set_label( lmg, x, y, 0);
+			else
+				/* Label the thing */
+				label_dark_pixel( lmg, x, y );
+		}
+
+	/* Sort out all the remaining labelling related stuff */
+	label_image_calc_stats( lmg );
+
+	koki_integral_image_free( iimg );
+
+	return lmg;
 }

@@ -116,4 +116,8 @@ uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
 				    uint16_t x, uint16_t y,
 			     enum DIRECTION direction);
 
+koki_labelled_image_t* koki_label_adaptive( const IplImage *frame,
+					    uint16_t window_size,
+					    int16_t thresh_margin );
+
 #endif /* _KOKI_LABELLING_H_ */
