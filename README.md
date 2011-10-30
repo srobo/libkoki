@@ -13,6 +13,7 @@ In order to build libkoki you'll need to have:
  * OpenGL Utility Toolkit
 
 On Ubuntu 11.10, these can be installed using:
+
 ~~~~~~~~~~~~~~~~
 (sudo) $ apt-get install gcc libcv-dev libhighgui-dev libcvaux-dev libyaml-dev freeglut3-dev
 ~~~~~~~~~~~~~~~~
