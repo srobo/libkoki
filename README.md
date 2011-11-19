@@ -46,3 +46,12 @@ Note that some of them expect to be passed an image file as their first
 ~~~~~~~~~~~~~~~~
 $ ./marker_info image_from_camera.jpg
 ~~~~~~~~~~~~~~~~
+
+If get an error that looks a bit like:
+
+~~~~~~~~~~~~~~~~
+$ ./examples/realtime_quads
+./examples/realtime_quads: error while loading shared libraries: libkoki.so: cannot open shared object file: No such file or directory
+~~~~~~~~~~~~~~~~
+
+Then most likely you've forgotten to run `./shell`.
