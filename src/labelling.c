@@ -106,32 +106,6 @@ void koki_labelled_image_free(koki_labelled_image_t *labelled_image)
 
 
 /**
- * @brief states whether or not the pixel at (x,y) in \c image is above or
- *        below the provided \c threshold.
- *
- * @param image          the image in question
- * @param x              the X co-ordinate of the pixel
- * @param y              the Y co-ordinate of the pixel
- * @param threshold_x_3  the threshold to apply, in the range \c 0-(255*3).
- *                       this param should be 3 times the threshold in the
- *                       range 0-255. (This is an optimization.)
- * @return               TRUE if the pixel is above the threshold, FALSE
- *                       otherwise.
- */
-static bool above_threshold(IplImage *image, uint16_t x, uint16_t y,
-			    uint16_t threshold_x_3)
-{
-
-	return (  KOKI_IPLIMAGE_ELEM(image, x, y, R)
-		+ KOKI_IPLIMAGE_ELEM(image, x, y, G)
-		+ KOKI_IPLIMAGE_ELEM(image, x, y, B))
-		> threshold_x_3;
-
-}
-
-
-
-/**
  * @brief sets the label for a given pixel co-ordinate (x, y)
  *
  * @param labelled_image  the labelled image to write the label to
@@ -318,10 +292,10 @@ static void label_dark_pixel( koki_labelled_image_t *lmg,
  *                        range 0-255. (This is an optimization.)
  */
 static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
-			uint16_t x, uint16_t y, uint16_t threshold_x_3)
+			uint16_t x, uint16_t y, uint16_t threshold)
 {
 	/* white thresholded pixel, not important */
-	if (above_threshold(image, x, y, threshold_x_3)){
+	if (KOKI_IPLIMAGE_GS_ELEM(image, x, y) > threshold){
 		set_label(labelled_image, x, y, 0);
 		return;
 	}
