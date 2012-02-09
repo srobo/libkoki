@@ -82,21 +82,20 @@ void koki_grid_from_image(IplImage *unwarped_frame, uint16_t threshold,
 			     koki_grid_t *grid)
 {
 
-	uint8_t r, g, b;
 	uint8_t cell_pixel_width;
-	uint16_t x, y;
+	uint16_t x, y, v;
 	uint16_t avg;
 
 	/* ensure the image is square and that it can be chunked into
 	   a grid without any remainder */
+	assert(unwarped_frame != NULL && unwarped_frame->nChannels == 1);
 	assert(unwarped_frame->width == unwarped_frame->height
 	       && unwarped_frame->width % KOKI_MARKER_GRID_WIDTH == 0);
 
 	cell_pixel_width = unwarped_frame->width / KOKI_MARKER_GRID_WIDTH;
 
-	/* scale threshold */
+	/* check threshold */
 	assert(threshold <= 255 && threshold >= 0);
-	threshold *= 3;
 
 	/* clear the grid */
 	zero_grid(grid);
@@ -110,16 +109,9 @@ void koki_grid_from_image(IplImage *unwarped_frame, uint16_t threshold,
 					x = col * cell_pixel_width + i;
 					y = row * cell_pixel_width + j;
 
-					r = KOKI_IPLIMAGE_ELEM(unwarped_frame,
-							       x, y, 0);
+					v = KOKI_IPLIMAGE_GS_ELEM(unwarped_frame, x, y);
 
-					g = KOKI_IPLIMAGE_ELEM(unwarped_frame,
-							       x, y, 1);
-
-					b = KOKI_IPLIMAGE_ELEM(unwarped_frame,
-							       x, y, 2);
-
-					grid->data[row][col].sum += r + g + b;
+					grid->data[row][col].sum += v;
 					grid->data[row][col].num_pixels++;
 
 				}//for j
