@@ -47,6 +47,9 @@
 #define KOKI_IPLIMAGE_ELEM(img, x, y, rgb) \
 	(((uint8_t*)((img)->imageData + (img)->widthStep*(y)))[(x)*3+rgb])
 
+#define KOKI_IPLIMAGE_GS_ELEM(img, x, y) \
+	(((uint8_t*)((img)->imageData + (img)->widthStep*(y)))[(x)])
+
 
 /**
  * @brief a macro for getting the label in a labeled image at point (x, y)
