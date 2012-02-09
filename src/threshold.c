@@ -115,8 +115,8 @@ static void classify_and_average(IplImage *frame, uint16_t threshold,
 
 	uint16_t num_white, num_black;
 	uint32_t sum_white, sum_black;
-	uint16_t threshold_x_3, rgb;
 	CvSize size;
+	uint8_t val;
 
 	assert(frame != NULL);
 	assert(threshold >= 0 && threshold <= 255);
@@ -126,20 +126,18 @@ static void classify_and_average(IplImage *frame, uint16_t threshold,
 	num_white = 0;
 	num_black = 0;
 
-	threshold_x_3 = threshold * 3;
-
 	size = cvGetSize(frame);
 
 	for (uint16_t y=0; y<size.height; y++){
 		for (uint16_t x=0; x<size.width; x++){
 
-			rgb = KOKI_RGB_SUM(frame, x, y);
+			val = KOKI_IPLIMAGE_GS_ELEM(frame, x, y);
 
-			if (rgb >= threshold_x_3){
-				sum_white += rgb;
+			if (val >= threshold){
+				sum_white += val;
 				num_white++;
 			} else {
-				sum_black += rgb;
+				sum_black += val;
 				num_black++;
 			}
 
@@ -150,10 +148,10 @@ static void classify_and_average(IplImage *frame, uint16_t threshold,
 	*avg_black = 0;
 
 	if (num_white != 0)
-		*avg_white = (sum_white / 3) / num_white;
+		*avg_white = sum_white / num_white;
 
 	if (num_black != 0)
-		*avg_black = (sum_black / 3) / num_black;
+		*avg_black = sum_black / num_black;
 
 }
 
