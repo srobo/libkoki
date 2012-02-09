@@ -55,7 +55,7 @@ int main(void)
 	while (1){
 
 		uint8_t *yuyv = koki_v4l_get_frame_array(fd, buffers);
-		IplImage *frame = koki_v4l_YUYV_frame_to_RGB_image(yuyv, WIDTH, HEIGHT);
+		IplImage *frame = koki_v4l_YUYV_frame_to_grayscale_image(yuyv, WIDTH, HEIGHT);
 
 		IplImage *thresholded;
 		thresholded = koki_threshold_adaptive(frame, 5, 3,
