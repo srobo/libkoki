@@ -381,8 +381,6 @@ static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
  */
 koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
 {
-	/* threshold for (R+G+B) with R, G and B being in the range 0-255 */
-	uint16_t threshold_x_3 = threshold * 3;
 
 	/* create and initialise a labelled image */
 	koki_labelled_image_t *labelled_image;
@@ -393,8 +391,8 @@ koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold)
 	for (uint16_t row=0; row<image->height; row++){
 		for (uint16_t col=0; col<image->width; col++){
 
-			label_pixel(image, labelled_image, col, row,
-				    threshold_x_3);
+			label_pixel(image, labelled_image,
+				    col, row, threshold);
 
 		}//for col
 	}//for row
