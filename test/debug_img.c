@@ -39,7 +39,7 @@ int main(int argc, const char *argv[])
 
 	const char *filename = argv[1];
 
-	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
+	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(frame != NULL);
 
 	debug(frame);
