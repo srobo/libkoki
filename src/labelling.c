@@ -535,6 +535,8 @@ koki_labelled_image_t* koki_label_adaptive( const IplImage *frame,
 	koki_integral_image_t *iimg;
 	koki_labelled_image_t *lmg;
 
+	assert(frame != NULL && frame->nChannels == 1);
+
 	iimg = koki_integral_image_new( frame, false );
 	lmg = koki_labelled_image_new( frame->width, frame->height );
 
