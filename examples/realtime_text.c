@@ -53,7 +53,7 @@ int main(void)
 
 	while (1){
 		uint8_t *yuyv = koki_v4l_get_frame_array(fd, buffers);
-		IplImage *frame = koki_v4l_YUYV_frame_to_RGB_image(yuyv, WIDTH, HEIGHT);
+		IplImage *frame = koki_v4l_YUYV_frame_to_grayscale_image(yuyv, WIDTH, HEIGHT);
 		GPtrArray *markers = koki_find_markers( frame, 0.11, &params );
 
 		printf( "%i markers found\n", markers->len );
