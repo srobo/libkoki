@@ -36,7 +36,7 @@ int main(int argc, const char *argv[])
 	int iters = atoi(iters_str);
 	const char *filename = argv[2];
 
-	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
+	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(frame != NULL);
 
 	koki_camera_params_t params;
