@@ -129,6 +129,11 @@ void display()
 	//glColor3f(0, 0, 0);
 
 	IplImage *frame = grab_frame();
+	assert(frame != NULL);
+	IplImage *gs = cvCreateImage(cvSize(frame->width, frame->height),
+				     IPL_DEPTH_8U, 1);
+	assert(gs != NULL);
+	cvCvtColor(frame, gs, CV_RGB2GRAY);
 
 	glutReshapeWindow(frame->width, frame->height);
 
@@ -170,7 +175,7 @@ void display()
 
 
 	/* get markers */
-	GPtrArray *markers = koki_find_markers(frame, 0.11, &params);
+	GPtrArray *markers = koki_find_markers(gs, 0.11, &params);
 
 	//printf("num markers: %d\n", markers->len);
 
@@ -204,6 +209,7 @@ void display()
 	glFlush();
 
 	cvReleaseImage(&frame);
+	cvReleaseImage(&gs);
 	glutSwapBuffers();
 
 }
