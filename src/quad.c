@@ -830,6 +830,23 @@ void koki_quad_free(koki_quad_t *quad)
 
 
 
+static void draw_cross_pixel(IplImage *frame, uint16_t x, uint16_t y)
+{
+	if (frame->nChannels == 1){
+
+		KOKI_IPLIMAGE_GS_ELEM(frame, x, y) = 127;
+
+	} else if (frame->nChannels == 3){
+
+		KOKI_IPLIMAGE_ELEM(frame, x, y, R) = KOKI_QUAD_RED;
+		KOKI_IPLIMAGE_ELEM(frame, x, y, G) = KOKI_QUAD_GREEN;
+		KOKI_IPLIMAGE_ELEM(frame, x, y, B) = KOKI_QUAD_BLUE;
+
+	}
+}
+
+
+
 /**
  * @brief draws a cross (i.e. a pixel at (x, y), then N, E, S and W of it)
  *
@@ -843,30 +860,19 @@ static void draw_cross(IplImage *frame, koki_point2Di_t p)
 		return;
 
 	/* centre */
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, R) = KOKI_QUAD_RED;
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, G) = KOKI_QUAD_GREEN;
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y, B) = KOKI_QUAD_BLUE;
+	draw_cross_pixel(frame, p.x, p.y);
 
 	/* above */
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y-1, R) = KOKI_QUAD_RED;
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y-1, G) = KOKI_QUAD_GREEN;
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y-1, B) = KOKI_QUAD_BLUE;
+	draw_cross_pixel(frame, p.x, p.y-1);
 
 	/* below */
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y+1, R) = KOKI_QUAD_RED;
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y+1, G) = KOKI_QUAD_GREEN;
-	KOKI_IPLIMAGE_ELEM(frame, p.x, p.y+1, B) = KOKI_QUAD_BLUE;
+	draw_cross_pixel(frame, p.x, p.y+1);
 
 	/* left */
-	KOKI_IPLIMAGE_ELEM(frame, p.x-1, p.y, R) = KOKI_QUAD_RED;
-	KOKI_IPLIMAGE_ELEM(frame, p.x-1, p.y, G) = KOKI_QUAD_GREEN;
-	KOKI_IPLIMAGE_ELEM(frame, p.x-1, p.y, B) = KOKI_QUAD_BLUE;
+	draw_cross_pixel(frame, p.x-1, p.y);
 
 	/* right */
-	KOKI_IPLIMAGE_ELEM(frame, p.x+1, p.y, R) = KOKI_QUAD_RED;
-	KOKI_IPLIMAGE_ELEM(frame, p.x+1, p.y, G) = KOKI_QUAD_GREEN;
-	KOKI_IPLIMAGE_ELEM(frame, p.x+1, p.y, B) = KOKI_QUAD_BLUE;
-
+	draw_cross_pixel(frame, p.x+1, p.y);
 
 }
 
