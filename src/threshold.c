@@ -223,7 +223,7 @@ bool koki_threshold_adaptive_pixel( const IplImage *frame,
  *
  * @param frame   the frame being thresholded
  * @param iimg    the integral image of the frame being thresholded
- * @param output  the RGB image to output the thresholded image to
+ * @param output  the 1-channel image to output the thresholded image to
  * @param x       the X co-ordinate of current pixel (probably the centre of the roi)
  * @param y       the Y co-ordinate of current pixel (probably the centre of the roi)
  * @param roi     the \c CvRect describing the regoin we're interested in
@@ -239,9 +239,7 @@ static void threshold_window_mean(IplImage *frame,
 	if( koki_threshold_adaptive_pixel( frame, iimg, &roi, x, y, c ) )
 		grey = 255;
 
-	KOKI_IPLIMAGE_ELEM(output, x, y, 0) = grey;
-	KOKI_IPLIMAGE_ELEM(output, x, y, 1) = grey;
-	KOKI_IPLIMAGE_ELEM(output, x, y, 2) = grey;
+	KOKI_IPLIMAGE_GS_ELEM(output, x, y) = grey;
 
 }
 
@@ -275,7 +273,7 @@ static int thresh_cmp(const void *a, const void *b)
  * just enough to prevent tiny 'features' being noticed.
  *
  * @param frame   the frame being thresholded
- * @param output  the RGB image to output the thresholded image to
+ * @param output  the 1-channel image to output the thresholded image to
  * @param x       the X co-ordinate of current pixel (probably the centre of the roi)
  * @param y       the Y co-ordinate of current pixel (probably the centre of the roi)
  * @param roi     the \c CvRect describing the regoin we're interested in
@@ -297,7 +295,8 @@ static void threshold_window_median(IplImage *frame, IplImage *output,
 	/* calculate threshold */
 	for (uint16_t win_y = 0; win_y < h; win_y++)
 		for (uint16_t win_x = 0; win_x < w; win_x++)
-			data[win_y*w + win_x] = KOKI_RGB_SUM(frame, roi.x + win_x, roi.y + win_y);
+			data[win_y*w + win_x] = KOKI_IPLIMAGE_GS_ELEM(frame, roi.x + win_x,
+								      roi.y + win_y);
 
 	/* sort and find threshold */
 	qsort(data, data_len, sizeof(int), thresh_cmp);
@@ -308,13 +307,11 @@ static void threshold_window_median(IplImage *frame, IplImage *output,
 
 
 	/* apply threshold */
-	grey = KOKI_RGB_SUM(frame, x, y) > threshold - (c * 3)
+	grey = KOKI_IPLIMAGE_GS_ELEM(frame, x, y) > threshold - c
 		? 255
 		: 0;
 
-	KOKI_IPLIMAGE_ELEM(output, x, y, 0) = grey;
-	KOKI_IPLIMAGE_ELEM(output, x, y, 1) = grey;
-	KOKI_IPLIMAGE_ELEM(output, x, y, 2) = grey;
+	KOKI_IPLIMAGE_GS_ELEM(output, x, y) = grey;
 
 }
 
@@ -385,7 +382,7 @@ IplImage* koki_threshold_adaptive(IplImage *frame, uint16_t window_size,
 	IplImage *output = NULL;
 	koki_integral_image_t *iimg = NULL;
 
-	assert(frame != NULL);
+	assert(frame != NULL && frame->nChannels == 1);
 
 	/* create the integral image to accelerate window summation */
 	iimg = koki_integral_image_new( frame, true );
