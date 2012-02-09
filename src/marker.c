@@ -132,7 +132,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	int16_t code;
 
 	assert(marker != NULL);
-	assert(frame != NULL);
+	assert(frame != NULL && frame->nChannels == 1);
 
 	/* unwarp */
 	unwarped = koki_unwarp_marker(marker, frame, 100);
