@@ -40,24 +40,6 @@
 #define KOKI_THRESHOLD_UPPER_BOUND 160
 #define KOKI_THRESHOLD_INCREMENT     1
 
-/**
- * @brief thresholds a specific pixel with the provided threshold
- *
- * @param frame      the image with the pixel to threshold
- * @param x          the pixel's X co-ordinate
- * @param y          the pixel's Y co-ordinate
- * @param threshold  the threshold (in the range \c 0-255) to apply
- * @return           \c TRUE (1) if it's above the threshold, \c FALSE (0)
- *                   otherwise
- */
-bool koki_threshold_rgb_pixel(IplImage *frame, uint16_t x, uint16_t y,
-			      uint16_t threshold)
-{
-
-	return KOKI_RGB_SUM(frame, x, y) > threshold * 3;
-
-}
-
 
 
 /**
@@ -71,24 +53,18 @@ bool koki_threshold_rgb_pixel(IplImage *frame, uint16_t x, uint16_t y,
 IplImage* koki_threshold_frame(IplImage *frame, uint16_t threshold)
 {
 
-	assert(frame != NULL);
+	assert(frame != NULL && frame->nChannels == 1);
 	assert(threshold >= 0 && threshold <= 255);
 
+	uint8_t v;
 	IplImage *ret = cvCreateImage(cvSize(frame->width, frame->height),
-				      IPL_DEPTH_8U, 3);
+				      IPL_DEPTH_8U, 1);
 
 	for (uint16_t y=0; y<frame->height; y++){
 		for (uint16_t x=0; x<frame->width; x++){
 
-			uint8_t grey =
-				koki_threshold_rgb_pixel(frame, x, y,
-							 threshold)
-				? 255
-				: 0;
-
-			KOKI_IPLIMAGE_ELEM(ret, x, y, 0) = grey;
-			KOKI_IPLIMAGE_ELEM(ret, x, y, 1) = grey;
-			KOKI_IPLIMAGE_ELEM(ret, x, y, 2) = grey;
+			v = KOKI_IPLIMAGE_GS_ELEM(frame, x, y);
+			KOKI_IPLIMAGE_GS_ELEM(ret, x, y) = v > threshold ? 255 : 0;
 
 		}//for
 	}//for
