@@ -232,7 +232,7 @@ bool koki_threshold_adaptive_pixel( const IplImage *frame,
 	threshold = sum / (w * h);
 
 	/* apply threshold */
-	if( KOKI_RGB_SUM(frame, x, y) > (threshold - (c * 3)) )
+	if( KOKI_IPLIMAGE_GS_ELEM(frame, x, y) > (threshold - c) )
 		return true;
 
 	return false;
