@@ -34,11 +34,11 @@ int main(int argc, const char *argv[])
 
 	const char *filename = argv[1];
 
-	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
+	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(frame != NULL);
 
 	koki_camera_params_t params;
-/*
+
 	params.size.x = frame->width;
 	params.size.y = frame->height;
 	params.principal_point.x = params.size.x / 2;
@@ -46,11 +46,11 @@ int main(int argc, const char *argv[])
 	params.focal_length.x = 571.0;
 	params.focal_length.y = 571.0;
 
-*/
+/*
 	if (!koki_cam_read_params("cam_640x480.yaml", &params)){
 		printf("Unable to read params\n");
 	}
-
+*/
 	/* get markers */
 	GPtrArray *markers = koki_find_markers(frame, 0.11, &params);
 
