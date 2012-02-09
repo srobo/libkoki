@@ -215,7 +215,7 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	koki_marker_t *marker;
 	GPtrArray *markers = NULL;
 
-	assert(frame != NULL);
+	assert(frame != NULL && frame->nChannels == 1);
 	assert(marker_width > 0);
 
 	/* labelling */
@@ -310,7 +310,7 @@ GPtrArray* koki_find_markers_fp(IplImage *frame, float (*fp)(int),
 	koki_marker_t *marker;
 	GPtrArray *markers = NULL;
 
-	assert(frame != NULL);
+	assert(frame != NULL && frame->nChannels == 1);
 
 	/* labelling */
 	labelled_image = koki_label_adaptive( frame, 11, 5 );
