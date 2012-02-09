@@ -337,9 +337,17 @@ void koki_contour_draw(IplImage *frame, GSList *contour)
 		koki_point2Di_t *p;
 		p = contour->data;
 
-		KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, R) = KOKI_CONTOUR_RED;
-		KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, G) = KOKI_CONTOUR_GREEN;
-		KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, B) = KOKI_CONTOUR_BLUE;
+		if (frame->nChannels == 3){
+
+			KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, R) = KOKI_CONTOUR_RED;
+			KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, G) = KOKI_CONTOUR_GREEN;
+			KOKI_IPLIMAGE_ELEM(frame, p->x, p->y, B) = KOKI_CONTOUR_BLUE;
+
+		} else if (frame->nChannels == 1){
+
+			KOKI_IPLIMAGE_GS_ELEM(frame, p->x, p->y) = 127;
+
+		}
 
 		contour = contour->next;
 
