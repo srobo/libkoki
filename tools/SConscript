@@ -1,0 +1,8 @@
+Import("env")
+
+LIBKOKI = "#lib/libkoki.so"
+
+for name in [ "take_photo" ]:
+    env.Program( target = name,
+                 source = [ "{0}.c".format( name ),
+                            LIBKOKI ] )
