@@ -1,0 +1,5 @@
+Import("env")
+
+c_files = Glob( "*.c" )
+
+env.SharedLibrary( "#lib/libkoki", c_files )
