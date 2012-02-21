@@ -1,22 +1,18 @@
-Import("env")
-
-LIBKOKI = "#lib/libkoki.so"
+Import("lk_env")
 
 # All the example applications that don't need GL
 for exname in [ "realtime_quads",
                 "realtime_text",
                 "marker_info" ]:
-    env.Program( source = [ "{0}.c".format(exname),
-                            LIBKOKI ],
-                 target = exname )
+    lk_env.Program( source = "{0}.c".format(exname),
+                    target = exname )
 
 # The GL example application
-glenv = env.Clone()
+glenv = lk_env.Clone()
 glenv.ParseConfig( "pkg-config --cflags --libs gl glu" )
 f = glenv.ParseFlags( "-lglut" )
 glenv.MergeFlags(f)
 
-glenv.Program( source = [ "realtime_gl.c",
-                          LIBKOKI ],
+glenv.Program( source = "realtime_gl.c",
                target = "realtime_gl" )
 
