@@ -194,8 +194,8 @@ bool koki_threshold_adaptive_pixel( const IplImage *frame,
 				    const CvRect *roi,
 				    uint16_t x, uint16_t y, int16_t c )
 {
-	uint16_t w, h, sum;
-	uint32_t threshold;
+	uint16_t w, h, threshold;
+	uint32_t sum;
 
 	w = roi->width;
 	h = roi->height;
