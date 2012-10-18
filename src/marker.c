@@ -126,8 +126,8 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 {
 
 	IplImage *unwarped, *sub;
+	IplImage *res;
 	koki_grid_t grid;
-	uint16_t grid_thresh;
 	float rotation;
 	int16_t code;
 
@@ -153,8 +153,11 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	cvDestroyWindow("w");
 #endif
 
-	grid_thresh = koki_threshold_global(sub);
-	koki_grid_from_image(unwarped, grid_thresh, &grid);
+	/* Adaptively threshold the marker */
+	res = koki_threshold_adaptive( unwarped, 21, 3, KOKI_ADAPTIVE_MEAN );
+
+	/* Resulting image is already b&w, so a threshold of 127 will do */
+	koki_grid_from_image(res, 127, &grid);
 
 #if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
 	IplImage *ts = koki_threshold_frame(sub, grid_thresh);

@@ -361,11 +361,6 @@ static void threshold_window(IplImage *frame,
  *        illumination variations to exist in the source image and still be
  *        able to thresholded well
  *
- * This method is good at finding the borders of the markers, but should not be
- * used to recover the codes, for example. Because of its adaptive nature, the
- * centre of the large black areas can end up thresholded white because of a
- * lack of variation in brightness.
- *
  * @param frame        the frame to threshold
  * @param window_size  the size of the window to use (must be odd, small is
  *                     faster and less susceptible to illumination variations)
