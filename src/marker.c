@@ -191,24 +191,27 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 
 }
 
-
-
 /**
- * @brief a higher-level function that does everything necessary to return
- *        an array of markers that thare in the given frame
+ * @brief Find the markers in the given frame.  This function can
+ *        take the physical size of the markers as a constant, or a
+ *        pointer to a function that returns the size of a given
+ *        marker.
  *
- * Note that with this function, one can only have a single marker size.
- *
- * @param frame         the input image
- * @param marker_width  the width, in metres, of the marker(s) in the image
- * @param params        the camera params for the camera at \c frame's
- *                      resolution
- * @return              a \c GptrArray* containing all of the found markers
+ * @param frame             the input image
+ * @param fp                a pointer to a function that returns the size of
+ *                          the marker of the given number in metres.  If
+ *                          NULL, marker_width will be used.
+ * @param marker_width      the marker size to use if fp is NULL, in
+ *                          metres.
+ * @param params            the camera params for the camera at \c
+ *                          frame's resolution
+ * @return a \c GptrArray* containing all of the found markers
  */
-GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
-			  koki_camera_params_t *params)
+static GPtrArray* find_markers( IplImage *frame,
+			        float (*fp)(int),
+			        float marker_width,
+			        koki_camera_params_t *params )
 {
-
 	koki_labelled_image_t *labelled_image;
 	GSList *contour;
 	koki_quad_t *quad;
@@ -216,7 +219,6 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	GPtrArray *markers = NULL;
 
 	assert(frame != NULL && frame->nChannels == 1);
-	assert(marker_width > 0);
 
 	/* labelling */
 	labelled_image = koki_label_adaptive( frame, 11, 5 );
@@ -254,9 +256,15 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 
 		/* recover code */
 		if (koki_marker_recover_code(marker, frame)){
-
+			float size;
 			assert(marker != NULL);
-			koki_pose_estimate(marker, marker_width, params);
+
+			if( fp == NULL )
+				size = marker_width;
+			else
+				size = fp(marker->code);
+
+			koki_pose_estimate(marker, size, params);
 			koki_rotation_estimate(marker);
 			koki_bearing_estimate(marker);
 
@@ -280,10 +288,25 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	koki_labelled_image_free(labelled_image);
 
 	return markers;
-
 }
 
-
+/**
+ * @brief a higher-level function that does everything necessary to return
+ *        an array of markers that thare in the given frame
+ *
+ * Note that with this function, one can only have a single marker size.
+ *
+ * @param frame         the input image
+ * @param marker_width  the width, in metres, of the marker(s) in the image
+ * @param params        the camera params for the camera at \c frame's
+ *                      resolution
+ * @return              a \c GptrArray* containing all of the found markers
+ */
+GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
+			  koki_camera_params_t *params)
+{
+	return find_markers( frame, NULL, marker_width, params );
+}
 
 /**
  * @brief a higher-level function that does everything necessary to return
@@ -303,81 +326,8 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 GPtrArray* koki_find_markers_fp(IplImage *frame, float (*fp)(int),
 				koki_camera_params_t *params)
 {
-
-	koki_labelled_image_t *labelled_image;
-	GSList *contour;
-	koki_quad_t *quad;
-	koki_marker_t *marker;
-	GPtrArray *markers = NULL;
-
-	assert(frame != NULL && frame->nChannels == 1);
-
-	/* labelling */
-	labelled_image = koki_label_adaptive( frame, 11, 5 );
-
-	if (labelled_image == NULL)
-		return NULL;
-
-	/* init markers array */
-	markers = g_ptr_array_new();
-
-	/* loop though all regions */
-	for (label_t i=0; i<labelled_image->clips->len; i++){
-
-		/* make sure it's big enough, etc... */
-		if (!koki_label_useable(labelled_image, i))
-			continue;
-
-		/* get contour */
-		contour = koki_contour_find(labelled_image, i);
-
-		/* find vertices */
-		quad = koki_quad_find_vertices(contour);
-
-		if (quad == NULL){
-			koki_contour_free(contour);
-			continue;
-		}
-
-		/* refine vertices */
-		koki_quad_refine_vertices(quad);
-
-		/* create a base marker */
-		marker = koki_marker_new(quad);
-		assert(marker != NULL);
-
-		/* recover code */
-		if (koki_marker_recover_code(marker, frame)){
-
-			assert(marker != NULL);
-			koki_pose_estimate(marker, fp(marker->code), params);
-			koki_rotation_estimate(marker);
-			koki_bearing_estimate(marker);
-
-			/* append the marker to the output array */
-			g_ptr_array_add(markers, marker);
-
-		} else {
-
-			/* not a useful marker, free it */
-			koki_marker_free(marker);
-
-		}
-
-		/* cleanup */
-		koki_contour_free(contour);
-		koki_quad_free(quad);
-
-	}//for
-
-	/* clean up */
-	koki_labelled_image_free(labelled_image);
-
-	return markers;
-
+	return find_markers( frame, fp, 0, params );
 }
-
-
 
 /**
  * @brief frees all the markers pointed to from the array, then frees the
