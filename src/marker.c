@@ -228,7 +228,7 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
 	markers = g_ptr_array_new();
 
 	/* loop though all regions */
-	for (uint16_t i=0; i<labelled_image->clips->len; i++){
+	for (label_t i=0; i<labelled_image->clips->len; i++){
 
 		/* make sure it's big enough, etc... */
 		if (!koki_label_useable(labelled_image, i))
@@ -322,7 +322,7 @@ GPtrArray* koki_find_markers_fp(IplImage *frame, float (*fp)(int),
 	markers = g_ptr_array_new();
 
 	/* loop though all regions */
-	for (uint16_t i=0; i<labelled_image->clips->len; i++){
+	for (label_t i=0; i<labelled_image->clips->len; i++){
 
 		/* make sure it's big enough, etc... */
 		if (!koki_label_useable(labelled_image, i))
