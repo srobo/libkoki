@@ -49,7 +49,7 @@
  * @return                a pointer to the first labelled point on the top row
  */
 static koki_point2Di_t* first_labeled_on_top_row(koki_labelled_image_t *labelled_image,
-						 uint16_t region)
+						 label_t region)
 {
 
 	koki_clip_region_t clip;
@@ -70,7 +70,7 @@ static koki_point2Di_t* first_labeled_on_top_row(koki_labelled_image_t *labelled
 
 	for (uint16_t i = 0; i < width/2; i++){
 
-		uint16_t label, alias;
+		label_t label, alias;
 
 		/* check left side */
 		label = KOKI_LABELLED_IMAGE_LABEL(labelled_image,
@@ -80,7 +80,7 @@ static koki_point2Di_t* first_labeled_on_top_row(koki_labelled_image_t *labelled
 		if (label != 0){
 
 			alias = g_array_index(labelled_image->aliases,
-					      uint16_t, label-1);
+					      label_t, label-1);
 
 			if (alias == region+1){
 
@@ -102,7 +102,7 @@ static koki_point2Di_t* first_labeled_on_top_row(koki_labelled_image_t *labelled
 		if (label != 0){
 
 			alias = g_array_index(labelled_image->aliases,
-					      uint16_t, label-1);
+					      label_t, label-1);
 
 			if (alias == region+1){
 
@@ -221,7 +221,7 @@ static koki_point2Di_t* point2Di_new(uint16_t x, uint16_t y)
  * @return                a pointer to the first GSList node
  */
 GSList* koki_contour_find(koki_labelled_image_t *labelled_image,
-			       uint16_t region)
+			  label_t region)
 {
 
 	GSList *contour = NULL;
@@ -236,7 +236,7 @@ GSList* koki_contour_find(koki_labelled_image_t *labelled_image,
 
 	enum DIRECTION dir = N;
 	bool first_run = TRUE;
-	uint16_t label;
+	label_t label;
 
 	current = *first_point;
 

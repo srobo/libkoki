@@ -85,6 +85,10 @@ typedef struct {
 } koki_clip_region_t;
 
 
+/**
+ * @brief A label number
+ */
+typedef uint16_t label_t;
 
 /**
  * @brief A structure representing a labelled image
@@ -98,7 +102,7 @@ typedef struct {
  * indexed as follows:
  *
  * @code
- *   uint16_t label = labelled_image.data[row * labelled_image.w + col];
+ *   label_t label = labelled_image.data[row * labelled_image.w + col];
  * @endcode
  *
  * Indexing the \c aliases \c GArray with \c (label_no-1) will give the
@@ -109,12 +113,12 @@ typedef struct {
  * \c (label_no-1).
  */
 typedef struct {
-	uint16_t *data;    /**< the array of labels, organised row after row */
+	label_t *data;    /**< the array of labels, organised row after row */
 	uint16_t w;        /**< the width of the labelled image */
 	uint16_t h;        /**< the height of the labelled image */
 	GArray *clips;     /**< a \c GArray* of \c koki_clip_region_t for the
                                 clip regions of each label */
-	GArray *aliases;   /**< a GArray* of \c uint16_t containing the final
+	GArray *aliases;   /**< a GArray* of \c label_t containing the final
                                 label number (see above) */
 } koki_labelled_image_t;
 
@@ -127,11 +131,11 @@ void koki_labelled_image_free(koki_labelled_image_t *labelled_image);
 
 koki_labelled_image_t* koki_label_image(IplImage *image, uint16_t threshold);
 
-bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region);
+bool koki_label_useable(koki_labelled_image_t *labelled_image, label_t region);
 
 IplImage* koki_labelled_image_to_image(koki_labelled_image_t *labelled_image);
 
-uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
+label_t get_connected_label(koki_labelled_image_t *labelled_image,
 				    uint16_t x, uint16_t y,
 			     enum DIRECTION direction);
 

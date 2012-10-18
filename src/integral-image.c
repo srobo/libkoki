@@ -87,7 +87,6 @@ static void update_pixel( koki_integral_image_t *ii,
 			  uint16_t x, uint16_t y )
 {
 	uint32_t v = 0;
-	uint8_t i;
 
 	/* Note that we expect the source image to be greyscale */
 	ii->sum[x] += KOKI_IPLIMAGE_GS_ELEM( ii->src, x, y );

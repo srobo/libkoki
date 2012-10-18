@@ -53,14 +53,14 @@ koki_labelled_image_t* koki_labelled_image_new(uint16_t w, uint16_t h)
 	labelled_image->h = h;
 
 	/* alocate the label data array */
-	uint32_t data_size = (w+2) * (h+2) * sizeof(uint16_t);
+	uint32_t data_size = (w+2) * (h+2) * sizeof(label_t);
 	labelled_image->data = malloc(data_size);
 	assert(labelled_image->data != NULL);
 
 	/* init a GArray for label aliases */
 	labelled_image->aliases = g_array_new(FALSE,
 					     TRUE,
-					     sizeof(uint16_t));
+					     sizeof(label_t));
 
 	/* init a GArray for clip regions */
 	labelled_image->clips = g_array_new(FALSE,
@@ -114,7 +114,7 @@ void koki_labelled_image_free(koki_labelled_image_t *labelled_image)
  * @param label           the label that pixel (x, y) should have
  */
 static void set_label(koki_labelled_image_t *labelled_image,
-		      uint16_t x, uint16_t y, uint16_t label)
+		      uint16_t x, uint16_t y, label_t label)
 {
 
 	if (label == 0){
@@ -128,7 +128,7 @@ static void set_label(koki_labelled_image_t *labelled_image,
 
 		KOKI_LABELLED_IMAGE_LABEL(labelled_image, x, y)
 			= g_array_index(labelled_image->aliases,
-					uint16_t, label-1);
+					label_t, label-1);
 
 	}
 
@@ -145,7 +145,7 @@ static void set_label(koki_labelled_image_t *labelled_image,
  * @param direction       the direction to move in (from the \c DIRECTION enum)
  * @return                the label \c direction of (x, y)
  */
-uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
+label_t get_connected_label(koki_labelled_image_t *labelled_image,
 				    uint16_t x, uint16_t y,
 				    enum DIRECTION direction)
 {
@@ -173,11 +173,11 @@ uint16_t get_connected_label(koki_labelled_image_t *labelled_image,
  *
  * @return The canonical number of the given label
   */
-static uint16_t label_find_canonical( koki_labelled_image_t *lmg,
-			       uint16_t l )
+static label_t label_find_canonical( koki_labelled_image_t *lmg,
+				     label_t l )
 {
 	while(1) {
-		uint16_t a = g_array_index( lmg->aliases, uint16_t, l-1 );
+		label_t a = g_array_index( lmg->aliases, label_t, l-1 );
 
 		if( a == l )
 			/* Found the lowest alias */
@@ -194,23 +194,23 @@ static uint16_t label_find_canonical( koki_labelled_image_t *lmg,
  * @param l_canon	The canonical label number to alias to
  * @param l_alias	The label number to mark as an alias
  */
-static void label_alias( koki_labelled_image_t *lmg, uint16_t l_canon, uint16_t l_alias )
+static void label_alias( koki_labelled_image_t *lmg, label_t l_canon, label_t l_alias )
 {
-	uint16_t *l;
+	label_t *l;
 
 	/* Resolve to the minimum alias of l_alias */
 	l_alias = label_find_canonical( lmg, l_alias );
 	l_canon = label_find_canonical( lmg, l_canon );
 
 	/* Alias l_alias to l_canon */
-	l = &g_array_index( lmg->aliases, uint16_t, l_alias-1 );
+	l = &g_array_index( lmg->aliases, label_t, l_alias-1 );
 	*l = l_canon;
 }
 
 static void label_dark_pixel( koki_labelled_image_t *lmg,
 			      uint16_t x, uint16_t y )
 {
-	uint16_t label_tmp;
+	label_t label_tmp;
 
 	/* if pixel above is labelled, join that label */
 	label_tmp = get_connected_label(lmg, x, y, N);
@@ -223,7 +223,7 @@ static void label_dark_pixel( koki_labelled_image_t *lmg,
 	label_tmp = get_connected_label(lmg, x, y, NE);
 	if (label_tmp > 0){
 
-		int16_t label_w, label_nw, l1, l2, label_min, label_max;
+		label_t label_w, label_nw, l1, l2, label_min, label_max;
 		label_w  = get_connected_label(lmg, x, y, W);
 		label_nw = get_connected_label(lmg, x, y, NW);
 
@@ -232,13 +232,13 @@ static void label_dark_pixel( koki_labelled_image_t *lmg,
 		if (label_w > 0 || label_nw > 0){
 
 			l1 = g_array_index(lmg->aliases,
-					   uint16_t, label_tmp-1);
+					   label_t, label_tmp-1);
 
 			l2 = label_nw > 0
 				? g_array_index(lmg->aliases,
-						uint16_t, label_nw-1)
+						label_t, label_nw-1)
 				: g_array_index(lmg->aliases,
-						uint16_t, label_w-1);
+						label_t, label_w-1);
 
 			/* identify lowest label */
 			label_max = l2;
@@ -307,29 +307,29 @@ static void label_pixel(IplImage *image, koki_labelled_image_t *labelled_image,
 static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 {
 	/* Now renumber all labels to ensure they're all canonical */
-	for( uint16_t i=1; i<labelled_image->aliases->len; i++ ) {
-		uint16_t *a = &g_array_index( labelled_image->aliases, uint16_t, i-1 );
+	for( label_t i=1; i<labelled_image->aliases->len; i++ ) {
+		label_t *a = &g_array_index( labelled_image->aliases, label_t, i-1 );
 
 		*a = label_find_canonical( labelled_image, i );
 	}
 
 	/* collect label statistics (mass, bounding box) */
 
-	uint16_t max_alias = 0;
+	label_t max_alias = 0;
 	GArray *aliases, *clips;
 
 	aliases = labelled_image->aliases;
 	clips = labelled_image->clips;
 
 	/* find largest alias */
-	for (int i=0; i<aliases->len; i++){
-		uint16_t alias = g_array_index(aliases, uint16_t, i);
+	for (label_t i=0; i<aliases->len; i++){
+		label_t alias = g_array_index(aliases, label_t, i);
 		if (alias > max_alias)
 			max_alias = alias;
 	}
 
 	/* init clips */
-	for (int i=0; i<max_alias; i++){
+	for (label_t i=0; i<max_alias; i++){
 		koki_clip_region_t clip;
 		clip.mass = 0;
 		clip.max.x = 0;
@@ -343,7 +343,7 @@ static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 	for (uint16_t y=0; y<labelled_image->h; y++){
 		for (uint16_t x=0; x<labelled_image->w; x++){
 
-			uint16_t label, alias;
+			label_t label, alias;
 			koki_clip_region_t *clip;
 
 			label = KOKI_LABELLED_IMAGE_LABEL(labelled_image, x, y);
@@ -352,7 +352,7 @@ static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 			if (label == 0)
 				continue;
 
-			alias = g_array_index(aliases, uint16_t, label-1);
+			alias = g_array_index(aliases, label_t, label-1);
 
 			clip = &g_array_index(clips,
 					     koki_clip_region_t,
@@ -418,7 +418,7 @@ IplImage* koki_labelled_image_to_image(koki_labelled_image_t *labelled_image)
 {
 
 	IplImage *image;
-	uint16_t label;
+	label_t label;
 	uint8_t r, g, b;
 
 	image = cvCreateImage(cvSize(labelled_image->w, labelled_image->h),
@@ -460,7 +460,7 @@ IplImage* koki_labelled_image_to_image(koki_labelled_image_t *labelled_image)
  * @return                FALSE if the region is considered unusable, TRUE
  *                        otherwise
  */
-bool koki_label_useable(koki_labelled_image_t *labelled_image, uint16_t region)
+bool koki_label_useable(koki_labelled_image_t *labelled_image, label_t region)
 {
 
 	koki_clip_region_t *clip;
