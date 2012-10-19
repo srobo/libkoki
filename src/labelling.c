@@ -33,6 +33,9 @@
 #define KOKI_MIN_REGION_MASS 64
 #define KOKI_MIN_DISTANCE_FROM_BORDER 3
 
+/* Convenience macros for indexing alias and clips arrays */
+#define label_aliases_index( arr, index ) g_array_index( arr, label_t, index )
+#define label_clips_index( arr, index ) g_array_index( arr, koki_clip_region_t, index )
 
 /**
  * @brief produces a new labelled image and initialises its fields
@@ -127,9 +130,8 @@ static void set_label(koki_labelled_image_t *labelled_image,
 		       && labelled_image->aliases->len > label-1);
 
 		KOKI_LABELLED_IMAGE_LABEL(labelled_image, x, y)
-			= g_array_index(labelled_image->aliases,
-					label_t, label-1);
-
+			= label_aliases_index( labelled_image->aliases,
+					       label-1 );
 	}
 
 }
@@ -177,7 +179,7 @@ static label_t label_find_canonical( koki_labelled_image_t *lmg,
 				     label_t l )
 {
 	while(1) {
-		label_t a = g_array_index( lmg->aliases, label_t, l-1 );
+		label_t a = label_aliases_index( lmg->aliases, l-1 );
 
 		if( a == l )
 			/* Found the lowest alias */
@@ -203,7 +205,7 @@ static void label_alias( koki_labelled_image_t *lmg, label_t l_canon, label_t l_
 	l_canon = label_find_canonical( lmg, l_canon );
 
 	/* Alias l_alias to l_canon */
-	l = &g_array_index( lmg->aliases, label_t, l_alias-1 );
+	l = &label_aliases_index( lmg->aliases, l_alias-1 );
 	*l = l_canon;
 }
 
@@ -231,14 +233,11 @@ static void label_dark_pixel( koki_labelled_image_t *lmg,
 		   be merged together */
 		if (label_w > 0 || label_nw > 0){
 
-			l1 = g_array_index(lmg->aliases,
-					   label_t, label_tmp-1);
+			l1 = label_aliases_index( lmg->aliases, label_tmp-1 );
 
 			l2 = label_nw > 0
-				? g_array_index(lmg->aliases,
-						label_t, label_nw-1)
-				: g_array_index(lmg->aliases,
-						label_t, label_w-1);
+				? label_aliases_index( lmg->aliases, label_nw-1 )
+				: label_aliases_index( lmg->aliases, label_w-1 );
 
 			/* identify lowest label */
 			label_max = l2;
@@ -308,7 +307,7 @@ static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 {
 	/* Now renumber all labels to ensure they're all canonical */
 	for( label_t i=1; i<labelled_image->aliases->len; i++ ) {
-		label_t *a = &g_array_index( labelled_image->aliases, label_t, i-1 );
+		label_t *a = &label_aliases_index( labelled_image->aliases, i-1 );
 
 		*a = label_find_canonical( labelled_image, i );
 	}
@@ -323,7 +322,7 @@ static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 
 	/* find largest alias */
 	for (label_t i=0; i<aliases->len; i++){
-		label_t alias = g_array_index(aliases, label_t, i);
+		label_t alias = label_aliases_index( aliases, i );
 		if (alias > max_alias)
 			max_alias = alias;
 	}
@@ -352,11 +351,8 @@ static void label_image_calc_stats( koki_labelled_image_t *labelled_image )
 			if (label == 0)
 				continue;
 
-			alias = g_array_index(aliases, label_t, label-1);
-
-			clip = &g_array_index(clips,
-					     koki_clip_region_t,
-					     alias-1);
+			alias = label_aliases_index( aliases, label-1 );
+			clip = &label_clips_index( clips, alias-1 );
 
 			clip->mass++;
 			if (x > clip->max.x)
@@ -468,9 +464,7 @@ bool koki_label_useable(koki_labelled_image_t *labelled_image, label_t region)
 	/* ensure the region number isn't too high */
 	assert(labelled_image->clips->len > region);
 
-	clip = &g_array_index(labelled_image->clips,
-			      koki_clip_region_t,
-			      region);
+	clip = &label_clips_index( labelled_image->clips, region );
 
 	/* are there enough pixels */
 	if (clip->mass < KOKI_MIN_REGION_MASS)
