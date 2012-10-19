@@ -91,6 +91,11 @@ typedef struct {
 typedef uint16_t label_t;
 
 /**
+ * @brief The maximum label number
+ */
+#define KOKI_LABEL_MAX 0xffff
+
+/**
  * @brief A structure representing a labelled image
  *
  * A labelled image is a representation of an input \c IplImage with separate
