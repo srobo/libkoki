@@ -1,4 +1,4 @@
-/* Copyright 2011 Chris Kirkham
+/* Copyright 2012 Rob Spanton
 
    This file is part of libkoki
 
@@ -14,32 +14,30 @@
 
    You should have received a copy of the GNU General Public License
    along with libkoki.  If not, see <http://www.gnu.org/licenses/>. */
-#ifndef _KOKI_H_
-#define _KOKI_H_
+#ifndef _TEXT_LOGGER_H_
+#define _TEXT_LOGGER_H_
 
 /**
- * @file  koki.h
- * @brief The main header file for including absolutely everything
+ * @file text-logger.h
+ * @brief Header file for the text logger
  */
 
-#include "context.h"
-#include "logger.h"
-#include "text-logger.h"
-#include "debug.h"
-#include "points.h"
-#include "labelling.h"
-#include "contour.h"
-#include "quad.h"
-#include "marker.h"
-#include "unwarp.h"
-#include "code_grid.h"
-#include "threshold.h"
-#include "camera.h"
-#include "pose.h"
-#include "rotation.h"
-#include "bearing.h"
-#include <sys/time.h> /* needed for videodev2.h */
-#include "v4l.h"
-#include "yaml_config.h"
+#include <glib.h>
+#include <stdio.h>
 
-#endif /* _KOKI_H_ */
+#include "logger.h"
+
+typedef struct {
+	FILE* f;     /**< the file that we're logging to */
+	gboolean close_on_destroy; /**< whether to close the file descriptor upon destruction  */
+} koki_text_logger_t;
+
+koki_text_logger_t* koki_text_logger_new( const char* fname );
+
+koki_text_logger_t* koki_text_logger_new_from_stream( FILE* f );
+
+void koki_text_logger_destroy( koki_text_logger_t* tlog );
+
+extern const logger_callbacks_t koki_text_logger_callbacks;
+
+#endif	/* _TEXT_LOGGER_H_ */
