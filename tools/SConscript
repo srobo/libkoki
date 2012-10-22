@@ -1,0 +1,5 @@
+Import("lk_env")
+
+for name in [ "take_photo" ]:
+    lk_env.Program( target = name,
+                    source = "{0}.c".format( name ) )

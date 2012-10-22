@@ -5,7 +5,6 @@ test/realtime
 test/debug_img
 test/marker_info
 *~
-docs/html/
-docs/latex/
 .ditz-config
 bugs/html/
+.sconsign.dblite
