@@ -14,28 +14,28 @@
 
    You should have received a copy of the GNU General Public License
    along with libkoki.  If not, see <http://www.gnu.org/licenses/>. */
-#ifndef _CONTEXT_H_
-#define _CONTEXT_H_
+#ifndef _LOGGER_H_
+#define _LOGGER_H_
 
 /**
- * @file context.h
- * @brief Header file for libkoki context functions
+ * @file logger.h
+ * @brief Header file for libkoki logger types
  */
 
-#include "logger.h"
+#include <cv.h>
 
 /**
- * @brief a libkoki context structure
- */
+ * @brief a structure to contain function pointers for a logger
+  */
 typedef struct {
-	logger_callbacks_t logger; /**< the logger callbacks */
-	void *logger_userdata;	   /**< the userdata to pass to the logger callbacks */
-} koki_t;
 
-koki_t* koki_new( void );
+	void (*init) ( void* userdata ); /**< initialisation function */
 
-void koki_set_logger( koki_t* koki, const logger_callbacks_t *logger, void* userdata );
+	void (*log) ( const char* text,
+		      IplImage *img,
+		      void* userdata ); /**< log event function: text or img can be NULL */
+} logger_callbacks_t;
 
-void koki_destroy( koki_t* koki );
+extern const logger_callbacks_t koki_null_logger;
 
-#endif	/* _CONTEXT_H_ */
+#endif	/* _LOGGER_H_ */

@@ -32,7 +32,29 @@
 koki_t* koki_new( void )
 {
 	koki_t *koki = g_malloc( sizeof(koki_t) );
+
+	/* By default, use the null logger (i.e. throw everything away) */
+	koki->logger = koki_null_logger;
+
 	return koki;
+}
+
+/**
+ * @brief set the logger callbacks to use
+ *
+ * @param koki      the libkoki context
+ * @param logger    the logger callbacks
+ * @param userdata  the userdata to pass to the logger callbacks
+  */
+void koki_set_logger( koki_t* koki,
+		      const logger_callbacks_t *logger,
+		      void *userdata )
+{
+	g_assert( koki != NULL );
+	g_assert( logger != NULL );
+
+	koki->logger = *logger;
+	koki->logger_userdata = userdata;
 }
 
 /**
