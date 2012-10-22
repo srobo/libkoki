@@ -225,7 +225,7 @@ static GPtrArray* find_markers( koki_t *koki,
 	koki_log( koki, "find_markers() input image\n", frame );
 
 	/* labelling */
-	labelled_image = koki_label_adaptive( frame, 11, 5 );
+	labelled_image = koki_label_adaptive( koki, frame, 11, 5 );
 
 	if (labelled_image == NULL)
 		return NULL;
