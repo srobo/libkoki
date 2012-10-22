@@ -32,7 +32,7 @@ int main(int argc, const char *argv[])
 	koki_camera_params_t params;
 
 	if (argc != 2){
-		printf("You must pass a filename.\n");
+		fprintf(stderr, "You must pass a filename.\n");
 		return 1;
 	}
 
