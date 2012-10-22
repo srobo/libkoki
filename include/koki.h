@@ -24,6 +24,7 @@
 
 #include "context.h"
 #include "logger.h"
+#include "html-logger.h"
 #include "text-logger.h"
 #include "debug.h"
 #include "points.h"
