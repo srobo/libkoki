@@ -22,6 +22,8 @@
  * @brief Header file for libkoki context functions
  */
 
+#include <glib.h>
+
 #include "logger.h"
 
 /**
@@ -39,5 +41,7 @@ void koki_set_logger( koki_t* koki, const logger_callbacks_t *logger, void* user
 void koki_destroy( koki_t* koki );
 
 void koki_log( koki_t* koki, const char* text, IplImage* img );
+
+gboolean koki_is_logging( koki_t* koki );
 
 #endif	/* _CONTEXT_H_ */

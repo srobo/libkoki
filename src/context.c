@@ -76,3 +76,17 @@ void koki_log( koki_t* koki, const char* text, IplImage* img )
 {
 	koki->logger.log( text, img, koki->logger_userdata );
 }
+
+/**
+ * @brief report whether the context is logging
+ *
+ * @return TRUE if the context is logging
+ */
+gboolean koki_is_logging( koki_t* koki )
+{
+	if( koki->logger.init == koki_null_logger.init
+	    && koki->logger.log == koki_null_logger.log )
+		return FALSE;
+
+	return TRUE;
+}
