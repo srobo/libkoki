@@ -1,4 +1,4 @@
-/* Copyright 2011 Chris Kirkham
+/* Copyright 2012 Rob Spanton
 
    This file is part of libkoki
 
@@ -14,30 +14,31 @@
 
    You should have received a copy of the GNU General Public License
    along with libkoki.  If not, see <http://www.gnu.org/licenses/>. */
-#ifndef _KOKI_H_
-#define _KOKI_H_
 
 /**
- * @file  koki.h
- * @brief The main header file for including absolutely everything
+ * @file context.c
+ * @brief Implementation of libkoki context functions
  */
 
-#include "context.h"
-#include "debug.h"
-#include "points.h"
-#include "labelling.h"
-#include "contour.h"
-#include "quad.h"
-#include "marker.h"
-#include "unwarp.h"
-#include "code_grid.h"
-#include "threshold.h"
-#include "camera.h"
-#include "pose.h"
-#include "rotation.h"
-#include "bearing.h"
-#include <sys/time.h> /* needed for videodev2.h */
-#include "v4l.h"
-#include "yaml_config.h"
+#include <glib.h>
 
-#endif /* _KOKI_H_ */
+#include "context.h"
+
+/**
+ * @brief create a libkoki context
+ *
+ * @return a freshly allocated libkoki context
+ */
+koki_t* koki_new( void )
+{
+	koki_t *koki = g_malloc( sizeof(koki_t) );
+	return koki;
+}
+
+/**
+ * @brief destroy a libkoki context
+ */
+void koki_destroy( koki_t* koki )
+{
+	g_free( koki );
+}
