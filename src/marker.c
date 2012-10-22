@@ -37,10 +37,6 @@
 #include "bearing.h"
 #include "debug.h"
 
-#if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
-#include <highgui.h>
-#endif
-
 #include "marker.h"
 
 
@@ -151,25 +147,8 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 
 	koki_log( koki, "cropped unwarped marker\n", sub );
 
-#if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
-	cvNamedWindow("w", CV_WINDOW_AUTOSIZE);
-	cvShowImage("w", sub);
-	cvWaitKey(0);
-	cvDestroyWindow("w");
-#endif
-
 	grid_thresh = koki_threshold_global(sub);
 	koki_grid_from_image(unwarped, grid_thresh, &grid);
-
-#if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
-	IplImage *ts = koki_threshold_frame(sub, grid_thresh);
-	cvNamedWindow("w", CV_WINDOW_AUTOSIZE);
-	cvShowImage("w", ts);
-	cvWaitKey(0);
-	cvDestroyWindow("w");
-	cvReleaseImage(&ts);
-	koki_grid_print(&grid);
-#endif
 
 	/* recover code */
 	code = koki_code_recover_from_grid(&grid, &rotation);
