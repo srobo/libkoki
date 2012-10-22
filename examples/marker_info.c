@@ -26,18 +26,20 @@
 
 int main(int argc, const char *argv[])
 {
+	const char *filename;
+	IplImage *frame;
+	GPtrArray *markers;
+	koki_camera_params_t params;
 
 	if (argc != 2){
 		printf("You must pass a filename.\n");
 		return 1;
 	}
 
-	const char *filename = argv[1];
+	filename = argv[1];
 
-	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
+	frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(frame != NULL);
-
-	koki_camera_params_t params;
 
 	params.size.x = frame->width;
 	params.size.y = frame->height;
@@ -52,7 +54,7 @@ int main(int argc, const char *argv[])
 	}
 */
 	/* get markers */
-	GPtrArray *markers = koki_find_markers(frame, 0.11, &params);
+	markers = koki_find_markers(frame, 0.11, &params);
 
 	/* display info*/
 	assert(markers != NULL);
