@@ -38,4 +38,6 @@ void koki_set_logger( koki_t* koki, const logger_callbacks_t *logger, void* user
 
 void koki_destroy( koki_t* koki );
 
+void koki_log( koki_t* koki, const char* text, IplImage* img );
+
 #endif	/* _CONTEXT_H_ */

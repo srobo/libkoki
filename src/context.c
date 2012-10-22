@@ -64,3 +64,15 @@ void koki_destroy( koki_t* koki )
 {
 	g_free( koki );
 }
+
+/**
+ * @brief send a log message out to the logger
+ *
+ * @param koki   the libkoki context
+ * @param text   the text of the log message -- can be NULL
+ * @param img    the image of the log message -- can be NULL
+ */
+void koki_log( koki_t* koki, const char* text, IplImage* img )
+{
+	koki->logger.log( text, img, koki->logger_userdata );
+}
