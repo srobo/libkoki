@@ -197,6 +197,7 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
  *        pointer to a function that returns the size of a given
  *        marker.
  *
+ * @param koki              the libkoki context
  * @param frame             the input image
  * @param fp                a pointer to a function that returns the size of
  *                          the marker of the given number in metres.  If
@@ -207,7 +208,8 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
  *                          frame's resolution
  * @return a \c GptrArray* containing all of the found markers
  */
-static GPtrArray* find_markers( IplImage *frame,
+static GPtrArray* find_markers( koki_t *koki,
+				IplImage *frame,
 			        float (*fp)(int),
 			        float marker_width,
 			        koki_camera_params_t *params )
@@ -296,16 +298,19 @@ static GPtrArray* find_markers( IplImage *frame,
  *
  * Note that with this function, one can only have a single marker size.
  *
+ * @param koki    the libkoki context
  * @param frame         the input image
  * @param marker_width  the width, in metres, of the marker(s) in the image
  * @param params        the camera params for the camera at \c frame's
  *                      resolution
  * @return              a \c GptrArray* containing all of the found markers
  */
-GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
-			  koki_camera_params_t *params)
+GPtrArray* koki_find_markers( koki_t *koki,
+			      IplImage *frame,
+			      float marker_width,
+			      koki_camera_params_t *params )
 {
-	return find_markers( frame, NULL, marker_width, params );
+	return find_markers( koki, frame, NULL, marker_width, params );
 }
 
 /**
@@ -318,15 +323,18 @@ GPtrArray* koki_find_markers(IplImage *frame, float marker_width,
  * argument a marker code, and returns a float representing the width of
  * a marker with said code.
  *
+ * @param koki    the libkoki context
  * @param frame   the input image
  * @param fp      the function pointer
  * @param params  the camera params for the camera at \c frame's resolution
  * @return        a \c GptrArray* containing all of the found markers
  */
-GPtrArray* koki_find_markers_fp(IplImage *frame, float (*fp)(int),
-				koki_camera_params_t *params)
+GPtrArray* koki_find_markers_fp( koki_t *koki,
+				 IplImage *frame,
+				 float (*fp)(int),
+				 koki_camera_params_t *params )
 {
-	return find_markers( frame, fp, 0, params );
+	return find_markers( koki, frame, fp, 0, params );
 }
 
 /**

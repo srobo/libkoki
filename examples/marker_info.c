@@ -30,6 +30,7 @@ int main(int argc, const char *argv[])
 	IplImage *frame;
 	GPtrArray *markers;
 	koki_camera_params_t params;
+	koki_t *koki = koki_new();
 
 	if (argc != 2){
 		fprintf(stderr, "You must pass a filename.\n");
@@ -54,7 +55,7 @@ int main(int argc, const char *argv[])
 	}
 */
 	/* get markers */
-	markers = koki_find_markers(frame, 0.11, &params);
+	markers = koki_find_markers(koki, frame, 0.11, &params);
 
 	/* display info*/
 	assert(markers != NULL);

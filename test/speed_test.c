@@ -26,6 +26,7 @@
 
 int main(int argc, const char *argv[])
 {
+	koki_t* koki = koki_new();
 
 	if (argc != 3){
 		printf("Usage: ./speed_test <iterations> <filename>\n");
@@ -51,7 +52,7 @@ int main(int argc, const char *argv[])
 	for (int iteration=0; iteration<iters; iteration++){
 
 		/* get markers */
-		GPtrArray *markers = koki_find_markers(frame, 0.11, &params);
+		GPtrArray *markers = koki_find_markers(koki, frame, 0.11, &params);
 
 		koki_markers_free(markers);
 
