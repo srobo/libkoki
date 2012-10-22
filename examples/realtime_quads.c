@@ -32,7 +32,7 @@
 
 int main(void)
 {
-
+	koki_t* koki = koki_new();
 	koki_camera_params_t params;
 
 	params.size.x = WIDTH;
@@ -85,7 +85,7 @@ int main(void)
 			koki_marker_t *marker;
 			marker = koki_marker_new(quad);
 
-			if (koki_marker_recover_code(marker, frame)){
+			if (koki_marker_recover_code(koki, marker, frame)){
 
 				koki_pose_estimate(marker, 0.11, &params);
 				koki_bearing_estimate(marker);

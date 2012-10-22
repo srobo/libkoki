@@ -53,6 +53,7 @@ int main(int argc, const char *argv[])
 
 void debug(IplImage *frame)
 {
+	koki_t* koki = koki_new();
 
 	cvNamedWindow("thresholded", CV_WINDOW_AUTOSIZE);
 	cvNamedWindow("output", CV_WINDOW_AUTOSIZE);
@@ -97,7 +98,7 @@ void debug(IplImage *frame)
 		marker = koki_marker_new(quad);
 		assert(marker != NULL);
 
-		if (koki_marker_recover_code(marker, frame)){
+		if (koki_marker_recover_code(koki, marker, frame)){
 			printf("Marker found. Code: %d, Z rotation: %f\n",
 			       marker->code, marker->rotation.z);
 		} else {

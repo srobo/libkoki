@@ -117,12 +117,13 @@ void koki_marker_free(koki_marker_t *marker)
 /**
  * @brief recovers the code from a marker, if possible
  *
+ * @param koki    the libkoki context
  * @param marker  the marker to try and get the code for
  * @param frame   the original image, used to extract the marker's pixels from
  * @return        TRUE if a good code is found, indicating the marker structure
  *                has been changed to reflect this; FALSE if no success
  */
-bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
+bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *frame )
 {
 
 	IplImage *unwarped, *sub;
@@ -141,10 +142,14 @@ bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame)
 	if (unwarped == NULL)
 		return FALSE;
 
+	koki_log( koki, "unwarped marker\n", unwarped );
+
 	/* get global threshold for marker -- threshold just the pixels
 	   in the code area/grid */
 	sub = koki_code_sub_image(unwarped);
 	assert(sub != NULL);
+
+	koki_log( koki, "cropped unwarped marker\n", sub );
 
 #if KOKI_DEBUG_LEVEL == KOKI_DEBUG_INFO
 	cvNamedWindow("w", CV_WINDOW_AUTOSIZE);
@@ -259,7 +264,7 @@ static GPtrArray* find_markers( koki_t *koki,
 		assert(marker != NULL);
 
 		/* recover code */
-		if (koki_marker_recover_code(marker, frame)){
+		if (koki_marker_recover_code(koki, marker, frame)){
 			float size;
 			assert(marker != NULL);
 

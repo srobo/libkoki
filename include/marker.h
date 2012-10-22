@@ -87,7 +87,7 @@ koki_marker_t* koki_marker_new(koki_quad_t *quad);
 
 void koki_marker_free(koki_marker_t *marker);
 
-bool koki_marker_recover_code(koki_marker_t *marker, IplImage *frame);
+bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *frame );
 
 GPtrArray* koki_find_markers( koki_t *koki,
 			      IplImage *frame,
