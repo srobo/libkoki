@@ -100,7 +100,7 @@ static void html_log_log( const char* text,
 
 		/* Write an <img> tag into the HTML file */
 		fprintf( hlog->html,
-			 "<img src='%6.6i.png' />", hlog->img_index );
+			 "<img src='%6.6i.png' /><br/>", hlog->img_index );
 
 		/* Free the generated filename */
 		free( fname );
