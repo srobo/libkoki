@@ -31,7 +31,7 @@
 
 int main(void)
 {
-
+	koki_t *koki = koki_new();
 	koki_camera_params_t params;
 
 	params.size.x = WIDTH;
@@ -54,7 +54,7 @@ int main(void)
 	while (1){
 		uint8_t *yuyv = koki_v4l_get_frame_array(fd, buffers);
 		IplImage *frame = koki_v4l_YUYV_frame_to_grayscale_image(yuyv, WIDTH, HEIGHT);
-		GPtrArray *markers = koki_find_markers( frame, 0.11, &params );
+		GPtrArray *markers = koki_find_markers( koki, frame, 0.11, &params );
 
 		printf( "%i markers found\n", markers->len );
 

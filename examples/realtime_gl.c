@@ -34,7 +34,7 @@
 static int fd;
 static koki_buffer_t *buffers;
 static int num_buffers = 1;
-
+static koki_t* koki = NULL;
 
 //static CvCapture *cap;
 static koki_camera_params_t params;
@@ -175,7 +175,7 @@ void display()
 
 
 	/* get markers */
-	GPtrArray *markers = koki_find_markers(gs, 0.11, &params);
+	GPtrArray *markers = koki_find_markers(koki, gs, 0.11, &params);
 
 	//printf("num markers: %d\n", markers->len);
 
@@ -257,6 +257,9 @@ int main(int argc, char **argv)
 	//assert(frame != NULL);
 
 	//glutInitWindowSize(frame->width, frame->height);
+
+	/* The libkoki context to use */
+	koki = koki_new();
 
 	fd = koki_v4l_open_cam("/dev/video0");
 

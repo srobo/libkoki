@@ -1,4 +1,4 @@
-/* Copyright 2011 Chris Kirkham
+/* Copyright 2012 Rob Spanton
 
    This file is part of libkoki
 
@@ -14,33 +14,28 @@
 
    You should have received a copy of the GNU General Public License
    along with libkoki.  If not, see <http://www.gnu.org/licenses/>. */
-#ifndef _KOKI_H_
-#define _KOKI_H_
+#ifndef _LOGGER_H_
+#define _LOGGER_H_
 
 /**
- * @file  koki.h
- * @brief The main header file for including absolutely everything
+ * @file logger.h
+ * @brief Header file for libkoki logger types
  */
 
-#include "context.h"
-#include "logger.h"
-#include "html-logger.h"
-#include "text-logger.h"
-#include "debug.h"
-#include "points.h"
-#include "labelling.h"
-#include "contour.h"
-#include "quad.h"
-#include "marker.h"
-#include "unwarp.h"
-#include "code_grid.h"
-#include "threshold.h"
-#include "camera.h"
-#include "pose.h"
-#include "rotation.h"
-#include "bearing.h"
-#include <sys/time.h> /* needed for videodev2.h */
-#include "v4l.h"
-#include "yaml_config.h"
+#include <cv.h>
 
-#endif /* _KOKI_H_ */
+/**
+ * @brief a structure to contain function pointers for a logger
+  */
+typedef struct {
+
+	void (*init) ( void* userdata ); /**< initialisation function */
+
+	void (*log) ( const char* text,
+		      IplImage *img,
+		      void* userdata ); /**< log event function: text or img can be NULL */
+} logger_callbacks_t;
+
+extern const logger_callbacks_t koki_null_logger;
+
+#endif	/* _LOGGER_H_ */

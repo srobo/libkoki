@@ -495,20 +495,36 @@ bool koki_label_useable(koki_labelled_image_t *labelled_image, label_t region)
  * friendly way.  (Furthermore, it internally progressively generates
  * and uses an integral image to speed up the adaptive thresholding.)
  *
+ * @param koki           the libkoki context
+ * @param frame          the input image to label
+ * @param window_size    the size of window to use around the threshold
+ * @param thresh_margin  the margin around the adaptively-calculated threshold
+ *                       to accept
  * @return the labelled image
  */
-koki_labelled_image_t* koki_label_adaptive( const IplImage *frame,
+koki_labelled_image_t* koki_label_adaptive( koki_t *koki,
+					    const IplImage *frame,
 					    uint16_t window_size,
 					    int16_t thresh_margin )
 {
 	uint16_t x, y;
 	koki_integral_image_t *iimg;
 	koki_labelled_image_t *lmg;
+	IplImage *thresh_img = NULL;
 
 	assert(frame != NULL && frame->nChannels == 1);
 
 	iimg = koki_integral_image_new( frame, false );
 	lmg = koki_labelled_image_new( frame->width, frame->height );
+
+	if( koki_is_logging( koki ) ) {
+		/* We'll log the thresholded image */
+		/* create an image for logging purposes */
+		thresh_img = cvCreateImage( cvSize( frame->width, frame->height ),
+					    IPL_DEPTH_8U, 1 );
+
+		g_assert( thresh_img != NULL );
+	}
 
 	for( y=0; y<frame->height; y++ )
 		for( x=0; x<frame->width; x++ ) {
@@ -526,13 +542,25 @@ koki_labelled_image_t* koki_label_adaptive( const IplImage *frame,
 
 			if( koki_threshold_adaptive_pixel( frame,
 							   iimg,
-							   &win, x, y, thresh_margin ) )
+							   &win, x, y, thresh_margin ) ) {
 				/* Nothing exciting */
 				set_label( lmg, x, y, 0);
-			else
+
+				if( thresh_img != NULL )
+					KOKI_IPLIMAGE_GS_ELEM( thresh_img, x, y ) = 0;
+			} else {
 				/* Label the thing */
 				label_dark_pixel( lmg, x, y );
+
+				if( thresh_img != NULL )
+					KOKI_IPLIMAGE_GS_ELEM( thresh_img, x, y ) = 0xff;
+			}
 		}
+
+	if( thresh_img != NULL ) {
+		koki_log( koki, "thresholded image\n", thresh_img );
+		cvReleaseImage( &thresh_img );
+	}
 
 	/* Sort out all the remaining labelling related stuff */
 	label_image_calc_stats( lmg );

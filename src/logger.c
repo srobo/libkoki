@@ -1,4 +1,4 @@
-/* Copyright 2011 Chris Kirkham
+/* Copyright 2012 Rob Spanton
 
    This file is part of libkoki
 
@@ -14,33 +14,31 @@
 
    You should have received a copy of the GNU General Public License
    along with libkoki.  If not, see <http://www.gnu.org/licenses/>. */
-#ifndef _KOKI_H_
-#define _KOKI_H_
+
+#include "logger.h"
 
 /**
- * @file  koki.h
- * @brief The main header file for including absolutely everything
+ * @brief initialisation function for the null logger
+ *
+ * The null logger just throws away log messages.
  */
+static void null_init( void* userdata )
+{
+	/* null logger does nothing */
+}
 
-#include "context.h"
-#include "logger.h"
-#include "html-logger.h"
-#include "text-logger.h"
-#include "debug.h"
-#include "points.h"
-#include "labelling.h"
-#include "contour.h"
-#include "quad.h"
-#include "marker.h"
-#include "unwarp.h"
-#include "code_grid.h"
-#include "threshold.h"
-#include "camera.h"
-#include "pose.h"
-#include "rotation.h"
-#include "bearing.h"
-#include <sys/time.h> /* needed for videodev2.h */
-#include "v4l.h"
-#include "yaml_config.h"
+/**
+ * @brief log message function for the null logger
+ */
+static void null_log( const char* text, IplImage *img, void* userdata )
+{
+	/* null logger does nothing */
+}
 
-#endif /* _KOKI_H_ */
+/**
+ * @brief the logger callbacks for the null logger
+ */
+const logger_callbacks_t koki_null_logger = {
+	.init = null_init,
+	.log = null_log,
+};

@@ -26,21 +26,25 @@
 
 int main(int argc, const char *argv[])
 {
-	koki_t* koki = koki_new();
+	const char *filename;
+	IplImage *frame;
+	GPtrArray *markers;
+	koki_camera_params_t params;
+	koki_t *koki = koki_new();
+	koki_html_logger_t *hlog = koki_html_logger_new( "log" );
 
-	if (argc != 3){
-		printf("Usage: ./speed_test <iterations> <filename>\n");
+	koki_set_logger( koki, &koki_html_logger_callbacks, hlog );
+
+	if (argc != 2){
+		fprintf(stderr, "You must pass a filename.\n");
 		return 1;
 	}
 
-	const char *iters_str = argv[1];
-	int iters = atoi(iters_str);
-	const char *filename = argv[2];
+	filename = argv[1];
 
-	IplImage *frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
+	frame = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(frame != NULL);
 
-	koki_camera_params_t params;
 	params.size.x = frame->width;
 	params.size.y = frame->height;
 	params.principal_point.x = params.size.x / 2;
@@ -48,20 +52,18 @@ int main(int argc, const char *argv[])
 	params.focal_length.x = 571.0;
 	params.focal_length.y = 571.0;
 
+	/* get markers */
+	markers = koki_find_markers(koki, frame, 0.11, &params);
 
-	for (int iteration=0; iteration<iters; iteration++){
+	/* display info*/
+	assert(markers != NULL);
 
-		/* get markers */
-		GPtrArray *markers = koki_find_markers(koki, frame, 0.11, &params);
+	printf( "Found %i markers\n", markers->len );
 
-		koki_markers_free(markers);
-
-	}
-
-
+	koki_markers_free(markers);
 	cvReleaseImage(&frame);
 
+	koki_html_logger_destroy( hlog );
+
 	return 0;
-
-
 }

@@ -3,7 +3,8 @@ Import("lk_env")
 # All the example applications that don't need GL
 for exname in [ "realtime_quads",
                 "realtime_text",
-                "marker_info" ]:
+                "marker_info",
+                "html_log" ]:
     lk_env.Program( source = "{0}.c".format(exname),
                     target = exname )
 
