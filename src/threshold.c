@@ -194,8 +194,9 @@ bool koki_threshold_adaptive_pixel( const IplImage *frame,
 				    const CvRect *roi,
 				    uint16_t x, uint16_t y, int16_t c )
 {
-	uint16_t w, h, threshold;
+	uint16_t w, h;
 	uint32_t sum;
+	uint32_t cmp;
 
 	w = roi->width;
 	h = roi->height;
@@ -203,10 +204,16 @@ bool koki_threshold_adaptive_pixel( const IplImage *frame,
 	/* calculate threshold */
 	sum = koki_integral_image_sum( iimg, roi );
 
-	threshold = sum / (w * h);
+	/* The following is a rearranged version of
+	      threshold = sum / (w*h);
+	      if( KOKI_IPLIMAGE_GS_ELEM(frame, x, y) > (threshold-c) ) ...
+	   This is re-arranged to avoid division. */
+
+	cmp = KOKI_IPLIMAGE_GS_ELEM(frame, x, y) + c;
+	cmp *= w * h;
 
 	/* apply threshold */
-	if( KOKI_IPLIMAGE_GS_ELEM(frame, x, y) > (threshold - c) )
+	if( cmp > sum )
 		return true;
 
 	return false;
