@@ -123,8 +123,8 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 {
 
 	IplImage *unwarped, *sub;
+	IplImage *res;
 	koki_grid_t grid;
-	uint16_t grid_thresh;
 	float rotation;
 	int16_t code;
 
@@ -147,8 +147,11 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 
 	koki_log( koki, "cropped unwarped marker\n", sub );
 
-	grid_thresh = koki_threshold_global(sub);
-	koki_grid_from_image(unwarped, grid_thresh, &grid);
+	/* Adaptively threshold the marker */
+	res = koki_threshold_adaptive( unwarped, 21, 3, KOKI_ADAPTIVE_MEAN );
+
+	/* Resulting image is already b&w, so a threshold of 127 will do */
+	koki_grid_from_image(res, 127, &grid);
 
 	/* recover code */
 	code = koki_code_recover_from_grid(&grid, &rotation);
