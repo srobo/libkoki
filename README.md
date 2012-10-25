@@ -11,6 +11,7 @@ In order to build libkoki you'll need to have:
  * OpenCV headers
  * YAML headers
  * OpenGL Utility Toolkit
+ * SCons
 
  * Doxygen (docs)
  * Ditz (bug tracking)
@@ -21,12 +22,16 @@ On Ubuntu 11.10 and 11.04, these can be installed using:
 (sudo) $ apt-get install gcc libcv-dev libhighgui-dev libcvaux-dev libyaml-dev freeglut3-dev doxygen ditz
 ~~~~~~~~~~~~~~~~
 
+### Build Instructions
+
+To build libkoki, run `scons` in the root source directory.
+
 ### Examples
 
 libkoki contains a number of examples programs that help demonstrate how
 to use the API, as well as some of its capabilities.
-The examples can be built by running `make` on their directory, and are
-built as part of a default build.
+
+The examples are built by default as part of the normal build process.
 
 In order to run the examples (without installing libkoki) you should run
 the `shell` script in the root of the repository, and then cd into the
