@@ -38,7 +38,8 @@ the `shell` script in the root of the repository, and then cd into the
 examples directory:
 
 ~~~~~~~~~~~~~~~~
-$ ./shell && cd examples
+$ ./shell
+$ cd examples
 ~~~~~~~~~~~~~~~~
 
 From there you can run any of examples by runnnig them as local programs.
