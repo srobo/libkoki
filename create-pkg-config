@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+
+SRC=$1
+TARGET=$2
+
+cat > ${TARGET} <<EOF
+prefix=/usr
+exec_prefix=\${prefix}
+includedir=\${prefix}/include
+libdir=\${exec_prefix}/lib
+
+EOF
+
+cat ${SRC} >> ${TARGET}

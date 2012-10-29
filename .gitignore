@@ -8,3 +8,4 @@ test/marker_info
 .ditz-config
 bugs/html/
 .sconsign.dblite
+libkoki.pc
