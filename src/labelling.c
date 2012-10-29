@@ -547,13 +547,13 @@ koki_labelled_image_t* koki_label_adaptive( koki_t *koki,
 				set_label( lmg, x, y, 0);
 
 				if( thresh_img != NULL )
-					KOKI_IPLIMAGE_GS_ELEM( thresh_img, x, y ) = 0;
+					KOKI_IPLIMAGE_GS_ELEM( thresh_img, x, y ) = 0xff;
 			} else {
 				/* Label the thing */
 				label_dark_pixel( lmg, x, y );
 
 				if( thresh_img != NULL )
-					KOKI_IPLIMAGE_GS_ELEM( thresh_img, x, y ) = 0xff;
+					KOKI_IPLIMAGE_GS_ELEM( thresh_img, x, y ) = 0;
 			}
 		}
 
