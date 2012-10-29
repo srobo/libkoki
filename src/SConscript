@@ -6,3 +6,7 @@ lib = env.SharedLibrary( "#lib/libkoki", c_files )
 
 install += [ env.Install( dir = dest( "/usr/lib" ),
                           source = lib ) ]
+
+# Also install the library with a version
+install += [ env.InstallAs( target = dest( "/usr/lib/libkoki.so.0.0" ),
+                            source = lib ) ]
