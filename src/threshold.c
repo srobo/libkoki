@@ -426,8 +426,8 @@ void koki_threshold_adaptive_calc_window( const IplImage *frame,
 
 	width = frame->width;
 	height = frame->height;
-	assert(x >= 0 && x < width);
-	assert(y >= 0 && y < height);
+	assert( x < width);
+	assert( y < height);
 
 	/* identify the window - x */
 	if (x >= window_size / 2 &&
