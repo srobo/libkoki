@@ -122,7 +122,7 @@ void koki_marker_free(koki_marker_t *marker)
 bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *frame )
 {
 
-	IplImage *unwarped, *sub;
+	IplImage *unwarped;
 	IplImage *res;
 	koki_grid_t grid;
 	float rotation;
@@ -140,15 +140,9 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 
 	koki_log( koki, "unwarped marker\n", unwarped );
 
-	/* get global threshold for marker -- threshold just the pixels
-	   in the code area/grid */
-	sub = koki_code_sub_image(unwarped);
-	assert(sub != NULL);
-
-	koki_log( koki, "cropped unwarped marker\n", sub );
-
 	/* Adaptively threshold the marker */
 	res = koki_threshold_adaptive( unwarped, 21, 3, KOKI_ADAPTIVE_MEAN );
+	koki_log( koki, "unwarped and thresholded marker\n", res );
 
 	/* Resulting image is already b&w, so a threshold of 127 will do */
 	koki_grid_from_image(res, 127, &grid);
@@ -159,9 +153,9 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 	if (code < 0){ /* code not recovered */
 
 		cvReleaseImage(&unwarped);
-		cvReleaseImage(&sub);
-		return FALSE;
+		cvReleaseImage(&res);
 
+		return FALSE;
 	}
 
 	/* add code to the marker */
@@ -172,7 +166,7 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 
 	/* clean up */
 	cvReleaseImage(&unwarped);
-	cvReleaseImage(&sub);
+	cvReleaseImage(&res);
 
 	return TRUE;
 
