@@ -151,6 +151,7 @@ bool koki_marker_recover_code( koki_t* koki, koki_marker_t *marker, IplImage *fr
 	code = koki_code_recover_from_grid(&grid, &rotation);
 
 	if (code < 0){ /* code not recovered */
+		koki_log( koki, "Failed to recover code from unwarped marker -- discarding\n", NULL );
 
 		cvReleaseImage(&unwarped);
 		cvReleaseImage(&res);
