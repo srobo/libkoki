@@ -81,8 +81,8 @@ static CvRect get_clip_rectangle(koki_marker_t *marker)
  * @param unwarped_width  the width, in pixels, of the unwarped square image
  * @return                an image of the marker unwarped
  */
-IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
-			     uint16_t unwarped_width)
+IplImage* koki_unwarp_marker( koki_t* koki, koki_marker_t *marker, IplImage *frame,
+			      uint16_t unwarped_width )
 {
 
 	CvRect clip_rect;
@@ -121,6 +121,7 @@ IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
 
 	/* use the clip rect as region of interest */
 	cvSetImageROI(frame, clip_rect);
+	koki_log( koki, "Warped marker", frame );
 
 	/* set source array */
 	for (uint8_t i=0; i<4; i++){

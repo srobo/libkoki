@@ -25,10 +25,11 @@
 #include <stdint.h>
 #include <cv.h>
 
+#include "koki.h"
 #include "marker.h"
 
-IplImage* koki_unwarp_marker(koki_marker_t *marker, IplImage *frame,
-			     uint16_t unwarped_width);
+IplImage* koki_unwarp_marker( koki_t* koki, koki_marker_t *marker, IplImage *frame,
+			      uint16_t unwarped_width );
 
 
 #endif /* _KOKI_UNWARP_H_ */
