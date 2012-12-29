@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 SRC=$1
 TARGET=$2
