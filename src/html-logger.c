@@ -82,11 +82,7 @@ static void html_log_log( const char* text,
 {
 	koki_html_logger_t* hlog = _logger;
 
-	if( text != NULL ) {
-		/* Write the text to the HTML file */
-		/* TODO: turn newlines into <br/> tags */
-		fprintf( hlog->html, text );
-	}
+	fprintf( hlog->html, "<div>\n" );
 
 	if( img != NULL ) {
 		char *fname;
@@ -100,7 +96,7 @@ static void html_log_log( const char* text,
 
 		/* Write an <img> tag into the HTML file */
 		fprintf( hlog->html,
-			 "<img src='%6.6i.png' /><br/>", hlog->img_index );
+			 "<img src='%6.6i.png' /> ", hlog->img_index );
 
 		/* Free the generated filename */
 		free( fname );
@@ -108,6 +104,14 @@ static void html_log_log( const char* text,
 		/* Next image needs to be a higher image */
 		hlog->img_index += 1;
 	}
+
+	if( text != NULL ) {
+		/* Write the text to the HTML file */
+		/* TODO: turn newlines into <br/> tags */
+		fprintf( hlog->html, text );
+	}
+
+	fprintf( hlog->html, "</div>\n" );
 }
 
 const logger_callbacks_t koki_html_logger_callbacks = {
