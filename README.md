@@ -12,14 +12,12 @@ In order to build libkoki you'll need to have:
  * YAML headers
  * OpenGL Utility Toolkit
  * SCons
-
  * Doxygen (docs)
- * Ditz (bug tracking)
 
 On Ubuntu 11.10 and 11.04, these can be installed using:
 
 ~~~~~~~~~~~~~~~~
-(sudo) $ apt-get install gcc libcv-dev libhighgui-dev libcvaux-dev libyaml-dev freeglut3-dev doxygen ditz
+(sudo) $ apt-get install gcc libcv-dev libhighgui-dev libcvaux-dev libyaml-dev freeglut3-dev doxygen
 ~~~~~~~~~~~~~~~~
 
 ### Build Instructions
