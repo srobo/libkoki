@@ -88,7 +88,7 @@ static void text_log_log( const char* text,
 	koki_text_logger_t* tlog = _logger;
 
 	if( text != NULL ) {
-		fprintf( tlog->f, text );
+		fputs( text, tlog->f );
 	}
 
 	if( img != NULL ) {

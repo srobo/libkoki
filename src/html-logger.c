@@ -108,7 +108,7 @@ static void html_log_log( const char* text,
 	if( text != NULL ) {
 		/* Write the text to the HTML file */
 		/* TODO: turn newlines into <br/> tags */
-		fprintf( hlog->html, text );
+		fputs( text, hlog->html );
 	}
 
 	fprintf( hlog->html, "</div>\n" );
