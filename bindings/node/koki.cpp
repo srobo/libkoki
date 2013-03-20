@@ -40,7 +40,7 @@ static GPtrArray* process_jpeg(unsigned char* data, int length) {
 static Handle<Object> markerToV8( const koki_marker_t* marker ){
     Local<Object> info = Object::New();
     info->Set(String::NewSymbol("code"), Integer::NewFromUnsigned(marker->code)->ToUint32());
-    
+
     Local<Object> centre = Object::New();
     Local<Object> image = Object::New();
     image->Set(String::NewSymbol("x"), Number::New(marker->centre.image.x));
@@ -69,44 +69,87 @@ static Handle<Object> markerToV8( const koki_marker_t* marker ){
     for(unsigned int j=0;j<4;j++) {
         Local<Object> vertex = Object::New();
         vertex->Set(String::NewSymbol("x"),
-                    Number::New(marker->vertices[j].world.x));
+                Number::New(marker->vertices[j].world.x));
         vertex->Set(String::NewSymbol("y"),
-                    Number::New(marker->vertices[j].world.y));
+                Number::New(marker->vertices[j].world.y));
         vertex->Set(String::NewSymbol("y"),
-                    Number::New(marker->vertices[j].world.z));
+                Number::New(marker->vertices[j].world.z));
         vertices->Set(j, vertex);
     }
     info->Set(String::NewSymbol("vertices"), vertices);
-    
+
     return info;
+}
+
+struct Baton {
+    uv_work_t request;
+    Persistent<Function> callback;
+    int error_code;
+    std::string error_message;
+
+    Persistent<Object> buffer;
+    unsigned char* bytes;
+    int length;
+    GPtrArray* markers;
+};
+
+void AsyncWork(uv_work_t* req) {
+    Baton* baton = static_cast<Baton*>(req->data);
+    baton->markers = process_jpeg( baton->bytes, baton->length );
+}
+
+void AsyncAfter(uv_work_t* req) {
+    HandleScope scope;
+    Baton* baton = static_cast<Baton*>(req->data);
+
+    if (baton->error_code) {
+    } else {
+        Local<Array> results = Array::New(baton->markers->len);
+        for (unsigned int i=0; i<baton->markers->len; i++){
+            koki_marker_t *marker = reinterpret_cast<koki_marker_t*>(g_ptr_array_index(baton->markers, i));
+            results->Set(i, markerToV8( marker ));
+        }
+        koki_markers_free(baton->markers);
+
+        Local<Value> argv[] = {
+            Local<Value>::New(Null()),
+            results
+        };
+        baton->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+    }
+
+    baton->callback.Dispose();
+    baton->buffer.Dispose();
+    delete baton;
 }
 
 static Handle<Value> findMarkers(const Arguments& args)
 {
     HandleScope scope;
-    if (args.Length() != 1) {
-        ThrowException(Exception::Error(String::New("Wrong number of arguments")));
-        return scope.Close(Undefined());
+    if (args.Length() != 2) {
+        return ThrowException(Exception::Error(String::New("Wrong number of arguments")));
     }
-
     if (!Buffer::HasInstance(args[0])) {
-        ThrowException(Exception::TypeError(String::New("Wrong argument type (expect buffer)")));
-        return scope.Close(Undefined());
+        return ThrowException(Exception::TypeError(String::New("Wrong argument type (expect buffer)")));
     }
-
+    if (!args[1]->IsFunction()) {
+        return ThrowException(Exception::TypeError(String::New("Wrong argument type (expect function)")));
+    }
     Local<Object> jpeg = args[0]->ToObject();
-    unsigned char* bytes = reinterpret_cast<unsigned char*>(Buffer::Data(jpeg));
-    int length = Buffer::Length(jpeg);
-    GPtrArray *markers = process_jpeg( bytes, length );
+    Local<Function> callback = Local<Function>::Cast(args[1]);
 
-    Local<Array> results = Array::New(markers->len);
-    for (unsigned int i=0; i<markers->len; i++){
-        koki_marker_t *marker = reinterpret_cast<koki_marker_t*>(g_ptr_array_index(markers, i));
-        results->Set(i, markerToV8( marker ));
-    }
-    koki_markers_free(markers);
+    Baton* baton = new Baton();
+    baton->request.data = baton;
+    baton->callback = Persistent<Function>::New(callback);
 
-    return scope.Close(results);
+    baton->buffer = Persistent<Object>::New(jpeg);
+    baton->bytes = reinterpret_cast<unsigned char*>(Buffer::Data(jpeg));
+    baton->length = Buffer::Length(jpeg);
+
+    uv_queue_work(uv_default_loop(),
+            &baton->request,
+            AsyncWork, AsyncAfter);
+    return Undefined();
 }
 
 extern "C" void init(Handle<Object> target)
