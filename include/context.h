@@ -23,8 +23,11 @@
  */
 
 #include <glib.h>
-
 #include "logger.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief a libkoki context structure
@@ -43,5 +46,9 @@ void koki_destroy( koki_t* koki );
 void koki_log( koki_t* koki, const char* text, IplImage* img );
 
 gboolean koki_is_logging( koki_t* koki );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* _CONTEXT_H_ */

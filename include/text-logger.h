@@ -27,6 +27,10 @@
 
 #include "logger.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	FILE* f;     /**< the file that we're logging to */
 	gboolean close_on_destroy; /**< whether to close the file descriptor upon destruction  */
@@ -40,4 +44,7 @@ void koki_text_logger_destroy( koki_text_logger_t* tlog );
 
 extern const logger_callbacks_t koki_text_logger_callbacks;
 
+#ifdef __cplusplus
+}
+#endif
 #endif	/* _TEXT_LOGGER_H_ */

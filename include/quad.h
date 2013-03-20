@@ -27,6 +27,10 @@
 
 #include "points.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief a structure containing the links contour chain links and their
  *        respective points, for convinience.
@@ -49,4 +53,7 @@ void koki_quad_free(koki_quad_t *quad);
 
 void koki_quad_draw(IplImage *frame, koki_quad_t *quad);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_QUAD_H_ */

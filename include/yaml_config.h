@@ -26,8 +26,13 @@
 
 #include "camera.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 bool koki_cam_read_params(const char *filename, koki_camera_params_t *params);
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_YAML_CONFIG_H_ */

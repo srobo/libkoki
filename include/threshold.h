@@ -27,9 +27,12 @@
 
 #include "integral-image.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define KOKI_ADAPTIVE_MEAN   1
 #define KOKI_ADAPTIVE_MEDIAN 2
-
 
 IplImage* koki_threshold_frame(IplImage *frame, uint16_t threshold);
 
@@ -48,4 +51,7 @@ void koki_threshold_adaptive_calc_window( const IplImage *frame,
 					  uint16_t width,
 					  uint16_t x, uint16_t y );
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_THRESHOLD_H_ */
