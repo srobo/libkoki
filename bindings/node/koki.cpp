@@ -37,6 +37,50 @@ static GPtrArray* process_jpeg(unsigned char* data, int length) {
     return markers;
 }
 
+static Handle<Object> markerToV8( const koki_marker_t* marker ){
+    Local<Object> info = Object::New();
+    info->Set(String::NewSymbol("code"), Integer::NewFromUnsigned(marker->code)->ToUint32());
+    
+    Local<Object> centre = Object::New();
+    Local<Object> image = Object::New();
+    image->Set(String::NewSymbol("x"), Number::New(marker->centre.image.x));
+    image->Set(String::NewSymbol("y"), Number::New(marker->centre.image.y));
+    centre->Set(String::NewSymbol("image"), image);
+    Local<Object> world = Object::New();
+    world->Set(String::NewSymbol("x"), Number::New(marker->centre.world.x));
+    world->Set(String::NewSymbol("y"), Number::New(marker->centre.world.y));
+    world->Set(String::NewSymbol("y"), Number::New(marker->centre.world.z));
+    centre->Set(String::NewSymbol("world"), world);
+    info->Set(String::NewSymbol("centre"), centre);
+
+    Local<Object> rotation = Object::New();
+    rotation->Set(String::NewSymbol("x"), Number::New(marker->rotation.x));
+    rotation->Set(String::NewSymbol("y"), Number::New(marker->rotation.y));
+    rotation->Set(String::NewSymbol("y"), Number::New(marker->rotation.z));
+    info->Set(String::NewSymbol("rotation"), rotation);
+
+    Local<Object> bearing = Object::New();
+    bearing->Set(String::NewSymbol("x"), Number::New(marker->bearing.x));
+    bearing->Set(String::NewSymbol("y"), Number::New(marker->bearing.y));
+    bearing->Set(String::NewSymbol("y"), Number::New(marker->bearing.z));
+    info->Set(String::NewSymbol("bearing"), bearing);
+
+    Local<Object> vertices = Array::New(4);
+    for(unsigned int j=0;j<4;j++) {
+        Local<Object> vertex = Object::New();
+        vertex->Set(String::NewSymbol("x"),
+                    Number::New(marker->vertices[j].world.x));
+        vertex->Set(String::NewSymbol("y"),
+                    Number::New(marker->vertices[j].world.y));
+        vertex->Set(String::NewSymbol("y"),
+                    Number::New(marker->vertices[j].world.z));
+        vertices->Set(j, vertex);
+    }
+    info->Set(String::NewSymbol("vertices"), vertices);
+    
+    return info;
+}
+
 static Handle<Value> findMarkers(const Arguments& args)
 {
     HandleScope scope;
@@ -58,48 +102,7 @@ static Handle<Value> findMarkers(const Arguments& args)
     Local<Array> results = Array::New(markers->len);
     for (unsigned int i=0; i<markers->len; i++){
         koki_marker_t *marker = reinterpret_cast<koki_marker_t*>(g_ptr_array_index(markers, i));
-
-        Handle<Object> info = Object::New();
-        info->Set(String::NewSymbol("code"), Integer::NewFromUnsigned(marker->code)->ToUint32());
-        
-        Local<Object> centre = Object::New();
-        Local<Object> image = Object::New();
-        image->Set(String::NewSymbol("x"), Number::New(marker->centre.image.x));
-        image->Set(String::NewSymbol("y"), Number::New(marker->centre.image.y));
-        centre->Set(String::NewSymbol("image"), image);
-        Local<Object> world = Object::New();
-        world->Set(String::NewSymbol("x"), Number::New(marker->centre.world.x));
-        world->Set(String::NewSymbol("y"), Number::New(marker->centre.world.y));
-        world->Set(String::NewSymbol("y"), Number::New(marker->centre.world.z));
-        centre->Set(String::NewSymbol("world"), world);
-        info->Set(String::NewSymbol("centre"), centre);
-
-        Local<Object> rotation = Object::New();
-        rotation->Set(String::NewSymbol("x"), Number::New(marker->rotation.x));
-        rotation->Set(String::NewSymbol("y"), Number::New(marker->rotation.y));
-        rotation->Set(String::NewSymbol("y"), Number::New(marker->rotation.z));
-        info->Set(String::NewSymbol("rotation"), rotation);
-
-        Local<Object> bearing = Object::New();
-        bearing->Set(String::NewSymbol("x"), Number::New(marker->bearing.x));
-        bearing->Set(String::NewSymbol("y"), Number::New(marker->bearing.y));
-        bearing->Set(String::NewSymbol("y"), Number::New(marker->bearing.z));
-        info->Set(String::NewSymbol("bearing"), bearing);
-
-        Local<Object> vertices = Array::New(4);
-        for(unsigned int j=0;j<4;j++) {
-            Local<Object> vertex = Object::New();
-            vertex->Set(String::NewSymbol("x"),
-                        Number::New(marker->vertices[j].world.x));
-            vertex->Set(String::NewSymbol("y"),
-                        Number::New(marker->vertices[j].world.y));
-            vertex->Set(String::NewSymbol("y"),
-                        Number::New(marker->vertices[j].world.z));
-            vertices->Set(j, vertex);
-        }
-        info->Set(String::NewSymbol("vertices"), vertices);
-
-        results->Set(i, info);
+        results->Set(i, markerToV8( marker ));
     }
     koki_markers_free(markers);
 
