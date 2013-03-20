@@ -33,7 +33,9 @@
 
 #include "quad.h"
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
  * @brief a structure representing a a single vertex, both in 2D and 3D space
  */
@@ -101,5 +103,7 @@ GPtrArray* koki_find_markers_fp( koki_t *koki,
 
 void koki_markers_free(GPtrArray *markers);
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_MARKER_H_ */

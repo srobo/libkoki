@@ -29,6 +29,10 @@
 
 #include "logger.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	char* dpath;	/**< the path of the directory we're logging to */
 
@@ -42,4 +46,7 @@ void koki_html_logger_destroy( koki_html_logger_t* hlog );
 
 extern const logger_callbacks_t koki_html_logger_callbacks;
 
+#ifdef __cplusplus
+}
+#endif
 #endif	/* _HTML_LOGGER_H_ */

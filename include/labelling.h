@@ -30,6 +30,9 @@
 #include "context.h"
 #include "points.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define R 0
 #define G 1
@@ -150,4 +153,7 @@ koki_labelled_image_t* koki_label_adaptive( koki_t *koki,
 					    uint16_t window_size,
 					    int16_t thresh_margin );
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_LABELLING_H_ */

@@ -25,9 +25,15 @@
 #include "points.h"
 #include "marker.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 koki_marker_rotation_t koki_rotation_estimate_array(koki_point3Df_t points[4]);
 
 void koki_rotation_estimate(koki_marker_t *marker);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_ROTATION_H_ */

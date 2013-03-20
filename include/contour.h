@@ -27,11 +27,19 @@
 
 #include "labelling.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 GSList* koki_contour_find(koki_labelled_image_t *labelled_image,
 			       label_t region);
 
 void koki_contour_free(GSList *contour);
 
 void koki_contour_draw(IplImage *frame, GSList *contour);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _KOKI_CONTOUR_H_ */

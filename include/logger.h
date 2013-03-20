@@ -24,6 +24,9 @@
 
 #include <cv.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
  * @brief a structure to contain function pointers for a logger
   */
@@ -38,4 +41,7 @@ typedef struct {
 
 extern const logger_callbacks_t koki_null_logger;
 
+#ifdef __cplusplus
+}
+#endif
 #endif	/* _LOGGER_H_ */

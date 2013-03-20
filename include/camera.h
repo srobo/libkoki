@@ -26,6 +26,9 @@
 
 #include "points.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief a structure for camera related parameters
@@ -38,5 +41,8 @@ typedef struct {
 	koki_point2Di_t size;            /**< the dimensions of the image */
 } koki_camera_params_t;
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _KOKI_CAMERA_H_ */

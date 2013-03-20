@@ -29,7 +29,9 @@
 #define KOKI_CODE_GRID_WIDTH 6
 #define KOKI_MARKER_GRID_WIDTH 10
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
  * @brief a structure for counting and averaging an image of a marker into
  *        a grid
@@ -65,4 +67,7 @@ int16_t koki_code_recover_from_grid(koki_grid_t *grid, float *rotation_offset);
 
 int16_t koki_code_translation(int code);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_CODE_GRID_H_ */

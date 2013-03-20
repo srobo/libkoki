@@ -26,6 +26,9 @@
 #include <linux/videodev2.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
  * @brief a structure for representing a memory-mapped buffer
  */
@@ -70,4 +73,7 @@ IplImage *koki_v4l_YUYV_frame_to_RGB_image(uint8_t *frame,
 IplImage *koki_v4l_YUYV_frame_to_grayscale_image(uint8_t *frame,
 						 uint16_t w, uint16_t h);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_V4L_H_ */
