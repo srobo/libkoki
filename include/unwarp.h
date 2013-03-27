@@ -28,8 +28,13 @@
 #include "koki.h"
 #include "marker.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 IplImage* koki_unwarp_marker( koki_t* koki, koki_marker_t *marker, IplImage *frame,
 			      uint16_t unwarped_width );
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_UNWARP_H_ */

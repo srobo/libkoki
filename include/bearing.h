@@ -25,9 +25,15 @@
 #include "points.h"
 #include "marker.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 koki_bearing_t koki_bearing_estimate_point(koki_point3Df_t point);
 
 void koki_bearing_estimate(koki_marker_t *marker);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_BEARING_H_ */

@@ -27,6 +27,10 @@
 #include "camera.h"
 #include "marker.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void koki_pose_estimate_arrays(koki_point2Df_t img[4],
 			       koki_point3Df_t world[4],
 			       float marker_width,
@@ -36,5 +40,8 @@ void koki_pose_estimate(koki_marker_t *marker,
 			float marker_width,
 			koki_camera_params_t *params);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _KOKI_POSE_H_ */

@@ -24,6 +24,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief A structure for an integer-valued point in 2D space.
  */
@@ -53,4 +57,7 @@ typedef struct {
 	float z;  /**< the Z co-ordinate */
 } koki_point3Df_t;
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _KOKI_POINTS_H_ */

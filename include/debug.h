@@ -24,6 +24,10 @@
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define KOKI_DEBUG_NONE    0
 #define KOKI_DEBUG_SEVERE  1
 #define KOKI_DEBUG_ERROR   2
@@ -54,5 +58,9 @@
 		fprintf(KOKI_DEBUG_OUTPUT, "[%d]  ", level);		\
 		fprintf(KOKI_DEBUG_OUTPUT, __VA_ARGS__);		\
 	}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _KOKI_DEBUG_H_ */
