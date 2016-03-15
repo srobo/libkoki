@@ -219,7 +219,7 @@ void create_sr_texture()
 {
 
 	IplImage *img = cvLoadImage("sr_round_flat.png", CV_LOAD_IMAGE_COLOR);
-	assert(img != NULL);
+	assert(img != NULL && "Failed to load overlay image. Check working directory.");
 
 	glBindTexture(GL_TEXTURE_2D, 2);
 
