@@ -42,6 +42,9 @@ static koki_camera_params_t params;
 #define WIDTH  1280
 #define HEIGHT 1024
 
+#define BACKGROUND_TEXTURE_ID 1
+#define SR_LOGO_TEXTURE_ID 2
+
 void reshape(int w, int h)
 {
 
@@ -98,7 +101,7 @@ void draw_marker(koki_marker_t *marker)
 
 	glColor3f(1, 1, 1);
 
-	glBindTexture(GL_TEXTURE_2D, 2);
+	glBindTexture(GL_TEXTURE_2D, SR_LOGO_TEXTURE_ID);
 
 	glBegin(GL_QUADS);
 
@@ -123,8 +126,6 @@ void draw_marker(koki_marker_t *marker)
 void display()
 {
 
-	int bg = 1;
-
 	//glClear(GL_COLOR_BUFFER_BIT);
 	//glColor3f(0, 0, 0);
 
@@ -139,7 +140,7 @@ void display()
 
 	/* prepare frame as texture */
 
-	glBindTexture(GL_TEXTURE_2D, bg);
+	glBindTexture(GL_TEXTURE_2D, BACKGROUND_TEXTURE_ID);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -155,7 +156,7 @@ void display()
 
 
 	glColor3f(1, 1, 1);
-	glBindTexture(GL_TEXTURE_2D, bg);
+	glBindTexture(GL_TEXTURE_2D, BACKGROUND_TEXTURE_ID);
 
 	glBegin(GL_QUADS);
 
@@ -221,7 +222,7 @@ void create_sr_texture()
 	IplImage *img = cvLoadImage("sr_round_flat.png", CV_LOAD_IMAGE_COLOR);
 	assert(img != NULL && "Failed to load overlay image. Check working directory.");
 
-	glBindTexture(GL_TEXTURE_2D, 2);
+	glBindTexture(GL_TEXTURE_2D, SR_LOGO_TEXTURE_ID);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
