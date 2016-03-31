@@ -1,4 +1,5 @@
 *.o
+*.pyc
 lib/
 test/example
 test/realtime
