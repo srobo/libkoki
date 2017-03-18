@@ -1,8 +1,6 @@
 CLEAN :=
 
-all: bugs_html AUTHORS
-
-include */include.mk
+all: AUTHORS
 
 AUTHORS: tools/generate_authors
 	tools/generate_authors AUTHORS
