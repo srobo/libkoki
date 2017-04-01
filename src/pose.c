@@ -19,7 +19,7 @@
  * @file  pose.c
  * @brief Implementation of position estimation in 3D space
  */
-
+#include <math.h>
 #include <cv.h>
 #include <stdint.h>
 
