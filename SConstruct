@@ -23,7 +23,7 @@ lk_env = env.Clone()
 lk_env.Append( LIBS = "koki", LIBPATH = "#lib" )
 
 # Our pkg-config stuff
-pkg_builder = Builder( action = "./create-pkg-config $SOURCE $TARGET".format( dest("") ) )
+pkg_builder = Builder( action = "./create-pkg-config $SOURCE $TARGET {}".format( dest("") ) )
 env.Append( BUILDERS = { "PkgConfig": pkg_builder } )
 
 pkg = env.PkgConfig( "libkoki.pc", "libkoki.pc.in" )
