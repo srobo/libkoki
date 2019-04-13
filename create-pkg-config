@@ -5,7 +5,7 @@ TARGET=$2
 PREFIX=$3
 
 cat > ${TARGET} <<EOF
-prefix=${PREFIX}/usr
+prefix=${PREFIX}
 exec_prefix=\${prefix}
 includedir=\${prefix}/include
 libdir=\${exec_prefix}/lib

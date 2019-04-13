@@ -4,9 +4,9 @@ c_files = Glob( "*.c" )
 
 lib = env.SharedLibrary( "#lib/libkoki", c_files )
 
-install += [ env.Install( dir = dest( "/usr/lib" ),
+install += [ env.Install( dir = dest( "/lib" ),
                           source = lib ) ]
 
 # Also install the library with a version
-install += [ env.InstallAs( target = dest( "/usr/lib/libkoki.so.0.0" ),
+install += [ env.InstallAs( target = dest( "/lib/libkoki.so.0.0" ),
                             source = lib ) ]

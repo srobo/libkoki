@@ -1,7 +1,7 @@
 import os
 
 # Install prefix:
-DESTDIR = os.getenv( "DESTDIR", default = "" )
+DESTDIR = os.getenv( "DESTDIR", default = "/usr" )
 
 # things that the install target should install
 install = []
@@ -28,7 +28,7 @@ env.Append( BUILDERS = { "PkgConfig": pkg_builder } )
 
 pkg = env.PkgConfig( "libkoki.pc", "libkoki.pc.in" )
 
-install += [ env.Install( dir = dest( "/usr/lib/pkgconfig" ),
+install += [ env.Install( dir = dest( "/lib/pkgconfig" ),
                           source = pkg ) ]
 
 Export("env lk_env dest install")
