@@ -9,8 +9,7 @@ install = []
 def dest( fname ):
     "Prefix the given filename with DESTDIR"
 
-    return "{0}{1}".format( os.getenv( "DESTDIR", default = "" ),
-                            fname )
+    return "{0}{1}".format( DESTDIR, fname )
 
 env = Environment( CPPPATH = "#include",
                    CCFLAGS = "-O3 -g -std=gnu99 -Werror",
