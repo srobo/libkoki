@@ -1,3 +1,7 @@
-Import("env")
+Import("env install dest")
 
 env.Doxygen( "Doxyfile" )
+
+for subdir in [ "html", "latex" ]:
+  install += [ env.Install( dir = dest( "/share/doc/koki" ),
+                            source = subdir ) ]
