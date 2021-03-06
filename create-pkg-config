@@ -2,9 +2,10 @@
 
 SRC=$1
 TARGET=$2
+PREFIX=$3
 
 cat > ${TARGET} <<EOF
-prefix=/usr
+prefix=${PREFIX}
 exec_prefix=\${prefix}
 includedir=\${prefix}/include
 libdir=\${exec_prefix}/lib

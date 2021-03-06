@@ -2,5 +2,5 @@ Import("env install dest")
 
 h_files = Glob( "*.h" )
 
-install += [ env.Install( dir = dest( "/usr/include/koki" ),
+install += [ env.Install( dir = dest( "/include/koki" ),
                           source = h_files ) ]
